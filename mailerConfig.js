@@ -1,18 +1,17 @@
-const mailerCrendentials = require("./mailerCredentials");
-
+// transporter.js
 const nodemailer = require("nodemailer");
+
+// Holen der Umgebungsvariable MAILER_CREDENTIALS
+const credentials = process.env.MAILER_CREDENTIALS;
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
-    auth: {
-        user: mailerCrendentials.email,
-        pass: mailerCrendentials.password,
-    },
+    auth: JSON.parse(credentials), // Konvertiere den JSON-String in ein Objekt
     tls: {
-        rejectUnauthorized: false, // Deaktiviere Zertifikatüberprüfung - schwierig
+        rejectUnauthorized: false,
     },
 });
 
