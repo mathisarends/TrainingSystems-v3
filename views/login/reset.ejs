@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/shared/variables.css">
+    <link rel="stylesheet" href="/stylesheets/shared/training.css">
+    <link rel="stylesheet" href="/stylesheets/shared/login_sign.css">
+    <title>Reset Password</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="trainingPlan-headline login-headline">Enter your Email</h2>
+        <% if (errorNotification === "Die Email wurde erfolgreich versandt!") { %>
+            <div class="form__message__sucess reset_error">
+                    <%= errorNotification %>
+            </div>
+            <% } else if (errorNotification) { %>
+                <div class="form__message__error reset_error">
+                        <%= errorNotification %>
+                </div>
+                <% } %>
+                <form action="/login/reset" method="POST">
+                    <div class="form__input-group" id="reset-input">
+                        <input type="email" id="email" name="email" class="form__input" placeholder="E-Mail" required
+                            autofocus>
+                    </div>
+                    <button class="form__button reset-btn" type="submit">RESET</button>
+                </form>
+                <p class="form__text">
+                    <a href="/login" class="form__link">Remember Password? Log in</a>
+                </p>
+    </div>
+
+</body>
+
+</html>

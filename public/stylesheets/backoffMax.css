@@ -1,0 +1,100 @@
+#weight-span,
+#max,
+.backoff-headline {
+    letter-spacing: 1px;
+}
+
+.backoff-input-field {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.backoff-input-field:nth-of-type(2) {
+    margin-top: 2rem;
+}
+
+.backoff-input-field:first-of-type
+.backoff-input-field input[type="text"] {
+    margin: 0;
+}
+
+.backoff-input-field input[type="text"] {
+    border: none;
+    border-bottom: 1px solid var(--color-white);
+    font-weight: 400;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+}
+
+.backoff-input-field label {
+    font-weight: 400;
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+    letter-spacing: 1px;
+}
+
+.backoff-input-field input {
+    display: block;
+    width: 100%;
+    height: 40px;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    border: 2px solid #e9e9e9;
+    outline: none;
+    background-color: var(--color-input);
+    transform: background 0.2s, border-color 0.2s;
+    border-radius: 7px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-text);
+    border: 1px solid var(--color-white);
+}
+
+.backoff-btn {
+    margin-top: 1rem;
+    background-color: var(--color-accent);
+    border-radius: 8px;
+    padding: 1rem;
+    height: fit-content;
+    letter-spacing: 1px;
+}
+
+.backoff-btn:hover {
+    scale: 1.0125;
+}
+
+.backoff-btn:active {
+    scale: 0.9875;
+}
+
+
+
+.backoff-btn:active {
+    scale: 0.975;
+}
+
+@media screen and (min-width: 650px) {
+    .backoff-inner-container {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+
+}
+
+@media screen and (min-width: 1600px) {
+    .backoff-inner-container {
+        padding-left: 7rem;
+        padding-right: 7rem;
+    }
+
+}
+
+@media screen and (min-width: 2100px) {
+    .backoff-inner-container {
+        padding-left: 10rem;
+        padding-right: 10rem;
+    }
+
+}

@@ -1,0 +1,558 @@
+<!--Relevant Fields for calculatin the pause Time-->
+<input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>"> <!--Parameter für loop im javascript-->
+
+<% for (let i = 0; i < exerciseCategories.length; i++) { %>
+  <% const category=exerciseCategories[i]; %>
+  <% console.log(category); %>
+  <% console.log(categoryPauseTimes[category]); %>
+  <input class="category-pause-time-input" type="hidden" value="<%= categoryPauseTimes[category] %>">
+<% } %>
+
+
+
+<div class="table-section">
+  <!--Workout Description-->
+  <div class="training-day-information-container">
+    <div class="training-name-more-options-container">
+      <p class="workout-name">Workout <span class="workout-day">1</span></p>
+      <div class="more-info-button-time-container">
+        <button class="more-info-button">
+          <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="feather feather-more-vertical">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div> 
+    <div class="rest-pause-container" style="display: none">
+      <div class="rest-pause-timer">
+        00:00
+      </div>
+      <div>
+        <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+      </div>
+    </div>
+    <input class="notes-regarding-workout" name="notes_regarding_workout_1" type="text"
+      placeholder="Bemerkungen zum Workout" value="<%= trainingNotes[0] %>">
+  </div>
+
+  <table class="workout-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übungskategorie</th>
+        <th>Übung</th>
+        <th>Sätze</th>
+        <th>Reps</th>
+        <th>Gewicht</th>
+        <th>~RPE~</th>
+        <th>RPE</th>
+        <th>Rechenmax.</th>
+        <th>Notiz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 0,
+        weekNumber: 1, dayNumber: 1, exerciseNumber: 1, exerciseCategories: exerciseCategories }) %>
+
+        <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 1,
+          weekNumber: 1, dayNumber: 1, exerciseNumber: 2, exerciseCategories: exerciseCategories }) %>
+
+          <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 2,
+            weekNumber: 1, dayNumber: 1, exerciseNumber: 3, exerciseCategories: exerciseCategories }) %>
+
+            <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 3,
+              weekNumber: 1, dayNumber: 1, exerciseNumber: 4, exerciseCategories: exerciseCategories }) %>
+
+              <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 4,
+                weekNumber: 1, dayNumber: 1, exerciseNumber: 5, exerciseCategories: exerciseCategories }) %>
+
+                <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                  5, weekNumber: 1, dayNumber: 1, exerciseNumber: 6, exerciseCategories: exerciseCategories }) %>
+
+                  <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                    6, weekNumber: 1, dayNumber: 1, exerciseNumber: 7, exerciseCategories: exerciseCategories }) %>
+
+                    <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                      exerciseIndex: 7, weekNumber: 1, dayNumber: 1, exerciseNumber: 8, exerciseCategories:
+                      exerciseCategories }) %>
+
+                      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                        exerciseIndex: 8, weekNumber: 1, dayNumber: 1, exerciseNumber: 9, exerciseCategories:
+                        exerciseCategories }) %>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!--Tag 2-->
+
+<div class="table-section">
+  <!--Workout Description-->
+  <div class="training-day-information-container">
+    <div class="training-name-more-options-container">
+      <p class="workout-name">Workout <span class="workout-day">2</span></p>
+      <div class="more-info-button-time-container">
+        <button class="more-info-button">
+          <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="feather feather-more-vertical">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div> 
+    <div class="rest-pause-container" style="display: none">
+      <div class="rest-pause-timer">
+        00:00
+      </div>
+      <div>
+        <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+      </div>
+    </div>
+    <input class="notes-regarding-workout" name="notes_regarding_workout_2" type="text"
+      placeholder="Bemerkungen zum Workout" value="<%=trainingNotes[1] %>">
+  </div>
+
+  <table class="workout-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übungskategorie</th>
+        <th>Übung</th>
+        <th>Sätze</th>
+        <th>Reps</th>
+        <th>Gewicht</th>
+        <th>~RPE~</th>
+        <th>RPE</th>
+        <th>Rechenmax.</th>
+        <th>Notiz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 9,
+        weekNumber: 1, dayNumber: 2, exerciseNumber: 1, exerciseCategories: exerciseCategories }) %>
+
+        <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 10,
+          weekNumber: 1, dayNumber: 2, exerciseNumber: 2, exerciseCategories: exerciseCategories }) %>
+
+          <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 11,
+            weekNumber: 1, dayNumber: 2, exerciseNumber: 3, exerciseCategories: exerciseCategories }) %>
+
+            <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 12,
+              weekNumber: 1, dayNumber: 2, exerciseNumber: 4, exerciseCategories: exerciseCategories }) %>
+
+              <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 13,
+                weekNumber: 1, dayNumber: 2, exerciseNumber: 5, exerciseCategories: exerciseCategories }) %>
+
+                <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                  14, weekNumber: 1, dayNumber: 2, exerciseNumber: 6, exerciseCategories: exerciseCategories }) %>
+
+                  <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                    15, weekNumber: 1, dayNumber: 2, exerciseNumber: 7, exerciseCategories: exerciseCategories }) %>
+
+                    <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                      exerciseIndex: 16, weekNumber: 1, dayNumber: 2, exerciseNumber: 8, exerciseCategories:
+                      exerciseCategories }) %>
+
+                      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                        exerciseIndex: 17, weekNumber: 1, dayNumber: 2, exerciseNumber: 9, exerciseCategories:
+                        exerciseCategories }) %>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!--Hier die Values für exercise Data aktualisieren-->
+
+<div class="table-section">
+  <!--Workout Description-->
+  <div class="training-day-information-container">
+    <div class="training-name-more-options-container">
+      <p class="workout-name">Workout <span class="workout-day">3</span></p>
+      <div class="more-info-button-time-container">
+        <button class="more-info-button">
+          <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="feather feather-more-vertical">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="rest-pause-container" style="display: none">
+      <div class="rest-pause-timer">
+        00:00
+      </div>
+      <div>
+        <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+      </div>
+    </div>
+    <input class="notes-regarding-workout" name="notes_regarding_workout_3" type="text"
+      placeholder="Bemerkungen zum Workout" value="<%= trainingNotes[2] %>">
+  </div>
+
+  <table class="workout-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übungskategorie</th>
+        <th>Übung</th>
+        <th>Sätze</th>
+        <th>Reps</th>
+        <th>Gewicht</th>
+        <th>~RPE~</th>
+        <th>RPE</th>
+        <th>Rechenmax.</th>
+        <th>Notiz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 18,
+        weekNumber: 1, dayNumber: 3, exerciseNumber: 1, exerciseCategories: exerciseCategories }) %>
+
+        <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 19,
+          weekNumber: 1, dayNumber: 3, exerciseNumber: 2, exerciseCategories: exerciseCategories }) %>
+
+          <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 20,
+            weekNumber: 1, dayNumber: 3, exerciseNumber: 3, exerciseCategories: exerciseCategories }) %>
+
+            <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 21,
+              weekNumber: 1, dayNumber: 3, exerciseNumber: 4, exerciseCategories: exerciseCategories }) %>
+
+              <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 22,
+                weekNumber: 1, dayNumber: 3, exerciseNumber: 5, exerciseCategories: exerciseCategories }) %>
+
+                <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                  23, weekNumber: 1, dayNumber: 3, exerciseNumber: 6, exerciseCategories: exerciseCategories }) %>
+
+                  <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                    24, weekNumber: 1, dayNumber: 3, exerciseNumber: 7, exerciseCategories: exerciseCategories }) %>
+
+                    <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                      exerciseIndex: 25, weekNumber: 1, dayNumber: 3, exerciseNumber: 8, exerciseCategories:
+                      exerciseCategories }) %>
+
+                      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                        exerciseIndex: 26, weekNumber: 1, dayNumber: 3, exerciseNumber: 9, exerciseCategories:
+                        exerciseCategories }) %>
+
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+<div class="table-section" style="display: none">
+  <!--Workout Description-->
+  <div class="training-day-information-container">
+    <div class="training-name-more-options-container">
+      <p class="workout-name">Workout <span class="workout-day">4</span></p>
+      <div class="more-info-button-time-container">
+        <button class="more-info-button">
+          <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="feather feather-more-vertical">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div> 
+    <div class="rest-pause-container" style="display: none">
+      <div class="rest-pause-timer">
+        00:00
+      </div>
+      <div>
+        <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+      </div>
+    </div>
+    <input class="notes-regarding-workout" name="notes_regarding_workout_4" type="text"
+      placeholder="Bemerkungen zum Workout" value="<%= trainingNotes[3] %>">
+  </div>
+
+  <table class="workout-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übungskategorie</th>
+        <th>Übung</th>
+        <th>Sätze</th>
+        <th>Reps</th>
+        <th>Gewicht</th>
+        <th>~RPE~</th>
+        <th>RPE</th>
+        <th>Rechenmax.</th>
+        <th>Notiz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 27,
+        weekNumber: 1, dayNumber: 4, exerciseNumber: 1, exerciseCategories: exerciseCategories }) %>
+
+        <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 28,
+          weekNumber: 1, dayNumber: 4, exerciseNumber: 2, exerciseCategories: exerciseCategories }) %>
+
+          <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 29,
+            weekNumber: 1, dayNumber: 4, exerciseNumber: 3, exerciseCategories: exerciseCategories }) %>
+
+            <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 30,
+              weekNumber: 1, dayNumber: 4, exerciseNumber: 4, exerciseCategories: exerciseCategories }) %>
+
+              <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 31,
+                weekNumber: 1, dayNumber: 4, exerciseNumber: 5, exerciseCategories: exerciseCategories }) %>
+
+                <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                  32, weekNumber: 1, dayNumber: 4, exerciseNumber: 6, exerciseCategories: exerciseCategories }) %>
+
+                  <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                    33, weekNumber: 1, dayNumber: 4, exerciseNumber: 7, exerciseCategories: exerciseCategories }) %>
+
+                    <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                      exerciseIndex: 34, weekNumber: 1, dayNumber: 4, exerciseNumber: 8, exerciseCategories:
+                      exerciseCategories }) %>
+
+                      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                        exerciseIndex: 35, weekNumber: 1, dayNumber: 4, exerciseNumber: 9, exerciseCategories:
+                        exerciseCategories }) %>
+
+
+    </tbody>
+  </table>
+</div>
+
+
+
+
+<div class="table-section" style="display: none">
+  <!--Workout Description-->
+  <div class="training-day-information-container">
+    <div class="training-name-more-options-container">
+      <p class="workout-name">Workout <span class="workout-day">5</span></p>
+      <div class="more-info-button-time-container">
+        <button class="more-info-button">
+          <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="feather feather-more-vertical">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div> 
+    <div class="rest-pause-container" style="display: none">
+      <div class="rest-pause-timer">
+        00:00
+      </div>
+      <div>
+        <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+      </div>
+    </div>
+    <input class="notes-regarding-workout" name="notes_regarding_workout_5" type="text"
+      placeholder="Bemerkungen zum Workout" value="<%=trainingNotes[4] %>">
+  </div>
+  <table class="workout-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übungskategorie</th>
+        <th>Übung</th>
+        <th>Sätze</th>
+        <th>Reps</th>
+        <th>Gewicht</th>
+        <th>~RPE~</th>
+        <th>RPE</th>
+        <th>Rechenmax.</th>
+        <th>Notiz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 36,
+        weekNumber: 1, dayNumber: 5, exerciseNumber: 1, exerciseCategories: exerciseCategories }) %>
+
+        <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 37,
+          weekNumber: 1, dayNumber: 5, exerciseNumber: 2, exerciseCategories: exerciseCategories }) %>
+
+          <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 38,
+            weekNumber: 1, dayNumber: 5, exerciseNumber: 3, exerciseCategories: exerciseCategories }) %>
+
+            <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 39,
+              weekNumber: 1, dayNumber: 5, exerciseNumber: 4, exerciseCategories: exerciseCategories }) %>
+
+              <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 40,
+                weekNumber: 1, dayNumber: 5, exerciseNumber: 5, exerciseCategories: exerciseCategories }) %>
+
+                <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                  41, weekNumber: 1, dayNumber: 5, exerciseNumber: 6, exerciseCategories: exerciseCategories }) %>
+
+                  <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                    42, weekNumber: 1, dayNumber: 5, exerciseNumber: 7, exerciseCategories: exerciseCategories }) %>
+
+                    <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                      exerciseIndex: 43, weekNumber: 1, dayNumber: 5, exerciseNumber: 8, exerciseCategories:
+                      exerciseCategories }) %>
+
+                      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                        exerciseIndex: 44, weekNumber: 1, dayNumber: 5, exerciseNumber: 9, exerciseCategories:
+                        exerciseCategories }) %>
+
+    </tbody>
+  </table>
+
+</div>
+
+
+
+
+<div class="table-section" style="display: none">
+  <!--Workout Description-->
+  <div class="training-day-information-container">
+    <div class="training-name-more-options-container">
+      <p class="workout-name">Workout <span class="workout-day">6</span></p>
+      <div class="more-info-button-time-container">
+        <button class="more-info-button">
+          <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="feather feather-more-vertical">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div> 
+    <div class="rest-pause-container" style="display: none">
+      <div class="rest-pause-timer">
+        00:00
+      </div>
+      <div>
+        <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+      </div>
+    </div>
+    <input class="notes-regarding-workout" name="notes_regarding_workout_6" type="text"
+      placeholder="Bemerkungen zum Workout" value="<%=trainingNotes[5] %>">
+  </div>
+  <table class="workout-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übungskategorie</th>
+        <th>Übung</th>
+        <th>Sätze</th>
+        <th>Reps</th>
+        <th>Gewicht</th>
+        <th>~RPE~</th>
+        <th>RPE</th>
+        <th>Rechenmax.</th>
+        <th>Notiz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 45,
+        weekNumber: 1, dayNumber: 6, exerciseNumber: 1, exerciseCategories: exerciseCategories }) %>
+
+        <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 46,
+          weekNumber: 1, dayNumber: 6, exerciseNumber: 2, exerciseCategories: exerciseCategories }) %>
+
+          <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 47,
+            weekNumber: 1, dayNumber: 6, exerciseNumber: 3, exerciseCategories: exerciseCategories }) %>
+
+            <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 48,
+              weekNumber: 1, dayNumber: 6, exerciseNumber: 4, exerciseCategories: exerciseCategories }) %>
+
+              <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex: 49,
+                weekNumber: 1, dayNumber: 6, exerciseNumber: 5, exerciseCategories: exerciseCategories }) %>
+
+                <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                  50, weekNumber: 1, dayNumber: 6, exerciseNumber: 6, exerciseCategories: exerciseCategories }) %>
+
+                  <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew, exerciseIndex:
+                    51, weekNumber: 1, dayNumber: 6, exerciseNumber: 7, exerciseCategories: exerciseCategories }) %>
+
+                    <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                      exerciseIndex: 52, weekNumber: 1, dayNumber: 6, exerciseNumber: 8, exerciseCategories:
+                      exerciseCategories }) %>
+
+                      <%- include('tableRow', { exerciseData: exerciseData, exerciseDataNew: exerciseDataNew,
+                        exerciseIndex: 53, weekNumber: 1, dayNumber: 6, exerciseNumber: 9, exerciseCategories:
+                        exerciseCategories }) %>
+
+    </tbody>
+  </table>
+
+</div>

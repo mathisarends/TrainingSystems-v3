@@ -1,0 +1,431 @@
+/*More General Tabl*/
+
+.workout-table .table-row td {
+    padding: 0;
+}
+
+/*Abwechselnde Farben Tabelle*/
+.table-section tr:nth-of-type(even) td select {
+    background-color: var(---color-td);
+    width: 100%;
+    height: 100%;
+}
+
+.table-section tr:nth-of-type(odd) td select {
+    background-color: var(--color-offwhite);
+    width: 100%;
+    height: 100%;
+}
+
+
+/*User Exercise Tables*/
+
+.exercise-table {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.exercise-table .table-header-row th {
+    background: linear-gradient(to right, var(--color-accent), var(--color-accent-trainsition));
+    background-color: var(--color-accent);
+}
+
+.exercise-table .table-header-row th:first-child {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    font-size: 1.2rem;
+    padding: 0.75rem;
+}
+
+.exercise-table .table-header-row th:first-child {
+    display: block;
+}
+
+.exercise-table .table-row td:first-child {
+    display: block;
+}
+
+.exercise-table .table-row:nth-of-type(10) td {
+    border-top: 3px solid white;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.exercise-table .table-row:nth-of-type(12) td {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.exercise-table .table-row:nth-of-type(10) td,
+.exercise-table .table-row:nth-of-type(11) td,
+.exercise-table .table-row:nth-of-type(12) td {
+    border-left: 3px solid white;
+    border-right: 3px solid white;
+}
+
+.exercise-table .table-row:nth-of-type(12) td {
+    border-bottom: 3px solid white;
+}
+
+.workout-table {
+    width: 100%;
+}
+
+.workout-notes,
+.exerciseName {
+    min-width: 200px;
+}
+
+tbody .table-row td:first-child {
+    padding-left: 0.35rem;
+}
+
+tbody .table-row td input[type="text"],
+tbody .table-row td input[type="number"],
+tbody .table-row td select {
+    font-size: 16px;
+}
+
+.table-section {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.table-section table {
+    margin-top: 0.5rem;
+    width: 100%;
+    border-spacing: 2px;
+}
+
+/*soll Platz für Navigation machen*/
+.table-section:last-child {
+    margin-bottom: 55px;
+}
+
+/*gewährleistet den Abstand zwischen bezeichnerZeile und Übungen*/
+.table-row:first-child td:first-child,
+.table-row:first-child td:nth-child(2) {
+    font-size: 3.5px;
+    color: var(--color-background);
+}
+
+.table-header-row th {
+    background-color: var(--color-accent);
+    color: #fff;
+    padding: 0.65rem 1.5rem;
+}
+
+.table-row td {
+    color: var(--color-text);
+    box-sizing: border-box;
+    background-color: var(--color-td);
+    padding-left: 0.65rem;
+}
+
+
+table input[type="number"],
+table input[type="text"] {
+    background-color: var(---color-td);
+    border: none;
+    text-align: left;
+    font-weight: 400;
+    font-size: 1.1rem;
+}
+
+table input[type="number"] {
+    text-align: center;
+}
+
+/* Setze den Text für .weight-Inputs auf 'center' */
+table input.weight[type="text"] {
+    text-align: center;
+}
+
+.sets, .reps, .weight, .targetRPE, .actualRPE {
+    padding: 0;
+}
+
+/*jede zweite Zeile andere Farbe*/
+.table-section tr:nth-of-type(odd) {
+    background-color: white;
+}
+
+/*TODO: JUMP for responsive*/
+.table-section .table-row td:nth-of-type(2) {
+    min-width: 85px;
+}
+
+@media screen and (max-width: 1999px) {
+    .notes-regarding-workout,
+    .exerciseName {
+        padding-left: 0.5rem;
+    }
+
+    .table-section td {
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 1400px) {
+    thead .table-header-row th:nth-child(8) {
+        display: none;
+    }
+
+    tbody .table-row td:nth-child(8) {
+        display: none;
+    }
+
+    .table-header-row th {
+        padding: 0;
+        padding-top: 0.5rem;
+        padding-bottom: 0.25rem
+            /*TODO:*/
+    }
+}
+
+@media screen and (max-width: 1024px) {
+
+    :root {
+        font-size: 14px;
+    }
+
+    .navigate-week-button-container .headline-container input[type="text"] {
+        display: none;
+    }
+
+    .progress-bar-container {
+        display: flex;
+        align-items: center;
+    }
+
+    input {
+        padding: 0;
+        font-size: 12px;
+    }
+
+    tbody .table-row td input[type="text"],
+    tbody .table-row td input[type="number"],
+    tbody .table-row td select {
+        font-size: 16px;
+    }
+
+    .table-header-row th {
+        padding: 0;
+        padding-top: 0.5rem;
+        padding-bottom: 0.25rem
+            /*TODO:*/
+    }
+
+    .table-header-row th:nth-child(2) {
+        border-top-left-radius: 2.75px;
+    }
+
+    .table-header-row th:nth-child(7) {
+        border-top-right-radius: 2.75px;
+    }
+
+    thead .table-header-row th:last-child {
+        display: none;
+    }
+
+    tbody .table-row td:last-child {
+        display: none;
+    }
+
+    thead .table-header-row th:first-child {
+        display: none;
+    }
+
+    thead .table-header-row th:nth-child(8) {
+        display: none;
+    }
+
+    tbody .table-row td:first-child {
+        display: none;
+    }
+
+    tbody .table-row td:nth-child(8) {
+        display: none;
+    }
+
+    tbody .table-row td:nth-child(2) {
+        padding-left: 0;
+    }
+
+}
+
+@media screen and (max-width: 768px) {
+
+    :root {
+        font-size: 12px;
+    }
+
+    #show-workout-title-btn {
+        display: none;
+    }
+
+    input {
+        padding: 0;
+        font-size: 10px;
+    }
+
+    tbody .table-row td input[type="text"],
+    tbody .table-row td input[type="number"],
+    tbody .table-row td select {
+        font-size: 14px;
+    }
+}
+
+
+
+
+@media screen and (max-width: 480px) {
+    tbody .table-row td input[type="text"],
+    tbody .table-row td input[type="number"],
+    tbody .table-row td select {
+        font-size: 11.5px;
+    }
+
+    .table-section table,
+    .calculate-table table {
+        border-spacing: 1px;
+    }
+}
+
+@media screen and (max-width: 320px) {
+
+
+    .table-section .exercise-name-selector {
+        min-width: 85px;
+    }
+
+    .exerciseName {
+        min-width: 80px;
+    }
+}
+
+/* Kleinere Smartphones im Landscape-Modus oder größere Smartphones im Portrait-Modus */
+@media screen and (min-width: 321px) and (max-width: 480px) {
+
+    .table-section .table-row .exercise-name-selector {
+        min-width: 90px;
+    }
+
+}
+
+/* Tablets und größere Smartphones im Landscape-Modus */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+
+    .table-section .exercise-name-selector {
+        min-width: 120px;
+    }
+
+    .table-section table,
+    .calculate-table table {
+        border-spacing: 1.25px;
+    }
+
+
+
+}
+
+/* Tablets im Landscape-Modus oder Desktops mit kleineren Bildschirmen */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+
+    #workout-title-input input[type="text"] {
+        padding-left: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .table-section table,
+    .calculate-table table {
+        border-spacing: 1.5px;
+    }
+
+
+
+}
+
+/* Desktops mit mittleren Bildschirmen */
+@media screen and (min-width: 1025px) and (max-width: 1200px) {
+
+    .more-info-button-time-container {
+        display: none;
+    }
+
+    .training-name-more-options-container {
+        margin-bottom: 0.35rem;
+    }
+
+
+    .table-header-row th {
+        padding: 0;
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem
+    }
+
+    .exerciseName,
+    .notes-regarding-workout {
+        min-width: 160px;
+    }
+}
+
+/* Desktops mit größeren Bildschirmen */
+@media screen and (min-width: 1201px) and (max-width: 1999px) {
+
+    input {
+        padding: 0;
+    }
+
+    .more-info-button-time-container {
+        display: none;
+    }
+
+    .training-name-more-options-container {
+        margin-bottom: 0.35rem;
+    }
+
+
+    .table-header-row th {
+        font-size: 1rem;
+        padding: 0;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+
+}
+
+/* Desktops mit sehr großen Bildschirmen */
+@media screen and (min-width: 2000px) {
+    .navigate-week-button-container .progress-bar-container {
+        position: absolute;
+        right: 9rem;
+    }
+
+    .training-name-more-options-container {
+        margin-bottom: 0.35rem;
+    }
+
+    .more-info-button-time-container {
+        display: none;
+    }
+
+    .navigate-week-button-container .headline-container {
+        position: absolute;
+        left: 9rem;
+        display: flex;
+        align-items: center;
+    }
+}
+
+
+
+
+
+
+
+
+

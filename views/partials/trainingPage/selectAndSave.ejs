@@ -1,0 +1,32 @@
+<% if (firstPage) { %>
+<select name="training-day-selector" id="training-day-selector" disabled>
+  <option value="3" <%=trainingFrequency=== 3 ? 'selected' : '' %>>3 Tage</option>
+  <option value="4" <%=trainingFrequency=== 4 ? 'selected' : '' %>>4 Tage</option>
+  <option value="5" <%=trainingFrequency=== 5 ? 'selected' : '' %>>5 Tage</option>
+  <option value="6" <%=trainingFrequency=== 6 ? 'selected' : '' %>>6 Tage</option>
+</select>
+
+<select name="volumePhase" id="volumePhasesSelector">
+  <option value="hypertrophie" <%= trainingPhase === 'hypertrophie' ? 'selected' : '' %>>Hypertrophie</option>
+  <option value="kraft" <%= trainingPhase === 'kraft' ? 'selected' : '' %>>Kraft</option>
+  <option value="peaking" <%= trainingPhase === 'peaking' ? 'selected' : '' %>>Peaking</option>
+</select>
+
+<!--Der Wert soll auf der seite geladen aber nicht angezeigt werden-->
+<% } else { %>
+  <select name="training-day-selector" id="training-day-selector" disabled>
+    <option value="3" <%=trainingFrequency=== 3 ? 'selected' : '' %>>3 Tage</option>
+    <option value="4" <%=trainingFrequency=== 4 ? 'selected' : '' %>>4 Tage</option>
+    <option value="5" <%=trainingFrequency=== 5 ? 'selected' : '' %>>5 Tage</option>
+    <option value="6" <%=trainingFrequency=== 6 ? 'selected' : '' %>>6 Tage</option>
+  </select>
+  
+  <select name="volumePhase" id="volumePhasesSelector" readonly>
+    <option value="hypertrophie" <%= trainingPhase === 'hypertrophie' ? 'selected' : '' %>>Hypertrophie</option>
+    <option value="kraft" <%= trainingPhase === 'kraft' ? 'selected' : '' %>>Kraft</option>
+    <option value="peaking" <%= trainingPhase === 'peaking' ? 'selected' : '' %>>Peaking</option>
+  </select>
+<% } %>
+<div class="calc-button-container">
+  <input class="calc-button" type="submit" value="Änderungen speichern">
+</div>

@@ -1,0 +1,145 @@
+.tool-inner-container { /*für das responsive design*/
+    padding: 0;
+}
+
+.tool-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    justify-content: center;
+
+}
+
+.tool-headline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+}
+
+.tool-explanation-container {
+    border: 2px solid var(--color-td);
+    width: 100%;
+    border-radius: 0.85rem;
+    padding: 1rem 2rem;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.75px;
+    margin-bottom: 0.85rem;
+}
+
+.more-info-tool-button {
+    background-color: var(--color-background);
+    border: none;
+    padding: 0;
+    height: 20px;
+    width: 20px;
+}
+
+
+
+.more-info-tool-button svg {
+    height: 100%;
+    width: 100%;
+}
+
+.tool-container a {
+    border: 1px solid var(--color-progress-background);
+    border-radius: 2rem;
+    text-align: center;
+    padding: 1rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 8px rgba(221, 221, 221, 0.3);
+    background-color: var(--color-hellgrau);
+    color: var(--color-text);
+    text-decoration: none;
+    width: 100%;
+}
+
+.tool-container a:hover {
+    scale: 0.9875;
+}
+
+.tool-container a:first-of-type {
+    background-color: var(--color-td);
+}
+
+.tool-container a:nth-of-type(2) {
+    background-color: var(--color-grey-2);
+}
+
+.tool-container a:hover {
+    scale: 0.985;
+    border-color: var(--color-white);
+}
+
+/* @media screen and (max-width: 635px) {
+    .tool-container a div {
+        font-size: 1rem;
+    }
+
+    .tool-container a div {
+        bottom: 2.5%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .tool-container a div {
+        font-size: 0.85rem;
+    }
+
+    .tool-container a div {
+        bottom: 1.5%;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .tool-container a div {
+        font-size: 0.7rem;
+    }
+
+    .tool-container a div {
+        bottom: 1%;
+    }
+} */
+
+@media screen and (max-width: 320px) {
+    .tool-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+/* Kleinere Smartphones im Landscape-Modus oder größere Smartphones im Portrait-Modus */
+@media screen and (min-width: 321px) and (max-width: 480px) {
+    .tool-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+/* Tablets und größere Smartphones im Landscape-Modus */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    .tool-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+/* Tablets im Landscape-Modus oder Desktops mit kleineren Bildschirmen */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    
+}
+
+/* Desktops mit mittleren Bildschirmen */
+@media screen and (min-width: 1025px) {
+    .tool-inner-container { /*für das responsive design*/
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+}
+
+@media screen and (min-width: 1800px) {
+    .tool-inner-container { /*für das responsive design*/
+        padding-left: 6.5%;
+        padding-right: 6.5%;
+    }
+}

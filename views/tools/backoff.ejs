@@ -1,0 +1,32 @@
+<link rel="stylesheet" href="/stylesheets/backoffMax.css">
+
+<div class="backoff-inner-container">
+    <h2 class="trainingPlan-headline backoff-headline">BACKOFF</h2>
+    <div class="backoff-input-field">
+        <input type="text" id="weight-span" class="trainingPlan-headline" placeholder="Trage deine Werte ein!" readonly/>
+    </div>
+    <div class="backoff-input-field">
+        <label for="working-weight">Bewegtes Gewicht</label>
+        <input type="number" id="working-weight" name="weight" />
+    </div>
+    <div class="backoff-input-field">
+        <label for="working-reps">Absolvierte Wiederholungen</label>
+        <input type="number" id="working-reps" min="1" />
+    </div>
+    <div class="backoff-input-field">
+        <label for="working-rpe">RPE</label>
+        <input type="number" id="working-rpe" min="6" max="10" />
+    </div>
+    <div class="backoff-input-field">
+        <label for="desired-reps">Angestrebte Reps im Backoff</label>
+        <input type="number" id="desired-reps"/>
+    </div>
+    <div class="backoff-input-field">
+        <label for="desired-rpe">Angestrebte RPE im Backoff</label>
+        <input type="number" id="desired-rpe"/>
+    </div>
+    
+    <button class="calc-button backoff-btn">BERECHNEN</button>
+</div>
+
+<script src="/javascripts/tools/calcBackoff.js"></script>

@@ -1,0 +1,199 @@
+<link rel="stylesheet" href="/stylesheets/createTraining.css">
+<link rel="stylesheet" href="/stylesheets/shared/confirmation-modal.css">
+
+<form id="workout-form" method="POST" action="" name="editTraining"> <!--name ist wichtig für modal-->
+
+    <div class="table-section">
+        <!--Workout Description-->
+        <div class="training-day-information-container">
+            <div class="training-name-more-options-container">
+                <input type="text" class="training-name" value="<%= trainingTitle || " Workout 1" %>"
+                name="training_name">
+                <div class="more-info-button-time-container">
+                    <button class="more-info-button">
+                        <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="rest-pause-timer" style="display: none">
+                00:00
+            </div>
+            <input class="notes-regarding-workout" name="notes_regarding_workout" type="text"
+                placeholder="Bemerkungen zum Workout">
+        </div>
+
+        <table class="workout-table create-training-table">
+            <thead>
+                <tr class="table-header-row">
+                    <th>Übung</th>
+                    <th>Sätze</th>
+                    <th>Reps</th>
+                    <th>Gewicht</th>
+                    <th>RPE</th>
+                    <th>1RM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--nur für Abstand kriege das anders nicht hin-->
+                <tr class="table-row">
+                    <td>a</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <!--TODO: den inputs die jeweiligen klassen geben die name attribute setzen: im post verarbeiten und javascript fehler behebend-->
+
+                <% for (let i=1; i <=9; i++) { %>
+                    <% const exerciseData=trainingData[i - 1]; %>
+                        <tr class="table-row">
+                            <td><input type="text" class="exercise-name" name="exercise_name_<%= i %>"
+                                    value="<%= exerciseData.exercise || "" %>"></td>
+                            <td><input type="number" class="sets" name="exercise_sets_<%= i %>"
+                                    value="<%= exerciseData.sets %>"></td>
+                            <td><input type="number" class="reps" name="exercise_reps_<%= i %>"
+                                    value="<%= exerciseData.reps %>"></td>
+                            <td><input type="text" class="weight" name="exercise_weight_<%= i %>" placeholder="<%= exerciseData.weight %>"></td> <!--TODO: und dann hier den placehodler stylen-->
+                            <td><input type="number" class="actualRPE" step="0.5" name="exercise_actualRPE_<%= i %>" value="<%= exerciseData.rpe %>"></td>
+                            <td><input type="number" class="estMax" step="0.5" name="exercise_max_<%= i %>"></td>
+                        </tr>
+                        <% } %>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="training-history-container">
+        <button class="invisible-btn" id="show-training-history">
+            <h2 class="headline">
+                <div>
+                    Absolvierte Trainings
+                </div>
+
+                <svg class="arrow-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-arrow-down">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                </svg>
+
+
+                <svg class="arrow-svg" style="display: none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-arrow-up">
+                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                    <polyline points="5 12 12 5 19 12"></polyline>
+                </svg>
+            </h2>
+        </button>
+
+        <div class="training-history" style="display: none">
+            <!--Wir sind auf der Train-again Page hier sollen alle Trainings nochmal angezeigt werden-->
+                    <% for (let i=0; i < training.trainings.length; i++) { %>
+                        <% const previousWeekData = previousTrainingData[i]; %>
+                        <div class="table-section">
+                            <!--Workout Description-->
+                            <div class="training-day-information-container">
+
+                                <input disabled class="notes-regarding-workout" type="text"
+                                    placeholder="Bemerkungen zum Workout" value="<%= previousTrainingDates[i] %>">
+                            </div>
+                    
+                            <table class="workout-table create-training-table">
+                                <thead>
+                                    <tr class="table-header-row">
+                                        <th>Übung</th>
+                                        <th>Sätze</th>
+                                        <th>Reps</th>
+                                        <th>Gewicht</th>
+                                        <th>RPE</th>
+                                        <th>1RM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!--nur für Abstand kriege das anders nicht hin-->
+                                    <tr class="table-row">
+                                        <td>a</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    
+                                    <!--Soll nur eine anzeige werden deswegen disabled und fehlende Name attribute-->
+                                    <% for (let j=1; j <=9; j++) { %>
+                                        <% const previousExerciseData = previousWeekData[j - 1]; %>
+                                            <tr class="table-row">
+                                                <td><input disabled type="text" class="exercise-name"
+                                                        value="<%= previousExerciseData.exercise || "" %>"></td>
+                                                <td><input disabled type="number" class="sets"
+                                                    value="<%= previousExerciseData.sets || "" %>"></td>
+                                                <td><input disabled type="number" class="reps"
+                                                    value="<%= previousExerciseData.reps || "" %>"></td>
+                                                <td><input disabled type="text" class="weight"
+                                                    value="<%= previousExerciseData.weight || "" %>"></td>
+                                                <td><input disabled type="number" class="actualRPE" step="0.5"
+                                                    value="<%= previousExerciseData.rpe || "" %>"></td>
+                                                <td><input disabled type="number" class="estMax" step="0.5"
+                                                    value="<%= previousExerciseData.estMax || "" %>"></td>
+                                            </tr>
+                                            <% } %>
+                    
+                                </tbody>
+                            </table>
+                        </div>
+    
+                        <% } %>
+    
+        </div>
+
+
+    </div>
+
+
+
+    <button class="link-btn" type="submit" id="save-training-button">Training
+        Speichern</button>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <p>Bist du sicher das du das Training beenden möchtest?</p>
+            <p>Deine Daten werden gespeichert</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-button" id="confirmResetButton">SPEICHERN</button>
+                <button type="button" class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<script src="/javascripts/scratch/confirmation_modal.js"></script>
+<script src="/javascripts/scratch/calcBackoffMax.js"></script>
+<script src="/javascripts/scratch/pauseTimer.js"></script>
+<script src="/javascripts/trainingPage/weightInput.js"></script>
+<script src="/javascripts/trainingPage/rpeInput.js"></script>
+
+<script>
+    const trainingHistoryContainer = document.getElementsByClassName("training-history")[0];
+    const showHistoryBTN = document.getElementById("show-training-history");
+
+    showHistoryBTN.addEventListener("click", e => {
+        e.preventDefault();
+
+        if (trainingHistoryContainer.style.display === "block") {
+            trainingHistoryContainer.style.display = "none";
+        } else {
+            trainingHistoryContainer.style.display = "block";
+        }
+    })
+
+</script>

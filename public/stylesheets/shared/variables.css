@@ -1,0 +1,28 @@
+:root {
+    --color-background: #F5F5F5;
+    --color-background-transition: #e8e8e8;
+    --color-text: #333333;
+    --color-header: #E6E6E6;
+    --color-select: #e1e1e1;
+    --color-navigation: #CCCCCC;
+    --color-white: #FFFFFF;
+    --color-input-focus: #ececec;
+    --color-offwhite: #f8f5f5; /* Etwas dunkleres Weiß */
+    --color-input: #f2f2f2;
+
+    --color-hellgrau: #f2f2f2;
+    --color-silbergrau: #c0c0c0;
+    --color-gainsboro: #dcdcdc;
+    --color-grey-2: #f0f0f0;
+
+    /*For Training page specifically*/
+    --color-td: #e6e7e88a;
+    --darker-color-td: hsl(210, 50%, 80%); /* Beispielhafte Anpassung des Farbtons und der Helligkeit */
+    
+    --color-transition-grey: #1033848a;
+    --color-accent: #002952;
+    --color-accent-transition: #054382;
+    --color-accent-transition-2: #214366;
+    --color-accent-transition-3: #205387;
+    --color-progress-background: #c3c3c38a;
+}

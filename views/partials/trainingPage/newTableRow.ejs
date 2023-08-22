@@ -1,0 +1,22 @@
+<tr class="table-row mainExercise">
+    <td>
+        <select name="day<%=i + 1%>_exercise<%=k + 1%>_category" class="exercise-category-selector">
+            <% for (const category of exerciseCategories) { %>
+                <option value="<%= category %>" <%= (trainingWeekData[i].exercises[k]?.category ?? '') === category ? 'selected' : '' %>>
+                    <%= category %>
+                  </option>
+              <% } %>
+        </select>
+    </td>
+    <td>
+        <% for (let j = 0; j < exerciseCategories.length; j++) { %>
+            <select 
+                name="day<%=i + 1%>_exercise<%=k + 1%>_exercise_name"
+                class="exercise-name-selector"
+                
+                >
+            
+            </select>
+            <% } %>
+    </td>
+</tr>

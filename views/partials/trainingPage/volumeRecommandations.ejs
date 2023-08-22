@@ -1,0 +1,261 @@
+<div class="volumePhases">
+  <table class="calculate-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übung</th>
+        <th>Minimale Satzanzahl/Woche</th>
+        <th>Maximalle Satzanzahl / Woche</th>
+        <th>Median</th>
+        <th>Absolvierte Sätze</th>
+        <th>Tonnage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row volume-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">SQUAT</td>
+        <td>
+          <input type="number" class="squatmev" value="<%=squatmev%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="squatmrv" value="<%=squatmrv%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="squat-median-volume" class="squat-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="squat-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="squat-tonnage">
+        </td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">BENCH</td>
+        <td>
+          <input type="number" class="benchmev" value="<%=benchmev%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="benchmrv" value="<%=benchmrv%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="bench-median-volume" class="bench-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="bench-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="bench-tonnage">
+        </td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">DEADLIFT</td>
+        <td>
+          <input type="number" class="deadliftmev" value="<%=deadliftmev%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="deadliftmrv" value="<%=deadliftmrv%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="deadlift-median-volume" class="deadlift-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="deadlift-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="deadlift-tonnage">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="volumePhases" style="display: none;">
+  <table class="calculate-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übung</th>
+        <th>Minimale Satzanzahl/Woche</th>
+        <th>Maximalle Satzanzahl / Woche</th>
+        <th>Median</th>
+        <th>Absolvierte Sätze</th>
+        <th>Tonnage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row volume-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">SQUAT</td>
+        <td>
+          <input type="number" class="squatmev" value="<%=squatmev - 2%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="squatmrv" value="<%=squatmrv - 3%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="squat-median-volume" class="squat-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="squat-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="squat-tonnage">
+        </td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">BENCH</td>
+        <td>
+          <input type="number" class="benchmev" value="<%=benchmev - 1%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="benchmrv" value="<%=benchmrv - 3%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="bench-median-volume" class="bench-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="bench-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="bench-tonnage">
+        </td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">DEADLIFT</td>
+        <td>
+          <input type="number" class="deadliftmev" value="<%=deadliftmev - 2%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="deadliftmrv" value="<%=deadliftmrv - 4%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="deadlift-median-volume" class="deadlift-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="deadlift-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="deadlift-tonnage">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="volumePhases" style="display: none;">
+  <table class="calculate-table">
+    <thead>
+      <tr class="table-header-row">
+        <th>Übung</th>
+        <th>Minimale Satzanzahl/Woche</th>
+        <th>Maximalle Satzanzahl / Woche</th>
+        <th>Median</th>
+        <th>Absolvierte Sätze</th>
+        <th>Tonnage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row volume-row">
+        <td>a</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">SQUAT</td>
+        <td>
+          <input type="number" class="squatmev" value="<%=squatmev - 3%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="squatmrv" value="<%=squatmrv - 6%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="squat-median-volume" class="squat-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="squat-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="squat-tonnage">
+        </td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">BENCH</td>
+        <td>
+          <input type="number" class="benchmev" value="<%=benchmev - 2%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="benchmrv" value="<%=benchmrv - 5%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="bench-median-volume" class="bench-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="bench-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="bench-tonnage">
+        </td>
+      </tr>
+      <tr class="table-row volume-row">
+        <td class="category-name">DEADLIFT</td>
+        <td>
+          <input type="number" class="deadliftmev" value="<%=deadliftmev - 3%>" readonly required />
+        </td>
+        <td>
+          <input type="number" class="deadliftmrv" value="<%=deadliftmrv - 4%>" readonly required />
+        </td>
+        <td>
+          <input type="number" readonly name="deadlift-median-volume" class="deadlift-median-volume-result">
+        </td>
+        <td>
+          <input type="number" readonly class="deadlift-sets-done">
+        </td>
+        <td>
+          <input type="number" readonly class="deadlift-tonnage">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!--TODO: in partal verpacken-->
+
+<!--scripts in preparation-->
+<script src="/javascripts/trainingPage/calcVolumeMedians.js"></script>
+<script src="/javascripts/trainingPage/showTrainingDays.js"></script>
+<script src="/javascripts/trainingPage/displayCalculatedVolumes.js"></script>
+<script src="/javascripts/trainingPage/removePlaceholder.js"></script>
+
+<!--actual Functionality-->
+<script src="/javascripts/trainingPage/workoutTitle.js"></script>
+<script src="/javascripts/trainingPage/pauseTimer.js"></script>
+<script src="/javascripts/trainingPage/calcBackoffMax.js"></script>
+<script src="/javascripts/trainingPage/calculateSetsTonnage.js"></script>
+<script src="/javascripts/trainingPage/displayDefaultSetSchema.js"></script>
+
+<!--Validation etc.-->
+<script src="/javascripts/trainingPage/weightInput.js"></script>
+<script src="/javascripts/trainingPage/rpeInput.js"></script>
+<script src="/javascripts/trainingPage/changeExerciseName.js"></script>
+
+<!--Navigation-->
+<script src="/javascripts/trainingPage/navigateWeeks.js"></script> <!--nur weil das in chrome nicht funktioniert hat funktioniert aber immer noch nicht top ja-->
+

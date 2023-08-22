@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Inline CSS-Stile für die E-Mail */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .email-container {
+            background-color: #F5F5F5;;
+            padding: 20px;
+        }
+
+        .button {
+            background-color: #002952;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .link-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <h1>Passwort zurücksetzen</h1>
+        <p>Klicke auf den folgenden Link, um dein Passwort zurückzusetzen:</p>
+        <div class="link-container">
+            <a href="http://localhost:3000/login/resetPassword/${generatedToken}" class="button">Passwort zurücksetzen</a>
+        </div>
+        
+    </div>
+</body>
+</html>

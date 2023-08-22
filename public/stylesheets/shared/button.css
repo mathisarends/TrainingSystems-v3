@@ -1,0 +1,105 @@
+.btn,
+.link-btn {
+    /*generic button class*/
+    width: 100%;
+    height: fit-content;
+    padding: 1rem;
+    font-family: "Roboto";
+    background: linear-gradient(to left, var(--color-accent-transition), var(--color-accent-transition-2));
+    border: 2px solid var(--color-navigation);
+    border-radius: 8px;
+    color: var(--color-white);
+    font-size: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0px 2px 4px rgba(243, 243, 243, 0.2);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, cursor 0.3s ease;
+}
+
+.create-training-btn {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.btn:hover {
+    background: linear-gradient(to left, var(--color-accent-transition-2), var(--color-accent-transition));
+    cursor: pointer;
+    border-color: var(--color-white);
+    /* transform: scale(1.0125); */
+    box-shadow: 0px 0px 4px rgba(0, 28, 57, 0.3);
+    /* Übergang für die Hintergrundfarbe aktivieren */
+    transition-duration: 0.3s, 0.3s, 0.3s, 0.3s, 0.3s;
+}
+
+.invisible-btn,
+.more-info-button {
+    background-color: inherit;
+    border: none;
+    width: 100%;
+}
+
+.invisible-btn:hover {
+    cursor: pointer;
+}
+
+.link-btn {
+    display: inline-block;
+    text-align: center;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    background: linear-gradient(to right, var(--color-accent-transition-2), var(--darker-color-td));
+}
+
+.link-btn:hover {
+    border: 2px solid var(--color-white);
+}
+
+.exercise-btn {
+    margin: 0;
+    margin-top: 0.5rem;
+}
+
+.exercise-btn:hover {
+    cursor: pointer;
+}
+
+.btn:active
+.link-btn:active {
+    background: linear-gradient(to left, var(--color-accent-transition-2), var(--color-accent-transition));
+    border-color: var(--color-accent-transition);
+    transform: scale(0.975); /* Leichte Verkleinerung beim Klicken */
+    box-shadow: 0px 0px 8px rgba(0, 41, 82, 0.5); /* Stärkerer Schatten */
+}
+
+/*these buttons shall have a different color*/
+.profile-picture-btn { 
+    background: linear-gradient(to right, var(--color-accent-transition-2), var(--color-accent-transition-3));
+}
+
+.profile-picture-btn:hover {
+    cursor: pointer;
+}
+
+/*Training Page*/
+.calc-button {
+    width: 100%;
+    height: 3.15rem;
+    padding: 0.65rem;
+    font-family: "Roboto";
+    background-color: var(--color-header);
+    border: 2px solid var(--color-navigation);
+    color: var(--color-white);
+    font-size: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0px 2px 4px rgba(243, 243, 243, 0.2);
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.calc-button:hover {
+    cursor: pointer;
+    transition: 0.5s;
+    border-color: var(--color-white);
+}

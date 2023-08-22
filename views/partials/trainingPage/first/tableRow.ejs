@@ -1,0 +1,162 @@
+<tr class="table-row mainExercise">
+    <td>
+      <% const exerciseDataItem= exerciseData[exerciseIndex]; %>
+      
+        <select name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_category" class="exercise-category-selector">
+          <% for (const category of exerciseCategories) { %>
+            <option value="<%= category %>" <%= (exerciseData[exerciseIndex]?.category ?? '') === category ? 'selected' : '' %>>
+              <%= category %>
+            </option>
+          <% } %>
+        </select>
+      </td>
+
+      <td class="exercise-name-selector-td">
+        
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === '- Bitte Auswählen -' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === '- Bitte Auswählen -' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["- Bitte Auswählen -"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Squat' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Squat' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Squat"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Bench' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Bench' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Bench"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Deadlift' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Deadlift' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Deadlift"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Overheadpress' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Overheadpress' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Overheadpress"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Chest' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Chest' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Chest"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Back' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Back' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Back"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Triceps' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Triceps' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Triceps"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Biceps' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Biceps' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Biceps"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Shoulder' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Shoulder' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Shoulder"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+        <select
+          name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_exercise_name"
+          class="exercise-name-selector"
+          <%= exerciseDataItem?.category === 'Legs' ? '' : 'disabled' %>
+          style="<%= exerciseDataItem?.category === 'Legs' ? '' : 'display: none;' %>">
+          <% for (const exercise of categorizedExercises["Legs"]) { %>
+            <option value="<%= exercise %>" <%=exerciseDataItem?.exercise === exercise ? 'selected' : '' %>>
+              <%= exercise %>
+            </option>
+          <% } %>
+        </select>
+    
+      </td>
+    <td><input type="number" class="sets" name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_sets" value="<%= exerciseData[exerciseIndex]?.sets %>">
+    </td>
+    <td><input type="number" class="reps" name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_reps" value="<%= exerciseData[exerciseIndex]?.reps %>">
+    </td>
+    <td><input type="text" class="weight" name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_weight"
+        value="<%= exerciseData[exerciseIndex]?.weight %>"></td>
+    <td><input type="number" step="0.5" class="targetRPE" name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_targetRPE"
+        value="<%= exerciseData[exerciseIndex]?.targetRPE %>"></td>
+    <td><input type="number" step="0.5" class="actualRPE" name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_actualRPE"
+        value="<%= exerciseData[exerciseIndex]?.actualRPE %>"></td>
+    <td><input type="number" step="0.5" class="estMax" name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_estMax"
+        value="<%= exerciseData[exerciseIndex]?.estMax %>" ></td>
+    <td><input type="text" class="workout-notes" value="<%= exerciseData[exerciseIndex]?.notes %>" name="week1_day<%= dayNumber %>_exercise<%= exerciseNumber %>_workout_notes"></td>
+  </tr>

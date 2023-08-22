@@ -1,0 +1,184 @@
+<form action="/training/template-<%= templatePlanName %>?_method=PATCH" method="POST">
+
+    <input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>">
+    <!--Parameter für loop im javascript-->
+
+    <% for (let i=0; i < exerciseCategories.length; i++) { %>
+        <% const category=exerciseCategories[i]; %>
+            <input class="category-pause-time-input" type="hidden" value="<%= categoryPauseTimes[category] %>">
+            <input class="category-default-sets-input" type="hidden" value="<%= defaultRepSchemeByCategory[category].defaultSets %>">
+            <input class="category-default-reps-input" type="hidden" value="<%= defaultRepSchemeByCategory[category].defaultReps %>">
+            <input class="category-default-rpe-input" type="hidden" value="<%= defaultRepSchemeByCategory[category].defaultRPE %>">
+
+            <% } %>
+
+
+                <% for (let i=0; i < amountOfTrainingDays; i++) { %>
+                    <div class="table-section">
+                        <div class="training-day-information-container">
+                            <div class="training-name-more-options-container">
+                                <p class="workout-name">Workout <span class="workout-day">
+                                        <%= i + 1 %>
+                                    </span></p>
+                                <div class="more-info-button-time-container">
+                                    <button class="more-info-button">
+                                        <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-more-vertical">
+                                            <circle cx="12" cy="12" r="1"></circle>
+                                            <circle cx="12" cy="5" r="1"></circle>
+                                            <circle cx="12" cy="19" r="1"></circle>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="rest-pause-container" style="display: none">
+                                <div class="rest-pause-timer">
+                                    00:00
+                                </div>
+                                <div>
+                                    <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+                                </div>
+                            </div>
+
+                            <input class="notes-regarding-workout" name="workout_notes_<%= i + 1 %>" type="text"
+                                placeholder="Bemerkungen zum Workout"
+                                value="<%= trainingWeekData[i].trainingDayNotes %>">
+                        </div>
+
+                        <table class="workout-table">
+                            <thead>
+                                <tr class="table-header-row">
+                                    <th>Übungskategorie</th>
+                                    <th>Übung</th>
+                                    <th>Sätze</th>
+                                    <th>Reps</th>
+                                    <th>Gewicht</th>
+                                    <th>RPE</th>
+                                    <th>@</th>
+                                    <th>Rechenmax.</th>
+                                    <th>Notiz</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!--nur für Abstand kriege das anders nicht hin-->
+                                <tr class="table-row">
+                                    <td>a</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+
+                                <!--9 ist die max Amount an exercises-->
+                                <% for (let k=0; k < 9; k++) { %>
+                                    <% const selectedCategory = trainingWeekData[i].exercises[k]?.category || firstTrainingWeekData[i].exercises[k]?.category || ""; %>
+                                    <% const selectedExercise=trainingWeekData[i].exercises[k]?.exercise || firstTrainingWeekData[i].exercises[k]?.exercise || ""; %>
+                                    <% const selectedSets=trainingWeekData[i].exercises[k]?.sets || firstTrainingWeekData[i].exercises[k]?.sets || ""; %>
+                                    <% const selectedReps=trainingWeekData[i].exercises[k]?.reps || firstTrainingWeekData[i].exercises[k]?.reps || ""; %>
+                                    <% const selectedWeight=trainingWeekData[i].exercises[k]?.weight || ""; %>
+                                    <% const selectedTargetRPE=trainingWeekData[i].exercises[k]?.targetRPE || firstTrainingWeekData[i].exercises[k]?.targetRPE || ""; %>
+                                    <% const selectedActualRPE=trainingWeekData[i].exercises[k]?.actualRPE || ""; %>
+                                    <% const selectedEstMax=trainingWeekData[i].exercises[k]?.estMax || ""; %>
+                                    <% const selectedNotes=trainingWeekData[i].exercises[k]?.notes || ""; %>
+                                                                    
+                                                                        <tr class="table-row mainExercise">
+                                                                            <td>
+                                                                                <select
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_category"
+                                                                                    class="exercise-category-selector">
+                                                                                    <% for (const category of
+                                                                                        exerciseCategories) { %>
+                                                                                        <option value="<%= category %>"
+                                                                                            <%=selectedCategory===category
+                                                                                            ? 'selected' : '' %>>
+                                                                                            <%= category %>
+                                                                                        </option>
+                                                                                        <% } %>
+                                                                                </select>
+                                                                            </td>
+                                                                            <td>
+                                                                                <% for (const category in
+                                                                                    categorizedExercises) { %>
+                                                                                        
+                                                                                    <select
+                                                                                        name="day<%= i + 1 %>_exercise<%= k + 1 %>_exercise_name"
+                                                                                        class="exercise-name-selector"
+                                                                                        <%=selectedCategory===category
+                                                                                        ? '' : 'disabled' %>
+                                                                                        style="<%=
+                                                                                            selectedCategory===category
+                                                                                            ? '' : 'display: none;' %>">
+                                                                                            <% for (const exerciseName
+                                                                                                of
+                                                                                                categorizedExercises[category])
+                                                                                                { %>
+                                                                                                <option
+                                                                                                    value="<%= exerciseName %>"
+                                                                                                    <%=selectedExercise===exerciseName
+                                                                                                    ? 'selected' : '' %>
+                                                                                                    >
+                                                                                                    <%= exerciseName %>
+                                                                                                </option>
+                                                                                                <% } %>
+                                                                                    </select>
+                                                                                    <% } %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input type="number" class="sets"
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_sets"
+                                                                                    value="<%= selectedSets %>">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number" class="reps"
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_reps"
+                                                                                    value="<%= selectedReps %>">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="text" class="weight"
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_weight"
+                                                                                    value="<%= selectedWeight %>">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number" class="targetRPE"
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_targetRPE"
+                                                                                    value="<%= selectedTargetRPE %>"
+                                                                                    step="0.5">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number" class="actualRPE"
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_actualRPE"
+                                                                                    value="<%= selectedActualRPE %>"
+                                                                                    step="0.5">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number" class="estMax"
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_estMax"
+                                                                                    value="<%= selectedEstMax %>">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="text" class="workout-notes"
+                                                                                    name="day<%=i + 1%>_exercise<%=k + 1%>_workout_notes"
+                                                                                    value="<%= selectedNotes %>">
+                                                                            </td>
+
+                                                                        </tr>
+                                                                        <% } %>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
+
+                    <%- include("../../partials/trainingPage/trainingNavigationBar",
+                            {beforePage: beforePage , nextPage: afterPage , week: week}) %>
+                            <%- include("../../partials/trainingPage/selectAndSave", {firstPage: week === 1}) %>
+                                <%- include("../../partials/trainingPage/volumeRecommandations") %>
+
+</form>
