@@ -16,7 +16,6 @@ const logoutRouter = require("./routes/logout");
 const toolRouter = require("./routes/tools");
 const exerciseRouter = require("./routes/exercises");
 const mongoose = require("mongoose");
-const config = require("./dbconfig");
 
 const {
   checkAuthenticated,
@@ -27,11 +26,12 @@ const {
 const app = express();
 const PORT = 3000;
 
+const mongoURI = process.env.MONGODB_URI;
 
 // MongoDB Verbindung
 async function connect() {
   try {
-    await mongoose.connect(config.mongoURI, {
+    await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
