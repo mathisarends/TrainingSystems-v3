@@ -1,7 +1,8 @@
-// transporter.js
+const dotenv = require('dotenv');
+dotenv.config();
+
 const nodemailer = require("nodemailer");
 
-// Holen der Umgebungsvariable MAILER_CREDENTIALS
 const credentials = process.env.MAILER_CREDENTIALS;
 
 const transporter = nodemailer.createTransport({
@@ -9,7 +10,7 @@ const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
-    auth: JSON.parse(credentials), // Konvertiere den JSON-String in ein Objekt
+    auth: JSON.parse(credentials), // convert JSON-String to an object
     tls: {
         rejectUnauthorized: false,
     },

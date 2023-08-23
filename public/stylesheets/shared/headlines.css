@@ -1,5 +1,5 @@
 .headline {
-    font-weight: bold;
+    font-weight: 500;
     width: 100%;
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -9,8 +9,8 @@
     gap: 0.5rem;
     justify-content: space-between;
     align-items: center;
-    padding: 0.85rem;
-    font-size: 1.65rem;
+    padding: 0.75rem;
+    font-size: 1.35rem;
     border-radius: 12px;
     color: #444;
     box-shadow: 0 8px 16px rgba(228, 228, 228, 0.3);

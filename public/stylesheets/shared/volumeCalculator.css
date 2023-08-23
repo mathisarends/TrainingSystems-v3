@@ -51,7 +51,7 @@
    padding: 0.65rem 1.5rem;
 }
 
- @media screen and (min-width: 321px) and (max-width: 768px) {
+ @media screen and (min-width: 321px) and (max-width: 1024px) {
 
    .volume-table {
       border-spacing: 1px;
@@ -59,10 +59,17 @@
 
    .volume-table .table-header-row th:last-of-type {
       display: block;
+      padding: 0;
+      height: 100%;
+      padding-top: 0.65rem;
+      padding-bottom: 0.65rem;
    }
 
    .volume-table .table-header-row th:first-child {
-      margin: 0;
+      padding: 0;
+      height: 100%;
+      padding-top: 0.65rem;
+      padding-bottom: 0.65rem;
    }
 
    .volume-table .table-header-row th {
@@ -105,36 +112,6 @@
 
    .recommandation-table .table-header-row th:first-child {
       margin: 0;
-   }
-
-}
-
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-
-   .volume-table .table-header-row th:first-child{
-      padding-top: 0.5rem;
-      padding-bottom: 0.25rem;
-      display: block;
-      padding-top: 1.65rem;
-      padding-bottom: 1.65rem;
-   }
-
-   .volume-table .table-row td:first-child {
-      display: block;
-      margin: 0;
-   }
-
-   .explanation-table .table-row td:first-child {
-      padding: 0.35rem 1.5rem;
-   }
-
-   .explanation-table .table-row td:last-child {
-      display: block;
-      padding: 0.65rem 1.5rem;
-   }
-
-   .volume-calculator-explanation-td {
-      max-width: 500px;
    }
 
 }

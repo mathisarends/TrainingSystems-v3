@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-    req.logout(() => {}); // Benutzer aus der Sitzung ausloggen - llerer callback
-    res.redirect("/login"); // Zurück zur Login-Seite leiten
+    req.logout(() => {}); // logout => empty callback
+    res.redirect("/login"); // back to login
 });
 
 module.exports = router;

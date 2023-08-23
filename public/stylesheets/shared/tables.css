@@ -12,7 +12,7 @@
 }
 
 .table-section tr:nth-of-type(odd) td select {
-    background-color: var(--color-offwhite);
+    background-color: inherit;
     width: 100%;
     height: 100%;
 }
@@ -67,7 +67,8 @@
     border-bottom: 3px solid white;
 }
 
-.workout-table {
+.workout-table,
+.workout-edit-table {
     width: 100%;
 }
 
@@ -146,8 +147,8 @@ table input.weight[type="text"] {
 }
 
 /*jede zweite Zeile andere Farbe*/
-.table-section tr:nth-of-type(odd) {
-    background-color: white;
+.table-section tr:nth-of-type(odd) td {
+    background-color: var(--color-td-light);
 }
 
 /*TODO: JUMP for responsive*/
@@ -158,7 +159,9 @@ table input.weight[type="text"] {
 @media screen and (max-width: 1999px) {
     .notes-regarding-workout,
     .exerciseName {
-        padding-left: 0.5rem;
+        padding: 0;
+        padding: 0.75rem;
+        height: fit-content;
     }
 
     .table-section td {
@@ -206,14 +209,24 @@ table input.weight[type="text"] {
     tbody .table-row td input[type="text"],
     tbody .table-row td input[type="number"],
     tbody .table-row td select {
-        font-size: 16px;
+        font-size: 1rem;
     }
 
     .table-header-row th {
         padding: 0;
-        padding-top: 0.5rem;
-        padding-bottom: 0.25rem
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem;
+        font-size: 1.1rem;
+        height: 1rem;
             /*TODO:*/
+    }
+
+    .table-header-row th:first-of-type {
+        /* padding: 0; */
+        height: 100%;
+
+        display: flex;
+        text-align: center;
     }
 
     .table-header-row th:nth-child(2) {
@@ -252,12 +265,21 @@ table input.weight[type="text"] {
         padding-left: 0;
     }
 
+    /*Workout edit mode only on mobile*/
+    .workout-edit-table .table-header-row th:first-of-type {
+        display: block;
+    }
+
+    .workout-edit-table .table-row td:first-of-type {
+        display: block;
+    }
+
 }
 
 @media screen and (max-width: 768px) {
 
     :root {
-        font-size: 12px;
+        font-size: 10px;
     }
 
     #show-workout-title-btn {
@@ -272,7 +294,7 @@ table input.weight[type="text"] {
     tbody .table-row td input[type="text"],
     tbody .table-row td input[type="number"],
     tbody .table-row td select {
-        font-size: 14px;
+        font-size: 1.1rem;
     }
 }
 
@@ -283,7 +305,7 @@ table input.weight[type="text"] {
     tbody .table-row td input[type="text"],
     tbody .table-row td input[type="number"],
     tbody .table-row td select {
-        font-size: 11.5px;
+        font-size: 1rem;
     }
 
     .table-section table,

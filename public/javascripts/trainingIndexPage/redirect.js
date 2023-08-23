@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log(BASE_URL);
-
     //CUSTOM
     const customTrainingPlanLinks = document.querySelectorAll(".custom-view-container .trainingPlan-container a"); //select trainingPlan
     const customTrainingPlanLinkButtons = document.getElementsByClassName("training-plan-button-grid"); //delete and edit buttons
@@ -9,24 +7,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const customDeletePlaceholderButton = document.getElementById("custom-delete-placeholder-button");
     const customDeleteForms = document.getElementsByClassName("delete-form");
 
-    const startCustomTrainingBTNs = document.getElementsByClassName("training-plan-button");
+    const startCustomTrainingPlanBTN = document.getElementsByClassName("training-plan-button")[0];
+    const editcustomTrainingPlanBTN = document.getElementsByClassName("edit-training-plan-button")[0];
 
     let lastSelectedLinkIndexCustom = null;
 
     const customNextTrainingWeeks = document.getElementsByClassName("customNextTrainingWeek");
     let customCurrentSelectedTrainingWeek;
 
-    for (let i = 0; i < startCustomTrainingBTNs.length; i++) { 
-        startCustomTrainingBTNs[i].addEventListener("click", e => {
-            e.preventDefault();
-            if (lastSelectedLinkIndexCustom !== null) { //prüfung absolet
+    startCustomTrainingPlanBTN.addEventListener("click", e => {
+        e.preventDefault();
+        if (lastSelectedLinkIndexCustom !== null) { //prüfung absolet
                 
-                const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndexCustom);
-                const customPlanPage = `/training/custom-${alphaValue}${customCurrentSelectedTrainingWeek}`;
-                window.location.href = customPlanPage;
-            }
-        })
-    }
+            const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndexCustom);
+            const customPlanPage = `/training/custom-${alphaValue}${customCurrentSelectedTrainingWeek}`;
+            window.location.href = customPlanPage;
+        }
+    })
+
+    editcustomTrainingPlanBTN.addEventListener("click", e => {
+        e.preventDefault();
+        if (lastSelectedLinkIndexCustom !== null) {
+            const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndexCustom);
+            const customEditPage = `/training/custom-${alphaValue}${customCurrentSelectedTrainingWeek}-edit`;
+            window.location.href = customEditPage; 
+        }
+    })
 
     for (let i = 0;  i < customTrainingPlanLinks.length; i++) { //actual navigation logic
         customTrainingPlanLinks[i].addEventListener("click", e => {
@@ -169,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < startScratchTrainingFromTemplateButtons.length; i++) {
         startScratchTrainingFromTemplateButtons[i].addEventListener("click", e => {
             e.preventDefault();
-            window.location.href = `${BASE_URL}/training/session-${i + 1}-train`;})
+            window.location.href = `/training/session-${i + 1}-train`;})
     }
 
 
@@ -177,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < editTrainingButtons.length; i++) {
         editTrainingButtons[i].addEventListener("click", e => {
             e.preventDefault();
-            window.location.href = `${BASE_URL}/training/session-${i + 1}`;
+            window.location.href = `/training/session-${i + 1}`;
         })
     }
 

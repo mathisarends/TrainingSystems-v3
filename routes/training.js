@@ -8,10 +8,10 @@ const TrainingSchema = require("../models/trainingSchema");
 const templateTrainingsGenerator = require("../models/templateTrainingGenerator");
 
 const { checkAuthenticated, checkNotAuthenticated, } = require("../authMiddleware");
+const redirectToReferer = require("../redirectMiddleware");
 
-const templates = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]; //for templates with fixed block length and amoutn
-
-const customTemplateLetters = ["A", "B", "C", "D"]; //for custom Training max Amount = 4, maxWeeks = 6
+const templates = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]; //template ULR-Endings
+const customTemplateLetters = ["A", "B", "C", "D"]; //customURL-Endings
 const maxWeeks = 6; 
 
 //saves last selected element
@@ -23,7 +23,6 @@ Router.post("/save-training-mode", checkAuthenticated, async (req, res) => {
     }
 
     const selectedTrainingMode = req.body.trainingMode;
-
     user.lastVisitedTrainingMode = selectedTrainingMode;
     await user.save();
 
@@ -36,7 +35,7 @@ Router.get("/", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
     if (!user) {
-      return res.status(404).send("Benutzer nicht gefunden");
+      return redirectToReferer(req, res);
     }
 
     renderTrainingPlansView(res, user);
@@ -78,6 +77,8 @@ Router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
     const trainingPlanPhase = trainingPlanData.training_phase;
     const trainingPlanFrequency = trainingPlanData.training_frequency;
     const trainingPlanWeeks = trainingPlanData.training_weeks;
+    const currentDevice = trainingPlanData.currentDevice;
+
     const lastUpdated = new Date();
 
     const trainingWeeks = createNewTrainingPlanWithPlaceholders(trainingPlanWeeks, trainingPlanFrequency);
@@ -95,7 +96,15 @@ Router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
     user.trainingPlansCustomNew.sort((a, b) => b.lastUpdated - a.lastUpdated); // sorts by date descending
 
     await user.save();
-    res.redirect("/training");  
+
+    if (currentDevice === "Handy" || currentDevice === "Tablet") {
+      res.redirect("/training/custom-A1-edit");
+      return;
+    } else {
+      res.redirect("/training/custom-A1");  
+    }
+
+
 
 
   } catch (err) {
@@ -139,12 +148,11 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         const updatedData = req.body;
         const trainingPlan = user.trainingPlansCustomNew[i];
 
-        trainingPlan.lastUpdated = new Date();
+        trainingPlan.lastUpdated = new Date(); //save timestamp
 
         const trainingWeek = trainingPlan.trainingWeeks[week - 1];
 
         for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
-          console.log(i);
           const trainingDay = trainingWeek.trainingDays[i];
           updateTrainingDayNotes(trainingDay, updatedData, i);
           
@@ -161,7 +169,6 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         trainingPlan.title = reqTrainingTitle;
       }
       const reqTrainingPhase = updatedData["volumePhase"];
-      console.log(reqTrainingPhase);
       if (reqTrainingPhase !== trainingPlan.trainingPhase) {
         trainingPlan.trainingPhase = reqTrainingPhase;
       }
@@ -191,7 +198,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 
         const trainingPlan = user.trainingPlansCustomNew[i];
 
-        if(!trainingPlan) { //Routen werden für den Nutzer in der normalen navigation nicht aufgerufen aber wenn er versucht manuell auf die Ressource zuzugreifen
+        if(!trainingPlan) { //Routes will hopefully will never be reached
           return res.status(404).send("Training nicht gefunden!");
         }
 
@@ -226,6 +233,90 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         const afterPage = `/training/custom-${letter}${afterPageIndex}`;
 
         res.render("trainingPlans/custom/trainingPlan", {
+          trainingWeekData: trainingWeekData,
+          firstTrainingWeekData: firstTrainingWeekData,
+    
+          amountOfTrainingDays: amountOfTrainingDays,
+          workoutName: trainingTitle,
+          trainingFrequency: trainingFrequency,
+          trainingPhase: trainingPhase,
+    
+          exerciseCategories: exerciseCategories,
+          categorizedExercises: categorizedExercises,
+          categoryPauseTimes: categoryPauseTimes,
+          defaultRepSchemeByCategory: defaultRepSchemeByCategory,
+    
+          trainingData: trainingData,
+          squatmev: trainingData.minimumSetsSquat || "",
+          squatmrv: trainingData.maximumSetsSquat || "",
+          benchmev: trainingData.minimumSetsBench || "",
+          benchmrv: trainingData.maximumSetsBench || "",
+          deadliftmev: trainingData.minimumSetsDeadlift || "",
+          deadliftmrv: trainingData.maximumSetsDeadlift || "",
+    
+          beforePage: beforePage,
+          afterPage: afterPage,
+          week: week,
+    
+          templatePlanName: `${letter}${week}`,
+        });
+      } catch (err) {
+        console.log("Fehler beim Aufrufen der Trainingsseite: " + err);
+      }
+    })
+  }
+}
+
+//GET CUSTOM TRAININGS EDIT PAGE ON MOBILE
+for (let i = 0; i < customTemplateLetters.length; i++) {
+  const letter = customTemplateLetters[i];
+  for (let week = 1; week <= maxWeeks; week++) {
+    const routePath = `/custom-${letter}${week}-edit`;
+    Router.get(routePath, checkAuthenticated, async (req, res) => {
+      try {
+        const user = await User.findOne({ name: req.user.name });
+        if (!user) {
+          return res.status(404).send("Benutzer nicht gefunden");
+        }
+
+        const trainingPlan = user.trainingPlansCustomNew[i];
+
+        if(!trainingPlan) { //Routes will hopefully will never be reached
+          return res.status(404).send("Training nicht gefunden!");
+        }
+
+        if (week > trainingPlan.trainingWeeks.length) {
+          return res.status(400).send("Ungültige Woche");
+        }
+
+        const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+
+        const trainingWeekData = [];
+        for (let j = 0; j < amountOfTrainingDays; j++) {
+          trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 1, j));
+        }
+
+        const firstTrainingWeekData = [];
+        for (let j = 0; j < amountOfTrainingDays; j++) {
+          firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
+        }
+
+        const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
+
+        const trainingData = user.trainingData.length > 0 ? user.trainingData[0] : {};
+
+
+        let afterPageIndex = (week + 1) % trainingPlan.trainingWeeks.length;
+        afterPageIndex = afterPageIndex === 0 ? trainingPlan.trainingWeeks.length : afterPageIndex;
+
+        let beforePageIndex = (week - 1) % trainingPlan.trainingWeeks.length;
+        beforePageIndex = beforePageIndex === 0 ? trainingPlan.trainingWeeks.length : beforePageIndex;
+
+        const beforePage = `/training/custom-${letter}${beforePageIndex}-edit`;
+        const afterPage = `/training/custom-${letter}${afterPageIndex}-edit`;
+
+        //JUMP TODO: hier das gerenderte Tempalte ändern
+        res.render("trainingPlans/custom/trainingPlanEdit", {
           trainingWeekData: trainingWeekData,
           firstTrainingWeekData: firstTrainingWeekData,
     
@@ -409,7 +500,6 @@ Router.post("/reset-template-training", checkAuthenticated, async (req, res) => 
     }
 
     await user.save();
-    console.log("Erfolgreich zurückgesetzt!");
 
     const referer = req.headers.referer || "/";
     res.redirect(referer);

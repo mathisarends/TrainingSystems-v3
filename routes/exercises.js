@@ -17,60 +17,11 @@ Router.get("/", checkAuthenticated, async (req, res) => {
       return res.status(404).send("Benutzer nicht gefunden");
     }
 
-    const predefinedExercises = user.exercises;
-    const exerciseCategories = [
-      ...new Set(predefinedExercises.map((exercise) => exercise.category.name)),
-    ];
+    const exercisesData = prepareExercisesData(user);
 
-    const categoryPauseTimes = {};
-    predefinedExercises.forEach((exercise) => {
-      const categoryName = exercise.category.name;
-      const pauseTime = exercise.category.pauseTime;
-      if (!categoryPauseTimes[categoryName]) {
-        categoryPauseTimes[categoryName] = pauseTime;
-      }
-    });
-
-    const defaultRepSchemeByCategory = {};
-    predefinedExercises.forEach((exercise) => {
-      const categoryName = exercise.category.name;
-      const defaultSets = exercise.category.defaultSets;
-      const defaultReps = exercise.category.defaultReps;
-      const defaultRPE = exercise.category.defaultRPE;
-
-      if (!defaultRepSchemeByCategory[categoryName]) {
-        defaultRepSchemeByCategory[categoryName] = {
-          defaultSets: defaultSets,
-          defaultReps: defaultReps,
-          defaultRPE: defaultRPE,
-        }
-      }
-    })
-
-    //so nutzbar
-    /* console.log(defaultRepSchemeByCategory["Squat"].defaultSets); 
-    console.log(defaultRepSchemeByCategory["Bench"].defaultReps);  */
-
-    const categorizedExercises = predefinedExercises.reduce((acc, exercise) => {
-      const categoryName = exercise.category.name; // Hier den Namen der Kategorie holen
-      if (!acc[categoryName]) {
-        acc[categoryName] = []; // Verwende den Namen als Schlüssel
-      }
-      acc[categoryName].push(exercise.name);
-      return acc;
-    }, {});
-
-    res.render("exercises/userExercises", {
-      exerciseCategories: exerciseCategories,
-      categoryPauseTimes: categoryPauseTimes,
-      categorizedExercises: categorizedExercises,
-      defaultRepSchemeByCategory: defaultRepSchemeByCategory,
-      error: "",
-    });
+    res.render("exercises/userExercises", exercisesData);
   } catch (err) {
-    console.log(
-      "Ein Fehler beim laden der Exercise Seite ist aufgetreten. " + err
-    );
+    console.log("Ein Fehler beim Laden der Exercise-Seite ist aufgetreten. " + err);
   }
 });
 
@@ -149,8 +100,6 @@ Router.post("/reset", checkAuthenticated, async (req, res) => {
         user.exercises = standartExerciseCatalog;
     
         await user.save();
-        console.log("Der Default Katalog wurde wiederhergestellt!");
-    
         res.redirect("/exercises");
     
       } catch (err) {
@@ -160,7 +109,55 @@ Router.post("/reset", checkAuthenticated, async (req, res) => {
 
 module.exports = Router;
 
+function prepareExercisesData(user) {
+  const predefinedExercises = user.exercises;
 
+  const exerciseCategories = [
+    ...new Set(predefinedExercises.map((exercise) => exercise.category.name)),
+  ];
+
+  const categoryPauseTimes = {};
+  predefinedExercises.forEach((exercise) => {
+    const categoryName = exercise.category.name;
+    const pauseTime = exercise.category.pauseTime;
+    if (!categoryPauseTimes[categoryName]) {
+      categoryPauseTimes[categoryName] = pauseTime;
+    }
+  });
+
+  const defaultRepSchemeByCategory = {};
+  predefinedExercises.forEach((exercise) => {
+    const categoryName = exercise.category.name;
+    const defaultSets = exercise.category.defaultSets;
+    const defaultReps = exercise.category.defaultReps;
+    const defaultRPE = exercise.category.defaultRPE;
+
+    if (!defaultRepSchemeByCategory[categoryName]) {
+      defaultRepSchemeByCategory[categoryName] = {
+        defaultSets: defaultSets,
+        defaultReps: defaultReps,
+        defaultRPE: defaultRPE,
+      };
+    }
+  });
+
+  const categorizedExercises = predefinedExercises.reduce((acc, exercise) => {
+    const categoryName = exercise.category.name;
+    if (!acc[categoryName]) {
+      acc[categoryName] = [];
+    }
+    acc[categoryName].push(exercise.name);
+    return acc;
+  }, {});
+
+  return {
+    exerciseCategories: exerciseCategories,
+    categoryPauseTimes: categoryPauseTimes,
+    categorizedExercises: categorizedExercises,
+    defaultRepSchemeByCategory: defaultRepSchemeByCategory,
+    error: "",
+  };
+}
 
 function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTimes, exerciseCategorySets, exerciseCategoryReps, exerciseCategoryRPE) {
   

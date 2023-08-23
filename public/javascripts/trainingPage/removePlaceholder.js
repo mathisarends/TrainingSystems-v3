@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let selectedCategory = exerciseCategorySelectors[i].value;
         if (selectedCategory === "- Bitte Auswählen -") {
             exerciseCategorySelectors[i].style.color = "#e6e7e88a";
+            
         }
     
         exerciseCategorySelectors[i].addEventListener("mousedown", () => {

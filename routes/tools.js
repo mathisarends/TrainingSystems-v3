@@ -56,95 +56,20 @@ Router.get("/volume", checkAuthenticated, async (req, res) => {
 
 Router.post("/volume", checkAuthenticated, async (req, res) => {
   try {
-    const {
-      squatWeight,
-      squatReps,
-      squatEstMax,
-      benchWeight,
-      benchReps,
-      benchEstMax,
-      deadliftWeight,
-      deadliftReps,
-      deadliftEstMax,
-      totalEstMax,
-      gender,
-      bodyweight,
-      bodyheight,
-      strengthLevel,
-      trainingExperience,
-      age,
-      nutrition,
-      sleep,
-      stress,
-      doping,
-      regeneration,
-      squatmev,
-      squatmrv,
-      benchmev,
-      benchmrv,
-      deadliftmev,
-      deadliftmrv
-    } = req.body;
-
     const user = await User.findOne({ name: req.user.name });
 
     if (!user.trainingData || user.trainingData.length === 0) {
-      // If no trainingData exists, create a new entry
-      user.trainingData = [
-        {
-          recentSquatWeight: squatWeight,
-          recentSquatReps: squatReps,
-          recentBenchWeight: benchWeight,
-          recentBenchReps: benchReps,
-          recentDeadliftWeight: deadliftWeight,
-          recentDeadliftReps: deadliftReps,
-          minimumSetsSquat: squatmev,
-          maximumSetsSquat: squatmrv,
-          minimumSetsBench: benchmev,
-          maximumSetsBench: benchmrv,
-          minimumSetsDeadlift: deadliftmev,
-          maximumSetsDeadlift: deadliftmrv,
-        },
-      ];
+      updateUserData(user, req.body);
     } else {
-      // Update the existing trainingData entry
-      user.trainingData[0] = {
-        recentSquatWeight: squatWeight,
-        recentSquatReps: squatReps,
-        recentBenchWeight: benchWeight,
-        recentBenchReps: benchReps,
-        recentDeadliftWeight: deadliftWeight,
-        recentDeadliftReps: deadliftReps,
-        minimumSetsSquat: squatmev,
-        maximumSetsSquat: squatmrv,
-        minimumSetsBench: benchmev,
-        maximumSetsBench: benchmrv,
-        minimumSetsDeadlift: deadliftmev,
-        maximumSetsDeadlift: deadliftmrv,
-      };
+      user.trainingData[0] = { ...user.trainingData[0], ...req.body };
     }
-
-    user.gender = gender;
-    user.bodyWeight = bodyweight;
-    user.bodyHeight = bodyheight;
-    user.strengthLevel = strengthLevel;
-    user.trainingExperience = trainingExperience;
-    user.age = age;
-    user.nutrition = nutrition;
-    user.sleepQuality = sleep;
-    user.stress = stress;
-    user.doping = doping;
-    user.regenerationCapacity = regeneration;
-    user.maxSquat = squatEstMax;
-    user.maxBench = benchEstMax;
-    user.maxDeadlift = deadliftEstMax;
-    user.total = totalEstMax;
 
     await user.save();
 
     console.log("Daten gespeichert");
     console.log(user);
-    // Redirect zurück zur vorherigen Seite (der Seite, auf der das Formular abgeschickt wurde)
+
+    // Redirect zurück zur vorherigen Seite
     const referer = req.headers.referer || "/";
     res.redirect(referer);
   } catch (err) {
@@ -162,3 +87,68 @@ Router.get("/max", (req, res) => {
 });
 
 module.exports = Router;
+
+function updateUserData(user, userData) {
+  const {
+    squatWeight,
+    squatReps,
+    squatEstMax,
+    benchWeight,
+    benchReps,
+    benchEstMax,
+    deadliftWeight,
+    deadliftReps,
+    deadliftEstMax,
+    totalEstMax,
+    gender,
+    bodyweight,
+    bodyheight,
+    strengthLevel,
+    trainingExperience,
+    age,
+    nutrition,
+    sleep,
+    stress,
+    doping,
+    regeneration,
+    squatmev,
+    squatmrv,
+    benchmev,
+    benchmrv,
+    deadliftmev,
+    deadliftmrv
+  } = userData;
+
+  user.trainingData = [
+    {
+      recentSquatWeight: squatWeight,
+      recentSquatReps: squatReps,
+      recentBenchWeight: benchWeight,
+      recentBenchReps: benchReps,
+      recentDeadliftWeight: deadliftWeight,
+      recentDeadliftReps: deadliftReps,
+      minimumSetsSquat: squatmev,
+      maximumSetsSquat: squatmrv,
+      minimumSetsBench: benchmev,
+      maximumSetsBench: benchmrv,
+      minimumSetsDeadlift: deadliftmev,
+      maximumSetsDeadlift: deadliftmrv,
+    },
+  ];
+
+  user.gender = gender;
+  user.bodyWeight = bodyweight;
+  user.bodyHeight = bodyheight;
+  user.strengthLevel = strengthLevel;
+  user.trainingExperience = trainingExperience;
+  user.age = age;
+  user.nutrition = nutrition;
+  user.sleepQuality = sleep;
+  user.stress = stress;
+  user.doping = doping;
+  user.regenerationCapacity = regeneration;
+  user.maxSquat = squatEstMax;
+  user.maxBench = benchEstMax;
+  user.maxDeadlift = deadliftEstMax;
+  user.total = totalEstMax;
+}

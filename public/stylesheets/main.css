@@ -12,30 +12,15 @@
 @import "shared/select.css";
 
 @import "shared/inputs.css";
+@import "shared/roots.css";
 
-:root {
-    /*define color scheme*/
-    font-family: 'Roboto', sans-serif;
-    --color-background: #F5F5F5;
-    --color-text: #333333;
-    --color-header: #E6E6E6;
-    --color-navigation: #CCCCCC;
-    --color-white: #FFFFFF;
-    --color-offwhite: #F0F0F0; /* Etwas dunkleres Weiß */
-    --color-input-focus: #ececec;
-
-    /*For Training page specifically*/
-    --color-td: #e6e7e88a;
-    --color-accent: #002952;
-
-}
 
 .remove-margin {
     margin: 0;
 }
 
 .remove-padding {
-    padding: 0;
+    padding: 0 !important;
 }
 
 .hidden {

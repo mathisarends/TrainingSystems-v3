@@ -2,3 +2,4 @@ node_modules/
 dbconfig.js
 mailerCredentials.js
 auth.js
+.env

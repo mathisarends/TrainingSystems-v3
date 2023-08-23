@@ -13,7 +13,6 @@ function initialize(passport) {
 
             const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
             if (isPasswordValid) {
-                console.log("eingeloggt");
                 return done(null, user);
             } else {
                 return done(null, false, { message: "Password incorrect" });

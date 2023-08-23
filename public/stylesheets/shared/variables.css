@@ -1,4 +1,7 @@
 :root {
+
+    font-family: 'Roboto', sans-serif;
+
     --color-background: #F5F5F5;
     --color-background-transition: #e8e8e8;
     --color-text: #333333;
@@ -17,6 +20,7 @@
 
     /*For Training page specifically*/
     --color-td: #e6e7e88a;
+    --color-td-light: #f0f1f2;
     --darker-color-td: hsl(210, 50%, 80%); /* Beispielhafte Anpassung des Farbtons und der Helligkeit */
     
     --color-transition-grey: #1033848a;

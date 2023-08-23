@@ -3,7 +3,7 @@
     /*generic button class*/
     width: 100%;
     height: fit-content;
-    padding: 1rem;
+    padding: 0.75rem;
     font-family: "Roboto";
     background: linear-gradient(to left, var(--color-accent-transition), var(--color-accent-transition-2));
     border: 2px solid var(--color-navigation);

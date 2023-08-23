@@ -4,14 +4,15 @@ const Router = express.Router();
 
 const transporter = require("../mailerConfig");
 const jwt = require("jsonwebtoken");
-const jwtConfig = require("../jwtConfig");
-const jwtSecret = jwtConfig.jwtSecret;
+
+const jwtSecret = process.env.JWT_SECRET;
 
 const bcrypt = require("bcrypt");
 const {
   checkAuthenticated,
   checkNotAuthenticated,
 } = require("../authMiddleware");
+
 const User = require("../models/user");
 
 Router.get("/", checkNotAuthenticated, (req, res) => {
@@ -169,7 +170,3 @@ Router.post("/reset", async (req, res) => {
 })
 
 module.exports = Router;
-
-//TODO: ich kriege beim versenden der E-Mail immer diesen Fehler und das bezieht sich auf die E-Mail in der mailerConfig datei - siehe stackOverflow einträge
-//Fehler beim Versenden der E-mail: Error: Invalid login: 535-5.7.8 Username and Password not accepted. Learn more at
-//535 5.7.8  https://support.google.com/mail/?p=BadCredentials w7-20020aa7da47000000b005224c6b2183sm6292021eds.39 - gsmtp

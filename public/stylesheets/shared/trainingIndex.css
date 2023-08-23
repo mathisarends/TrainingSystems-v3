@@ -5,6 +5,13 @@
     justify-content: space-between;
 }
 
+#editTrainingPlanHeadlineButton {
+    padding-left: 0;
+    padding-right: 0;
+    font-weight: 500;
+    border: none;
+}
+
 .workout-preview-outer-container {
     border-top: 1px solid var(--color-white);
     padding-top: 0.85rem;
@@ -286,6 +293,12 @@
     }
 }
 
+@media screen and (min-width: 1024px) {
+    .edit-training-plan-button {
+        display: none;
+    }
+}
+
 @media screen and (min-width: 1050px) {
 
     .trainingPlan-container {
@@ -347,14 +360,14 @@
 
 @media screen and (min-height: 750px) {
     .trainingPlan-container a {
-        min-height: 12.5rem;
+        min-height: 17.5rem;
     }
 }
 
 @media screen and (min-height: 1000px) {
 
     :root {
-        font-size: 16px;
+        font-size: 12px;
     }
 
     .trainingPlan-container a {
@@ -373,7 +386,7 @@
     }
 
     .headline {
-        padding: 1.35rem;
+        padding: 1rem;
     }
 
 

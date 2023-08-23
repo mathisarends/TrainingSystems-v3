@@ -24,10 +24,10 @@ select {
     font-family: "Roboto", "sans-serif";
     border: 2px solid var(--color-navigation);
     background: linear-gradient(to left, var(--color-td), var(--color-hellgrau));
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 400;
     letter-spacing: 1.25px;
-    padding: 1rem 0.75rem 1rem 0.75rem;
+    padding: 0.75rem;
     border-radius: 1rem;
 }
 
