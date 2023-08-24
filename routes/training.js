@@ -145,6 +145,9 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
           return res.status(404).send("Benutzer nicht gefunden");
         }
 
+        console.log("----")
+        console.log("ich werde gepatched")
+
         const updatedData = req.body;
         const trainingPlan = user.trainingPlansCustomNew[i];
 
@@ -174,11 +177,14 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
       }
       
       await user.save();
+      console.log("Daten erfolgreich gespeichert")
+
+
       const referer = req.headers.referer || "/";
-      res.redirect(referer);
+      res.redirect(referer); //302
 
       } catch (err) {
-        console.log(`Fehler beim Patchen der Seite CUSTOM${letter}${week}!` + err);
+        console.log(`Fehler beim Patchen der Seite CUSTOM ${letter}${week}! ` + err);
       }
     })
   }

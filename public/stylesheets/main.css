@@ -71,8 +71,8 @@ body {
 
 @media screen and (min-width: 321px) and (max-width: 480px) {
     body {
-        padding-left: 0.85rem;
-        padding-right: 0.85rem;
+        padding-left: 0.35rem;
+        padding-right: 0.35rem;
     }
 }
 

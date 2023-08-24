@@ -47,13 +47,13 @@ Router.post("/", async (req, res) => {
 
     const password = req.body.password;
 
-    if (!passwordSchema.validate(password)) {
+    /* if (!passwordSchema.validate(password)) {
       // Das Passwort erfüllt nicht die Sicherheitsanforderungen
       return res.render("register/index", {
         layout: false,
         error: "Das Passwort erfüllt nicht die Mindestanforderungen.",
       });
-    }
+    } */
 
     if (password !== req.body.repeatPassword) {
       return res.render("register/index", {

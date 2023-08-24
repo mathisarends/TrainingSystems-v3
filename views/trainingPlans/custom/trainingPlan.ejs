@@ -55,7 +55,7 @@
                                     <th>Reps</th>
                                     <th>Gewicht</th>
                                     <th>RPE</th>
-                                    <th>@RPE</th>
+                                    <th>@</th>
                                     <th>Rechenmax.</th>
                                     <th>Notiz</th>
                                 </tr>
@@ -173,11 +173,34 @@
                             </tbody>
                         </table>
                     </div>
+
+                
+                <div id="confirmationModal" class="modal">
+                    <div class="modal-content">
+                        <p>Bist du dir sicher dass du das Training abbrechen möchtest</p>
+                        <div class="modal-buttons">
+                            <button class="modal-button" id="confirmResetButton">LÖSCHEN</button>
+                            <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+                        </div>
+                    </div>
+                </div>
                     <% } %>
 
                     <%- include("../../partials/trainingPage/trainingNavigationBar",
                             {beforePage: beforePage , nextPage: afterPage , week: week}) %>
                             <%- include("../../partials/trainingPage/selectAndSave", {firstPage: week === 1}) %>
                                 <%- include("../../partials/trainingPage/volumeRecommandations") %>
+
+                    <script>
+                        /* document.addEventListener("DOMContentLoaded", () => {
+                            const selectElements = document.querySelectorAll(".table-row");
+                            console.log(selectElements.length + " sadsda")
+
+                            const inputElements = document.querySelectorAll('.table-row td input[type="text"]');
+                            const inputElementsNumber = document.querySelectorAll('.table-row td input[type="number"]');
+                            console.log(inputElementsNumber.length)
+                        }) */
+                        
+                        </script>
 
 </form>
