@@ -12,15 +12,17 @@ const trainingSchema = new mongoose.Schema({
   trainings: [
     {
       trainingDate: Date,
-      trainingNote: String,
       exercises: [
         {
+          category: String,
           exercise: String,
           sets: Number,
           reps: Number,
           weight: Number,
-          rpe: Number,
+          targetRPE: Number,
+          actualRPE: Number,
           estMax: Number,
+          notes: String,
         },
       ],
     },

@@ -1,89 +1,152 @@
 <link rel="stylesheet" href="/stylesheets/createTraining.css">
 <link rel="stylesheet" href="/stylesheets/shared/confirmation-modal.css">
 
-<form id="workout-form" method="POST" action="" name="editTraining"> <!--name ist wichtig für modal-->
+<form id="workout-form" method="POST" action="" name="editTraining" class="flow"> <!--name ist wichtig für modal-->
 
-    <div class="table-section">
-        <!--Workout Description-->
-        <div class="training-day-information-container">
-            <div class="training-name-more-options-container">
-                <input type="text" class="training-name" value="Workout 1" name="training_name">
-                <div class="more-info-button-time-container">
-                    <button class="more-info-button">
-                        <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                        </svg>
-                    </button>
+    <input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>">
+    <!--Parameter für loop im javascript-->
+
+    <% for (let i=0; i < exerciseCategories.length; i++) { %>
+        <% const category=exerciseCategories[i]; %>
+            <input class="category-pause-time-input" type="hidden" value="<%= categoryPauseTimes[category] %>">
+            <input class="category-default-sets-input" type="hidden"
+                value="<%= defaultRepSchemeByCategory[category].defaultSets %>">
+            <input class="category-default-reps-input" type="hidden"
+                value="<%= defaultRepSchemeByCategory[category].defaultReps %>">
+            <input class="category-default-rpe-input" type="hidden"
+                value="<%= defaultRepSchemeByCategory[category].defaultRPE %>">
+            <% } %>
+
+                <div class="table-section">
+
+                    <table class="workout-table create-training-table">
+                        <caption class="flow text-accent letter-spacing-3" style="--flow-space: 0rem;">
+                            <input class="letter-spacing-3 text-accent fs-500" type="text" value="Workout 1"
+                                name="training_name" style="padding: 0; text-align: left;">
+                            <div class="rest-pause-container" style="display: none;">
+                                <div class="rest-pause-timer">
+                                    00:00
+                                </div>
+                                <div>
+                                    <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+                                </div>
+                            </div>
+
+                        </caption>
+                        <thead>
+                            <tr class="table-header-row">
+                                <th>Category</th>
+                                <th>Exercise</th>
+                                <th>Sets</th>
+                                <th>Reps</th>
+                                <th>Weight</th>
+                                <th>RPE</th>
+                                <th>@</th>
+                                <th>1RM</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--TODO: den inputs die jeweiligen klassen geben die name attribute setzen: im post verarbeiten und javascript fehler behebend-->
+
+                            <% const selectedCategory="" ; %>
+                                <% const selectedExercise="" ; %>
+
+                                    <% for (let i=1; i <=9; i++) { %>
+
+
+                                        <tr class="table-row mainExercise">
+                                            <td data-cell="category">
+                                                <select name="exercise_category_<%= i %>"
+                                                    class="exercise-category-selector">
+                                                    <% for (const category of exerciseCategories) { %>
+                                                        <option value="<%= category %>" <%=selectedCategory===category
+                                                            ? 'selected' : '' %>>
+                                                            <%= category %>
+                                                        </option>
+                                                        <% } %>
+                                                </select>
+                                            </td>
+                                            <td data-cell="Exercise">
+                                                <% for (const category in categorizedExercises) { %>
+
+                                                    <select name="exercise_name_<%= i %>" class="exercise-name-selector"
+                                                        <%=selectedCategory===category ? '' : 'disabled' %>
+                                                        style="<%= selectedCategory===category ? '' : 'display: none;'
+                                                            %>">
+                                                            <% for (const exerciseName of
+                                                                categorizedExercises[category]) { %>
+                                                                <option value="<%= exerciseName %>"
+                                                                    <%=selectedExercise===exerciseName ? 'selected' : ''
+                                                                    %>
+                                                                    >
+                                                                    <%= exerciseName %>
+                                                                </option>
+                                                                <% } %>
+                                                    </select>
+                                                    <% } %>
+                                            </td>
+                                            <td data-cell="Sets"><input type="number" class="sets"
+                                                    name="exercise_sets_<%= i %>"></td>
+                                            <td data-cell="Reps"><input type="number" class="reps"
+                                                    name="exercise_reps_<%= i %>"></td>
+                                            <td data-cell="Weight"><input type="text" class="weight"
+                                                    name="exercise_weight_<%= i %>"></td>
+                                            <td data-cell="RPE"><input type="number" class="targetRPE"
+                                                    name="exercise_targetRPE_<%= i %>"></td>
+                                            <td data-cell="@RPE"><input type="number" class="actualRPE" step="0.5"
+                                                    name="exercise_actualRPE_<%= i %>"></td>
+                                            <td data-cell="1RM"><input type="number" class="estMax" step="0.5"
+                                                    name="exercise_max_<%= i %>"></td>
+                                            <td data-cell="Notes"><input type="text" name="exercise_notes_<%= i %>"
+                                                    style="padding-left: 0;"></td>
+                                            <% } %>
+
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div class="rest-pause-timer" style="display: none">
-                00:00
-            </div>
-            <input class="notes-regarding-workout" name="notes_regarding_workout" type="text"
-                placeholder="Bemerkungen zum Workout" value="">
-        </div>
-
-        <table class="workout-table create-training-table">
-            <thead>
-                <tr class="table-header-row">
-                    <th>Übung</th>
-                    <th>Sätze</th>
-                    <th>Reps</th>
-                    <th>Gewicht</th>
-                    <th>RPE</th>
-                    <th>1RM</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!--nur für Abstand kriege das anders nicht hin-->
-                <tr class="table-row">
-                    <td>a</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <!--TODO: den inputs die jeweiligen klassen geben die name attribute setzen: im post verarbeiten und javascript fehler behebend-->
-                
-                <% for (let i = 1; i <=9; i++) { %>
-                    <tr class="table-row mainExercise">
-                        <td><input type="text" class="exercise-name" name="exercise_name_<%= i %>"></td>
-                        <td><input type="number" class="sets" name="exercise_sets_<%= i %>"></td>
-                        <td><input type="number" class="reps" name="exercise_reps_<%= i %>"></td>
-                        <td><input type="text" class="weight" name="exercise_weight_<%= i %>" value=""></td>
-                        <td><input type="number" class="actualRPE" step="0.5" name="exercise_actualRPE_<%= i %>"></td>
-                        <td><input type="number" class="estMax" step="0.5" name="exercise_max_<%= i %>"></td>
-                    <% } %>
-                
-            </tbody>
-        </table>
-    </div>
 
 
-    <button class="calc-button create-training-button" type="submit" id="save-training-button">Training Speichern</button>
+                <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit"
+                    style="margin: 0; margin-top: 0.5em;" id="save-training-button">Save</button>
 
-    <div id="confirmationModal" class="modal">
-        <div class="modal-content">
-          <p>Bist du sicher das du das Training beenden möchtest?</p>
-          <p>Deine Daten werden gespeichert</p>
-          <div class="modal-buttons">
-            <button type="button" class="modal-button" id="confirmResetButton">SPEICHERN</button>
-            <button type="button" class="modal-button" id="cancelResetButton">ABBRECHEN</button>
-          </div>
-        </div>
-      </div>
+                <div id="confirmationModal" class="modal">
+                    <div class="modal-content">
+                        <p>Bist du sicher das du das Training beenden möchtest?</p>
+                        <p>Deine Daten werden gespeichert</p>
+                        <div class="modal-buttons">
+                            <button type="button" class="modal-button" id="confirmResetButton">SPEICHERN</button>
+                            <button type="button" class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+                        </div>
+                    </div>
+                </div>
 
 </form>
 
-<script src="/javascripts/scratch/calcBackoffMax.js"></script>
+<!--scripts in preparation-->
+<script src="/javascripts/trainingPage/calcVolumeMedians.js"></script>
+<script src="/javascripts/trainingPage/showTrainingDays.js"></script>
+<script src="/javascripts/trainingPage/displayCalculatedVolumes.js"></script>
+<script src="/javascripts/trainingPage/removePlaceholder.js"></script>
+
+<!--actual Functionality-->
+<script src="/javascripts/trainingPage/workoutTitle.js"></script>
+<script src="/javascripts/trainingPage/pauseTimer.js"></script>
+<script src="/javascripts/trainingPage/showTimer.js"></script>
+<script src="/javascripts/trainingPage/calcBackoffMax.js"></script>
+<script src="/javascripts/trainingPage/calculateSetsTonnage.js"></script>
+<script src="/javascripts/trainingPage/displayDefaultSetSchema.js"></script>
+<script src="/javascripts/trainingPage/displayTrainingDay.js"></script>
+
+
+<!--Validation etc.-->
+<script src="/javascripts/trainingPage/weightInput.js"></script>
+<script src="/javascripts/trainingPage/rpeInput.js"></script>
+<script src="/javascripts/trainingPage/changeExerciseName.js"></script>
+
+<!--Navigation-->
+<script src="/javascripts/trainingPage/navigateWeeks.js"></script>
+<!--nur weil das in chrome nicht funktioniert hat funktioniert aber immer noch nicht top ja-->
+
+
 <script src="/javascripts/scratch/confirmation_modal.js"></script>
-<script src="/javascripts/scratch/pauseTimer.js"></script>
-
-<script>
-
-</script>

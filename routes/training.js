@@ -137,9 +137,6 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
           return res.status(404).send("Benutzer nicht gefunden");
         }
 
-        console.log("----")
-        console.log("ich werde gepatched")
-
         const updatedData = req.body;
         const trainingPlan = user.trainingPlansCustomNew[i];
 
@@ -556,7 +553,7 @@ for (let i = 1; i <= 5; i++) {
   }) 
 }
 
-// get für session-i-train
+// get für session-train-i
 async function handleTrainingSessionGET(req, res, index) {
   try {
     const user = await User.findOne({ name: req.user.name });
@@ -579,9 +576,18 @@ async function handleTrainingSessionGET(req, res, index) {
       previousTrainingDates.push(extractPreviousTrainingDates(training, i));
     }
 
+    //JUMP
+    const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
+
     const date = formatDateWithDay(training.lastUpdated); //newst date from newest training
 
     res.render("trainingPlans/scratch/trainAgain", {
+
+      exerciseCategories,
+      categoryPauseTimes,
+      categorizedExercises,
+      defaultRepSchemeByCategory,
+
       trainingTitle: trainingTitle,
 
       trainingData: trainingData,
@@ -624,13 +630,21 @@ Router.get("/createTraining", checkAuthenticated, async (req, res) => {
       return res.status(404).send("Benutzer nicht gefunden");
     }
 
+    //JUMP
+    const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
+
     if (user.trainings.length >= 2) {
       renderTrainingPlansView(res, user, {
         errorCreatingNewCustomTraining: "Du hast bereits die maximale Anzahl an Trainings gespeichert!"
       });
 
     } else {
-      res.render("trainingPlans/scratch/createTraining");
+      res.render("trainingPlans/scratch/createTraining", {
+        exerciseCategories,
+        categoryPauseTimes,
+        categorizedExercises,
+        defaultRepSchemeByCategory,
+      });
     }
 
 
@@ -658,12 +672,15 @@ Router.post("/createTraining", checkAuthenticated, async (req, res) => {
     // weil auf der page maximal 9 übungen erlaubt sind
     for (let i = 1; i <= 9; i++) {
       const exerciseObject = {
+        category: trainingData[`exercise_category_${i}`],
         exercise: trainingData[`exercise_name_${i}`],
         sets: trainingData[`exercise_sets_${i}`],
         reps: trainingData[`exercise_reps_${i}`],
         weight: trainingData[`exercise_weight_${i}`],
-        rpe: trainingData[`exercise_actualRPE_${i}`],
+        targetRPE: trainingData[`exercise_targetRPE_${i}`],
+        actualRPE: trainingData[`exercise_actualRPE_${i}`],
         estMax: trainingData[`exercise_max_${i}`],
+        notes: trainingData[`exercise_notes_${i}`],
       }
       exercises.push(exerciseObject);
     }
@@ -926,12 +943,15 @@ function extractTrainingExerciseData(trainingSession, index) {
 
       if (exercise !== null) {
         exerciseData.push({
+          category: exercise.category || "",
           exercise: exercise.exercise || "",
           sets: exercise.sets || "",
           reps: exercise.reps || "",
           weight: exercise.weight || "",
-          rpe: exercise.rpe || "",
+          targetRPE: exercise.targetRPE || "",
+          actualRPE: exercise.actualRPE || "",
           estMax: exercise.estMax || "",
+          notes: exercise.notes || "",
         });
       }
     }
