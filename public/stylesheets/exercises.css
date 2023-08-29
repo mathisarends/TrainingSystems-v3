@@ -1,58 +1,17 @@
-.exercise-grid {
-    display: grid;
-    gap: 0.5rem;
-    grid-template-columns: repeat(4, 1fr);
+.exercise-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
-/* so könnte man den table ausblenden */
-.exercise-grid table:first-of-type {
+.exercise-container table {
+    min-width: 100%;
+}
+
+.exercise-container table:first-of-type {
     display: none;
 }
 
-.category-input {
-    padding: 1rem;
-    padding-left: 0.75rem;
-    text-align: center;
+.exercise-table tr:nth-of-type(9) {
+    border-top: 1.51px solid hsl(var(--clr-light) / 0.65);
 }
-
-
-@media screen and (max-width: 481px) {
-    .exercise-grid {
-        grid-template-columns: repeat(1, 1fr);
-        gap: 0.5rem;
-    }
-
-    .exercise-grid:first-of-type {
-        margin-top: 1rem;
-    }
-
-    .exercise-table {
-        margin-bottom: 0;
-    }
-}
-
-@media screen and (min-width: 481px) and (max-width: 768px) {
-    .exercise-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.65rem;
-    }
-
-    .exercise-grid:first-of-type {
-        margin-top: 1rem;
-    }
-
-    .exercise-table {
-        margin-bottom: 0rem;
-    }
-}
-
-@media screen and (min-width: 768px) and (max-width: 1024px) {
-    .exercise-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .exercise-grid:first-of-type {
-        margin-top: 1rem;
-    }
-}
-

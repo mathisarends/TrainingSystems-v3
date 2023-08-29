@@ -1,242 +1,234 @@
 <link rel="stylesheet" href="/stylesheets/exercises.css">
 
-<h2 class="trainingPlan-headline">
-  <div class="show-training-headline">
-    Übungen
-  </div>
+<main class="grid-container grid-container--exercises flow" style="--flow-space: 0.5rem;">
+    <h1 class="numbered-title"><span aria-hidden="true" style="padding-left: 1em;">03</span>Übungen</h1>
 
-<button>
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-      stroke-linejoin="round" class="feather feather-bar-chart">
-      <line x1="12" y1="20" x2="12" y2="10"></line>
-      <line x1="18" y1="20" x2="18" y2="4"></line>
-      <line x1="6" y1="20" x2="6" y2="16"></line>
-  </svg>
-</button>
-</h2>
-
-<div class="more-training-info-container" style="display: block">
-  Hier kannst du deine präferierten Übungen definieren. Für jede Übungskategorie kannst du außerdem eine Pausenzeit sowie dein präferiertes REP-Schema eingeben.
-  Dies ermöglicht ein schnelles erstellen vo neune Trainingsplänen.
-  <p>Hinweis: Vergessen nicht auf Speichern zu drücken</p>
-</div>
-
-<% if (error) { %>
-  <div class="form__message__error">
-    <%= messages.error %>
-  </div>
-  <% } %>
-
-    <% const maxExercises=Math.max(...exerciseCategories.map(category=> categorizedExercises[category].length)); %>
-
-      <form action="/exercises" method="POST">
-        <div class="exercise-grid">
-          <input type="hidden" name="maxExercises" value="<%= maxExercises %>">
-          <input type="hidden" name="exerciseCategoriesLength" value="<%= exerciseCategories.length %>">
-          <% for (let categoryIndex=0; categoryIndex < exerciseCategories.length; categoryIndex++) { %>
-            <% const category=exerciseCategories[categoryIndex]; %>
-              <table class="exercise-table">
-                <thead>
-                  <tr class="table-header-row">
-                    <th class="exericse-table-th">
-                      <%= category %>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% const exercises=categorizedExercises[category]; %>
-                    <% for (let exerciseIndex=0; exerciseIndex < maxExercises; exerciseIndex++) { %>
-                      <tr class="table-row category-row">
-                        <td><input type="text" class="category-input"
-                            name="exercise_<%= categoryIndex %>_<%= exerciseIndex %>"
-                            value="<%= exercises[exerciseIndex] || '' %>"></td>
-                        <!--categoryindex 0- 11 || exerciseIndex 0 - 9 -->
+    <!-- <div class="tab-list underline-indicators flex" role="tablist" aria-label="exercise list">
+      <button aria-selected="true" role="tab" aria-controls="Main-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Main</button>
+      <button aria-selected="false" role="tab" aria-controls="Accesoires-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">ACC</button>
+      <button aria-selected="false" role="tab" aria-controls="All-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">All</button>
+    </div>
+   -->
+  
+    <% if (error) { %>
+      <div class="ff-sans-normal fs-500 text-accent letter-spacing-3" style="text-align: left;">
+        <%= messages.error %>
+      </div>
+      <% } %>
+    
+        <% const maxExercises=Math.max(...exerciseCategories.map(category=> categorizedExercises[category].length)); %>
+    
+          <form action="/exercises" method="POST">
+            <div class="exercise-container">
+              <input type="hidden" name="maxExercises" value="<%= maxExercises %>">
+              <input type="hidden" name="exerciseCategoriesLength" value="<%= exerciseCategories.length %>">
+              <% for (let categoryIndex=0; categoryIndex < exerciseCategories.length; categoryIndex++) { %>
+                <% const category=exerciseCategories[categoryIndex]; %>
+                  <table class="exercise-table">
+                    <thead>
+                      <tr class="table-header-row">
+                        <th class="exericse-table-th" style="text-align: left;">
+                          <%= category %>
+                        </th>
                       </tr>
-                      <% if (exerciseIndex===maxExercises - 1) { %> <!--hier eine neue table hinzufügen-->
-
-                        <tr class="table-row category-row">
-                          <td>
-                            <div class="select-container remove-margin">
-                              <!--TODO: unique names in der route verarbeiten-->
-                              <select name="categoryPauseTimeSelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
-                                <option value="60" <%=categoryPauseTimes[category]===60 ? "selected" : "" %>>60s
-                                </option>
-                                <option value="90" <%=categoryPauseTimes[category]===90 ? "selected" : "" %>>90s
-                                </option>
-                                <option value="120" <%=categoryPauseTimes[category]===120 ? "selected" : "" %>>120s
-                                </option>
-                                <option value="150" <%=categoryPauseTimes[category]===150 ? "selected" : "" %>>150s
-                                </option>
-                                <option value="180" <%=categoryPauseTimes[category]===180 ? "selected" : "" %>>180s
-                                </option>
-                                <option value="210" <%=categoryPauseTimes[category]===210 ? "selected" : "" %>>210s
-                                </option>
-                                <option value="240" <%=categoryPauseTimes[category]===240 ? "selected" : "" %>>240s
-                                </option>
-                                <option value="270" <%=categoryPauseTimes[category]===270 ? "selected" : "" %>>270s
-                                </option>
-                                <option value="300" <%=categoryPauseTimes[category]===300 ? "selected" : "" %>>300s
-                                </option>
-                              </select>
-
-                              <div class="icon-container" id="select-pause-time-icon-container">
-                                <div class="svg-container" style="display: none">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-arrow-up">
-                                    <line x1="12" y1="19" x2="12" y2="5"></line>
-                                    <polyline points="5 12 12 5 19 12"></polyline>
-                                  </svg>
+                    </thead>
+                    <tbody>
+                      <% const exercises=categorizedExercises[category]; %>
+                        <% for (let exerciseIndex=0; exerciseIndex < maxExercises; exerciseIndex++) { %>
+                          <tr class="table-row category-row">
+                            <td data-cell="<%= category %>"><input type="text" class="category-input"
+                                name="exercise_<%= categoryIndex %>_<%= exerciseIndex %>"
+                                value="<%= exercises[exerciseIndex] || '' %>" style="text-align: left; padding: 0;"></td>
+                            <!--categoryindex 0- 11 || exerciseIndex 0 - 9 -->
+                          </tr>
+                          <% if (exerciseIndex===maxExercises - 1) { %> <!--hier eine neue table hinzufügen-->
+    
+                            <tr class="table-row category-row">
+                              <td data-cell="Rest-time">
+                                <div class="select-container remove-margin">
+                                  <!--TODO: unique names in der route verarbeiten-->
+                                  <select name="categoryPauseTimeSelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
+                                    <option value="60" <%=categoryPauseTimes[category]===60 ? "selected" : "" %>>60s
+                                    </option>
+                                    <option value="90" <%=categoryPauseTimes[category]===90 ? "selected" : "" %>>90s
+                                    </option>
+                                    <option value="120" <%=categoryPauseTimes[category]===120 ? "selected" : "" %>>120s
+                                    </option>
+                                    <option value="150" <%=categoryPauseTimes[category]===150 ? "selected" : "" %>>150s
+                                    </option>
+                                    <option value="180" <%=categoryPauseTimes[category]===180 ? "selected" : "" %>>180s
+                                    </option>
+                                    <option value="210" <%=categoryPauseTimes[category]===210 ? "selected" : "" %>>210s
+                                    </option>
+                                    <option value="240" <%=categoryPauseTimes[category]===240 ? "selected" : "" %>>240s
+                                    </option>
+                                    <option value="270" <%=categoryPauseTimes[category]===270 ? "selected" : "" %>>270s
+                                    </option>
+                                    <option value="300" <%=categoryPauseTimes[category]===300 ? "selected" : "" %>>300s
+                                    </option>
+                                  </select>
                                 </div>
-                                <div class="svg-container" style="display: block">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-arrow-down">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <polyline points="19 12 12 19 5 12"></polyline>
-                                  </svg>
+                              </td>
+                            </tr>
+                            
+                            <tr class="table-row category-row">
+                              <td data-cell="sets">
+                                <div class="select-container remove-margin">
+                                  <!--TODO: unique names in der route verarbeiten-->
+                                  <select name="categoryDefaultSetSelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
+                                    <option value="2" <%=defaultRepSchemeByCategory[category].defaultSets === 2 ? "selected" : "" %>>2 Sets
+                                    </option>
+                                    <option value="3" <%=defaultRepSchemeByCategory[category].defaultSets === 3 ? "selected" : "" %>>3 Sets
+                                    </option>
+                                    <option value="4" <%=defaultRepSchemeByCategory[category].defaultSets === 4 ? "selected" : "" %>>4 Sets
+                                    </option>
+                                    <option value="5" <%=defaultRepSchemeByCategory[category].defaultSets === 5 ? "selected" : "" %>>5 Sets
+                                    </option>
+                                    <option value="6" <%=defaultRepSchemeByCategory[category].defaultSets === 6 ? "selected" : "" %>>6 Sets
+                                    </option>
+                                  </select>
                                 </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                        
-                        <tr class="table-row category-row">
-                          <td>
-                            <div class="select-container remove-margin">
-                              <!--TODO: unique names in der route verarbeiten-->
-                              <select name="categoryDefaultSetSelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
-                                <option value="2" <%=defaultRepSchemeByCategory[category].defaultSets === 2 ? "selected" : "" %>>2 Sets
-                                </option>
-                                <option value="3" <%=defaultRepSchemeByCategory[category].defaultSets === 3 ? "selected" : "" %>>3 Sets
-                                </option>
-                                <option value="4" <%=defaultRepSchemeByCategory[category].defaultSets === 4 ? "selected" : "" %>>4 Sets
-                                </option>
-                                <option value="5" <%=defaultRepSchemeByCategory[category].defaultSets === 5 ? "selected" : "" %>>5 Sets
-                                </option>
-                                <option value="6" <%=defaultRepSchemeByCategory[category].defaultSets === 6 ? "selected" : "" %>>6 Sets
-                                </option>
-                              </select>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr class="table-row category-row">
-                          <td>
-                            <div class="select-container remove-margin">
-                              <!--TODO: unique names in der route verarbeiten-->
-                              <select name="categoryDefaultRepSelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
-                                <option value="3" <%=defaultRepSchemeByCategory[category].defaultReps === 3 ? "selected" : "" %>>3 Reps
-                                </option>
-                                <option value="4" <%=defaultRepSchemeByCategory[category].defaultReps === 4 ? "selected" : "" %>>4 Reps
-                                </option>
-                                <option value="5" <%=defaultRepSchemeByCategory[category].defaultReps === 5 ? "selected" : "" %>>5 Reps
-                                </option>
-                                <option value="6" <%=defaultRepSchemeByCategory[category].defaultReps === 6 ? "selected" : "" %>>6 Reps
-                                </option>
-                                <option value="7" <%=defaultRepSchemeByCategory[category].defaultReps === 7 ? "selected" : "" %>>7 Reps
-                                </option>
-                                <option value="8" <%=defaultRepSchemeByCategory[category].defaultReps === 8 ? "selected" : "" %>>8 Reps
-                                </option>
-                                <option value="9" <%=defaultRepSchemeByCategory[category].defaultReps === 9 ? "selected" : "" %>>9 Reps
-                                </option>
-                                <option value="10" <%=defaultRepSchemeByCategory[category].defaultReps === 10 ? "selected" : "" %>>10 Reps
-                                </option>
-                                <option value="11" <%=defaultRepSchemeByCategory[category].defaultReps === 11 ? "selected" : "" %>>11 Reps
-                                </option>
-                                <option value="12" <%=defaultRepSchemeByCategory[category].defaultReps === 12 ? "selected" : "" %>>12 Reps
-                                </option>
-                              </select>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr class="table-row category-row">
-                          <td>
-                            <div class="select-container remove-margin">
-                              <!--TODO: unique names in der route verarbeiten-->
-                              <select name="categoryDefaultRPESelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
-                                <option value="6" <%=defaultRepSchemeByCategory[category].defaultRPE === 6 ? "selected" : "" %>>RPE 6
-                                </option>
-                                <option value="6.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 6.5 ? "selected" : "" %>>RPE 6.5
-                                </option>
-                                <option value="7" <%=defaultRepSchemeByCategory[category].defaultRPE === 7 ? "selected" : "" %>>RPE 7
-                                </option>
-                                <option value="7.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 7.5 ? "selected" : "" %>>RPE 7.5
-                                </option>
-                                <option value="8" <%=defaultRepSchemeByCategory[category].defaultRPE === 8 ? "selected" : "" %>>RPE 8
-                                </option>
-                                <option value="8.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 8.5 ? "selected" : "" %>>RPE 8.5
-                                </option>
-                                <option value="9" <%=defaultRepSchemeByCategory[category].defaultRPE === 9 ? "selected" : "" %>>RPE 9
-                                </option>
-                                <option value="9.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 9.5 ? "selected" : "" %>>RPE 9
-                                </option>
-                                <option value="10" <%=defaultRepSchemeByCategory[category].defaultRPE === 10 ? "selected" : "" %>>RPE 10
-                                </option>
-                              </select>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                        
-                        <% } %>
-                          <% } %>
-                </tbody>
-              </table>
-
-              <% } %>
-        </div>
-        <button class="btn exercise-btn" type="submit">SPEICHERN</button>
-      </form>
+                              </td>
+                            </tr>
+    
+                            <tr class="table-row category-row">
+                              <td data-cell="reps">
+                                <div class="select-container remove-margin">
+                                  <!--TODO: unique names in der route verarbeiten-->
+                                  <select name="categoryDefaultRepSelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
+                                    <option value="3" <%=defaultRepSchemeByCategory[category].defaultReps === 3 ? "selected" : "" %>>3 Reps
+                                    </option>
+                                    <option value="4" <%=defaultRepSchemeByCategory[category].defaultReps === 4 ? "selected" : "" %>>4 Reps
+                                    </option>
+                                    <option value="5" <%=defaultRepSchemeByCategory[category].defaultReps === 5 ? "selected" : "" %>>5 Reps
+                                    </option>
+                                    <option value="6" <%=defaultRepSchemeByCategory[category].defaultReps === 6 ? "selected" : "" %>>6 Reps
+                                    </option>
+                                    <option value="7" <%=defaultRepSchemeByCategory[category].defaultReps === 7 ? "selected" : "" %>>7 Reps
+                                    </option>
+                                    <option value="8" <%=defaultRepSchemeByCategory[category].defaultReps === 8 ? "selected" : "" %>>8 Reps
+                                    </option>
+                                    <option value="9" <%=defaultRepSchemeByCategory[category].defaultReps === 9 ? "selected" : "" %>>9 Reps
+                                    </option>
+                                    <option value="10" <%=defaultRepSchemeByCategory[category].defaultReps === 10 ? "selected" : "" %>>10 Reps
+                                    </option>
+                                    <option value="11" <%=defaultRepSchemeByCategory[category].defaultReps === 11 ? "selected" : "" %>>11 Reps
+                                    </option>
+                                    <option value="12" <%=defaultRepSchemeByCategory[category].defaultReps === 12 ? "selected" : "" %>>12 Reps
+                                    </option>
+                                  </select>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+    
+                            <tr class="table-row category-row">
+                              <td data-cell="RPE">
+                                <div class="select-container remove-margin">
+                                  <!--TODO: unique names in der route verarbeiten-->
+                                  <select name="categoryDefaultRPESelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
+                                    <option value="6" <%=defaultRepSchemeByCategory[category].defaultRPE === 6 ? "selected" : "" %>>RPE 6
+                                    </option>
+                                    <option value="6.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 6.5 ? "selected" : "" %>>RPE 6.5
+                                    </option>
+                                    <option value="7" <%=defaultRepSchemeByCategory[category].defaultRPE === 7 ? "selected" : "" %>>RPE 7
+                                    </option>
+                                    <option value="7.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 7.5 ? "selected" : "" %>>RPE 7.5
+                                    </option>
+                                    <option value="8" <%=defaultRepSchemeByCategory[category].defaultRPE === 8 ? "selected" : "" %>>RPE 8
+                                    </option>
+                                    <option value="8.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 8.5 ? "selected" : "" %>>RPE 8.5
+                                    </option>
+                                    <option value="9" <%=defaultRepSchemeByCategory[category].defaultRPE === 9 ? "selected" : "" %>>RPE 9
+                                    </option>
+                                    <option value="9.5" <%=defaultRepSchemeByCategory[category].defaultRPE === 9.5 ? "selected" : "" %>>RPE 9
+                                    </option>
+                                    <option value="10" <%=defaultRepSchemeByCategory[category].defaultRPE === 10 ? "selected" : "" %>>RPE 10
+                                    </option>
+                                  </select>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                            
+                            <% } %>
+                              <% } %>
+                    </tbody>
+                  </table>
+    
+                  <% } %>
+            </div>
+            <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit" style="margin-bottom: 0;">Save</button>
+            <form action="/exercises/reset" method="POST" name="resetForm">
+              <button class="main-page-button save-training-button uppercase ff-sans-normal" type="button" id="reset-exercises-button">RESET</button>
+            </form>
+          </form>
 
 
-      <form action="/exercises/reset" method="POST" name="resetForm">
-        <button class="btn exercise-btn" type="button" id="reset-exercises-button">RESET TO DEFAULT</button>
-      </form>
-
-      <div id="confirmationModal" class="modal">
-        <div class="modal-content">
-          <p>Bist du sicher, dass du die Übungen auf die Standartwerte zurücksetzen möchtest?</p>
-          <div class="modal-buttons">
-            <button class="modal-button" id="confirmResetButton">ZURÜCKSETZEN</button>
-            <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+  
+  
+        
+  
+        <div id="confirmationModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <p>Bist du sicher, dass du die Übungen auf die Standartwerte zurücksetzen möchtest?</p>
+            <div class="modal-buttons">
+              <button class="modal-button" id="confirmResetButton">ZURÜCKSETZEN</button>
+              <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+            </div>
           </div>
         </div>
-      </div>
+</main>
 
 
-      <script src="/javascripts/volume/showExtraInfo.js"></script>
+
+
+
+      <!-- <script src="/javascripts/volume/showExtraInfo.js"></script> -->
       <script>
 
-        const categoryPauseTimeSelectors = document.getElementsByClassName("categoryPauseTimeSelector");
-        console.log(categoryPauseTimeSelectors.length)
-        const selectSVGs = document.getElementsByClassName("svg-container");
-        console.log(selectSVGs.length);
+      const showExercisesNav = document.querySelector(".tab-list");
+      const navButtons = showExercisesNav.querySelectorAll("button");
 
+      const exerciseTables = Array.from(document.querySelectorAll("table:not(:first-of-type)"));
+      const mainTables = exerciseTables.slice(0, 3);
+      const accesoireTables = exerciseTables.slice(3);
+      console.log(mainTables);
+      console.log(accesoireTables);
 
+      navButtons.forEach((navButton, index) => {
+        navButton.addEventListener("click", e => {
+          e.preventDefault();
 
-        for (let i = 0; i < categoryPauseTimeSelectors.length; i++) {
-            const upArrow = selectSVGs[i * 2];     // Use i * 2 to match the correct index
-            const downArrow = selectSVGs[i * 2 + 1]; // Use i * 2 + 1 to match the correct index
+          navButtons.forEach((btn) => {
+            btn.setAttribute("aria-selected", false);
+          })
 
-            categoryPauseTimeSelectors[i].addEventListener("focus", () => {
-              upArrow.style.display = "block";
-              downArrow.style.display = "none";
-            });
+          navButton.setAttribute("aria-selected", true);
 
-            categoryPauseTimeSelectors[i].addEventListener("change", () => {
-              downArrow.style.display = "block";
-              upArrow.style.display = "none";
-            });
-
-            categoryPauseTimeSelectors[i].addEventListener("blur", () => {
-              upArrow.style.display = "none";
-              downArrow.style.display = "block";
-            });
+          if (index === 0) {
+            showAllTables(mainTables);
+            removeAllTables(accesoireTables);
+          } else if (index === 1) {
+            showAllTables(accesoireTables);
+            removeAllTables(mainTables);
+          } else if (index === 3) {
+            showAllTables(exerciseTables);
           }
+        })
+      })
+
+      function showAllTables(tableList) {
+        tableList.forEach((table) => {
+          table.style.display = "block";
+        })
+      }
+
+      function removeAllTables(tableList) {
+        tableList.forEach((table) => {
+          table.style.display = "none";
+        })
+      }
 
         // Modal Shit
         const resetExercisesButton = document.getElementById("reset-exercises-button");

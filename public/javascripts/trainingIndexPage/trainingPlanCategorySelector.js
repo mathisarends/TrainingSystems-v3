@@ -1,35 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("category selector")
-    const trainingPlanCategorySelector = document.getElementById("training-mode-selector");
-    const trainingPlanCategorysContainer = document.getElementsByClassName("training-plan-view-container");
-    
-    const initalCategory = trainingPlanCategorySelector.value;
-    
-    displayTrainingMode(initalCategory); //initial method-call
-    
+  const tabList = document.querySelector('[role="tablist"]');
+  const tabs = tabList.querySelectorAll('[role="tab"]');
+  const sections = document.querySelectorAll("section");
 
-    trainingPlanCategorySelector.addEventListener("change", () => {
-        const category = trainingPlanCategorySelector.value;
+  const title = document.querySelector("h1");
 
-        displayTrainingMode(category);
-    })
+  /*TODO: Oben die ÜBerschrift verändern und die active klasse entsprechend setzen ^^*/
+  for (let i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener("click", (e) => {
+      e.preventDefault();
 
+      for (let j = 0; j < sections.length; j++) {
+        sections[j].setAttribute("hidden", true);
+        tabs[j].setAttribute("aria-selected", false);
+      }
 
-    function displayTrainingMode(category) {
-        if (category === "custom") {
-            console.log("custon new");
-            trainingPlanCategorysContainer[0].style.display = "block";
-            trainingPlanCategorysContainer[1].style.display = "none";
-            trainingPlanCategorysContainer[2].style.display = "none";
-        } else if (category === "template") {
-            trainingPlanCategorysContainer[0].style.display = "none";
-            trainingPlanCategorysContainer[1].style.display = "block";
-            trainingPlanCategorysContainer[2].style.display = "none";
-            console.log("templates");
-        } else if (category === "scratch") {
-            trainingPlanCategorysContainer[0].style.display = "none";
-            trainingPlanCategorysContainer[1].style.display = "none";
-            trainingPlanCategorysContainer[2].style.display = "block";
-        }
-    }
-})
+      sections[i].removeAttribute("hidden");
+      tabs[i].setAttribute("aria-selected", true);
+
+      if (i === 0) {
+        title.innerHTML = `<span aria-hidden="true">01</span>CUSTOM`;
+      } else if (i === 1) {
+        title.innerHTML = `<span aria-hidden="true">01</span>SESSION`;
+      } else if (i === 2) {
+        title.innerHTML = `<span aria-hidden="true">01</span>TEMPLATE`;
+      }
+    });
+  }
+});

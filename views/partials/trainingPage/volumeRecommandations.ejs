@@ -1,75 +1,69 @@
-<div class="volumePhases">
+<div class="volumePhases" style="<%= trainingPhase === 'hypertrophie' ? 'display: block;' : 'display: none;' %>">
   <table class="calculate-table">
+    <caption class="text-accent letter-spacing-3"><%= trainingPhase %></caption>
     <thead>
       <tr class="table-header-row">
-        <th>Übung</th>
-        <th>Minimale Satzanzahl/Woche</th>
-        <th>Maximalle Satzanzahl / Woche</th>
+        <th>Exercise</th>
+        <th>MEV</th>
+        <th>MRV</th>
         <th>Median</th>
-        <th>Absolvierte Sätze</th>
+        <th>Sets done</th>
         <th>Tonnage</th>
       </tr>
     </thead>
     <tbody>
       <!--nur für Abstand kriege das anders nicht hin-->
       <tr class="table-row volume-row">
-        <td>a</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="table-row volume-row">
-        <td class="category-name">SQUAT</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">SQUAT</td>
+        <td data-cell="MEV">
           <input type="number" class="squatmev" value="<%=squatmev%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="squatmrv" value="<%=squatmrv%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="squat-median-volume" class="squat-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="squat-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="squat-tonnage">
         </td>
       </tr>
       <tr class="table-row volume-row">
-        <td class="category-name">BENCH</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">BENCH</td>
+        <td data-cell="MEV">
           <input type="number" class="benchmev" value="<%=benchmev%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV"> 
           <input type="number" class="benchmrv" value="<%=benchmrv%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median"> 
           <input type="number" readonly name="bench-median-volume" class="bench-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="bench-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="bench-tonnage">
         </td>
       </tr>
       <tr class="table-row volume-row">
-        <td class="category-name">DEADLIFT</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">DEADLIFT</td>
+        <td data-cell="MEV">
           <input type="number" class="deadliftmev" value="<%=deadliftmev%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="deadliftmrv" value="<%=deadliftmrv%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="deadlift-median-volume" class="deadlift-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="deadlift-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="deadlift-tonnage">
         </td>
       </tr>
@@ -77,78 +71,71 @@
   </table>
 </div>
 
-<div class="volumePhases" style="display: none;">
+<div class="volumePhases" style="<%= trainingPhase === 'kraft' ? 'display: block;' : 'display: none;' %>">
   <table class="calculate-table">
+    <caption class="text-accent letter-spacing-3"><%= trainingPhase %></caption>
     <thead>
       <tr class="table-header-row">
-        <th>Übung</th>
-        <th>Minimale Satzanzahl/Woche</th>
-        <th>Maximalle Satzanzahl / Woche</th>
+        <th>Exercise</th>
+        <th>MEV</th>
+        <th>MRV</th>
         <th>Median</th>
-        <th>Absolvierte Sätze</th>
+        <th>Sets done</th>
         <th>Tonnage</th>
       </tr>
     </thead>
     <tbody>
-      <!--nur für Abstand kriege das anders nicht hin-->
       <tr class="table-row volume-row">
-        <td>a</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="table-row volume-row">
-        <td class="category-name">SQUAT</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">SQUAT</td>
+        <td data-cell="MEV">
           <input type="number" class="squatmev" value="<%=squatmev - 2%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="squatmrv" value="<%=squatmrv - 3%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="squat-median-volume" class="squat-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="squat-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="squat-tonnage">
         </td>
       </tr>
       <tr class="table-row volume-row">
-        <td class="category-name">BENCH</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">BENCH</td>
+        <td data-cell="MEV">
           <input type="number" class="benchmev" value="<%=benchmev - 1%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="benchmrv" value="<%=benchmrv - 3%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="bench-median-volume" class="bench-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="bench-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="bench-tonnage">
         </td>
       </tr>
       <tr class="table-row volume-row">
-        <td class="category-name">DEADLIFT</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">DEADLIFT</td>
+        <td data-cell="MEV">
           <input type="number" class="deadliftmev" value="<%=deadliftmev - 2%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="deadliftmrv" value="<%=deadliftmrv - 4%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="deadlift-median-volume" class="deadlift-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="deadlift-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="deadlift-tonnage">
         </td>
       </tr>
@@ -156,79 +143,72 @@
   </table>
 </div>
 
-<div class="volumePhases" style="display: none;">
+<div class="volumePhases" style="<%= trainingPhase === 'peaking' ? 'display: block;' : 'display: none;' %>">
   <table class="calculate-table">
+    <caption class="text-accent letter-spacing-3"><%= trainingPhase %></caption>
     <thead>
       <tr class="table-header-row">
-        <th>Übung</th>
-        <th>Minimale Satzanzahl/Woche</th>
-        <th>Maximalle Satzanzahl / Woche</th>
+        <th>Exercise</th>
+        <th>MEV</th>
+        <th>MRV</th>
         <th>Median</th>
-        <th>Absolvierte Sätze</th>
+        <th>Sets done</th>
         <th>Tonnage</th>
       </tr>
     </thead>
     <tbody>
       <!--nur für Abstand kriege das anders nicht hin-->
       <tr class="table-row volume-row">
-        <td>a</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="table-row volume-row">
-        <td class="category-name">SQUAT</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">SQUAT</td>
+        <td data-cell="MEV">
           <input type="number" class="squatmev" value="<%=squatmev - 3%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="squatmrv" value="<%=squatmrv - 6%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="squat-median-volume" class="squat-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="squat-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="squat-tonnage">
         </td>
       </tr>
       <tr class="table-row volume-row">
-        <td class="category-name">BENCH</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">BENCH</td>
+        <td data-cell="MEV">
           <input type="number" class="benchmev" value="<%=benchmev - 2%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="benchmrv" value="<%=benchmrv - 5%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="bench-median-volume" class="bench-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="bench-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="bench-tonnage">
         </td>
       </tr>
       <tr class="table-row volume-row">
-        <td class="category-name">DEADLIFT</td>
-        <td>
+        <td data-cell="Exercise" class="category-name">DEADLIFT</td>
+        <td data-cell="MEV">
           <input type="number" class="deadliftmev" value="<%=deadliftmev - 3%>" readonly required />
         </td>
-        <td>
+        <td data-cell="MRV">
           <input type="number" class="deadliftmrv" value="<%=deadliftmrv - 4%>" readonly required />
         </td>
-        <td>
+        <td data-cell="Median">
           <input type="number" readonly name="deadlift-median-volume" class="deadlift-median-volume-result">
         </td>
-        <td>
+        <td data-cell="Sets done">
           <input type="number" readonly class="deadlift-sets-done">
         </td>
-        <td>
+        <td data-cell="Tonnage">
           <input type="number" readonly class="deadlift-tonnage">
         </td>
       </tr>
@@ -247,9 +227,12 @@
 <!--actual Functionality-->
 <script src="/javascripts/trainingPage/workoutTitle.js"></script>
 <script src="/javascripts/trainingPage/pauseTimer.js"></script>
+<script src="/javascripts/trainingPage/showTimer.js"></script>
 <script src="/javascripts/trainingPage/calcBackoffMax.js"></script>
 <script src="/javascripts/trainingPage/calculateSetsTonnage.js"></script>
 <script src="/javascripts/trainingPage/displayDefaultSetSchema.js"></script>
+<script src="/javascripts/trainingPage/displayTrainingDay.js"></script>
+
 
 <!--Validation etc.-->
 <script src="/javascripts/trainingPage/weightInput.js"></script>

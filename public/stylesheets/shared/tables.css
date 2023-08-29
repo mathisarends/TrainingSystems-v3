@@ -1,5 +1,9 @@
 /*More General Tabl*/
 
+.workout-table {
+    box-shadow: 0 0 10px rgba(171, 171, 171, 0.2); /* Horizontale Verschiebung, vertikale Verschiebung, Weichheit, Farbe */
+}
+
 .workout-table .table-row td {
     padding: 0;
 }

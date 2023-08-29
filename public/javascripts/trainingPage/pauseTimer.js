@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Auf jedes change event der weight-eingabe wird reagiert damit dass der entsprechende timer wieder von vorne läuft
+  console.log("Test timer")
   
   const exerciseCategoryLength = document.getElementById("exercise-category-length").value; //12
 

@@ -52,13 +52,13 @@ Router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
       return res.status(404).send("Benutzer nicht gefunden");
     }
 
-    if (user.trainingPlansCustomNew.length >= 4) {
+    if (user.trainingPlansCustomNew.length >= 3) {
       renderTrainingPlansView(res, user, {
-        errorCreatingNewCustomTrainingPlan: "Du hast bereits die maximale Anzahl an Plänen erreicht."
+        errorCreatingNewCustomTrainingPlan: "Maximale Anzahl an Plänen erreicht."
       });
 
     } else {
-      res.render("trainingPlans/custom/createNewCustomTraining");
+      res.render("trainingPlans/custom/createNewCustomTraining", {layout: false});
     }
   } catch (err) {
     console.log("Fehler beim Erstellen des Trainingsplans " + err);
@@ -97,15 +97,7 @@ Router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
 
     await user.save();
 
-    if (currentDevice === "Handy" || currentDevice === "Tablet") {
-      res.redirect("/training/custom-A1-edit");
-      return;
-    } else {
-      res.redirect("/training/custom-A1");  
-    }
-
-
-
+    res.redirect("/training/custom-A1");  
 
   } catch (err) {
     console.log("Es ist ein Fehler beim erstellen des Trainingsplans vorgefallen! " + err);
@@ -239,6 +231,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         const afterPage = `/training/custom-${letter}${afterPageIndex}`;
 
         res.render("trainingPlans/custom/trainingPlan", {
+
           trainingWeekData: trainingWeekData,
           firstTrainingWeekData: firstTrainingWeekData,
     
@@ -273,7 +266,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
   }
 }
 
-//GET CUSTOM TRAININGS EDIT PAGE ON MOBILE
+//GET CUSTOM TRAININGPLANS EDIT PAGE (for changing training tile frequency etc)
 for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
   for (let week = 1; week <= maxWeeks; week++) {
@@ -297,58 +290,21 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 
         const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
 
-        const trainingWeekData = [];
-        for (let j = 0; j < amountOfTrainingDays; j++) {
-          trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 1, j));
-        }
 
-        const firstTrainingWeekData = [];
-        for (let j = 0; j < amountOfTrainingDays; j++) {
-          firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
-        }
-
-        const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
-
-        const trainingData = user.trainingData.length > 0 ? user.trainingData[0] : {};
-
-
-        let afterPageIndex = (week + 1) % trainingPlan.trainingWeeks.length;
-        afterPageIndex = afterPageIndex === 0 ? trainingPlan.trainingWeeks.length : afterPageIndex;
-
-        let beforePageIndex = (week - 1) % trainingPlan.trainingWeeks.length;
-        beforePageIndex = beforePageIndex === 0 ? trainingPlan.trainingWeeks.length : beforePageIndex;
-
-        const beforePage = `/training/custom-${letter}${beforePageIndex}-edit`;
-        const afterPage = `/training/custom-${letter}${afterPageIndex}-edit`;
+        const blockLength = getAmountOfTrainingWeeks(trainingPlan);
 
         //JUMP TODO: hier das gerenderte Tempalte ändern
         res.render("trainingPlans/custom/trainingPlanEdit", {
-          trainingWeekData: trainingWeekData,
-          firstTrainingWeekData: firstTrainingWeekData,
+
+          layout: false,
     
           amountOfTrainingDays: amountOfTrainingDays,
           workoutName: trainingTitle,
           trainingFrequency: trainingFrequency,
           trainingPhase: trainingPhase,
+          blockLength: blockLength,
     
-          exerciseCategories: exerciseCategories,
-          categorizedExercises: categorizedExercises,
-          categoryPauseTimes: categoryPauseTimes,
-          defaultRepSchemeByCategory: defaultRepSchemeByCategory,
-    
-          trainingData: trainingData,
-          squatmev: trainingData.minimumSetsSquat || "",
-          squatmrv: trainingData.maximumSetsSquat || "",
-          benchmev: trainingData.minimumSetsBench || "",
-          benchmrv: trainingData.maximumSetsBench || "",
-          deadliftmev: trainingData.minimumSetsDeadlift || "",
-          deadliftmrv: trainingData.maximumSetsDeadlift || "",
-    
-          beforePage: beforePage,
-          afterPage: afterPage,
-          week: week,
-    
-          templatePlanName: `${letter}${week}`,
+          templatePlanName: `${letter}${week}`, //for posting to the right path
         });
       } catch (err) {
         console.log("Fehler beim Aufrufen der Trainingsseite: " + err);
@@ -356,6 +312,59 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
     })
   }
 }
+
+for (let i = 0; i < customTemplateLetters.length; i++) {
+  const letter = customTemplateLetters[i];
+  for (let week = 1; week <= maxWeeks; week++) {
+    const routePath = `/custom-${letter}${week}-edit`;
+    Router.patch(routePath, checkAuthenticated, async (req, res) => {
+      try {
+        const user = await User.findOne({ name: req.user.name });
+        if (!user) {
+          return res.status(404).send("Benutzer nicht gefunden");
+        }
+
+        const trainingPlan = user.trainingPlansCustomNew[i];
+
+        if(!trainingPlan) { //Routes will hopefully will never be reached
+          return res.status(404).send("Training nicht gefunden!");
+        }
+
+        if (week > trainingPlan.trainingWeeks.length) {
+          return res.status(400).send("Ungültige Woche");
+        }
+
+        //Neue übergebene Daten
+        const newTitle = req.body.training_title;
+        const newTrainingPhase = req.body.training_phase;
+        const newTrainingFrequency = req.body.training_frequency;
+
+        // wenn es änderungen gibt dann aktualiseren
+        if (trainingPlan.title !== newTitle) {
+          trainingPlan.title = newTitle;
+        }
+        if (trainingPlan.trainingPhase !== newTrainingPhase) {
+          trainingPlan.trainingPhase = newTrainingPhase;
+        }
+        if (trainingPlan.trainingFrequency !== newTrainingFrequency) {
+          trainingPlan.trainingFrequency = newTrainingFrequency;
+        }
+
+        console.log("daten gespeichert");
+        await user.save();
+
+
+        res.redirect("/training");
+
+        
+      } catch (err) {
+        console.log("Fehler beim Patchen der Meta-Datend des Trainings " + err);
+      }
+    })
+  }
+}
+
+
 
 // TEMPLATE PLANS
 
@@ -536,13 +545,13 @@ for (let i = 1; i <= 5; i++) { // 5 Training Slots POST
 
 // 2 Neue Routen für den Training Mode der Trainingsfunktion GET UND POST
 for (let i = 1; i <= 5; i++) {
-  Router.get(`/session-${i}-train`, checkAuthenticated, async (req, res) => {
+  Router.get(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
     await handleTrainingSessionGET(req, res, i - 1);
   }) 
 }
 
 for (let i = 1; i <= 5; i++) {
-  Router.post(`/session-${i}-train`, checkAuthenticated, async (req, res) => {
+  Router.post(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
     await handleTrainingSessionPOST(req, res, i - 1);
   }) 
 }
@@ -1015,6 +1024,11 @@ function getTrainingPlanInfo(trainingPlan) {
     trainingPhase,
     amountOfTrainingDays
   };
+}
+
+function getAmountOfTrainingWeeks(trainingPlan) {
+  const trainingWeeks = trainingPlan.trainingWeeks.length;
+  return trainingWeeks;
 }
 
 

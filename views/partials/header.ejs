@@ -1,23 +1,35 @@
-<!DOCTYPE html>
-<html>
-    <body>
-      <nav class="navbar">
-        <a href="/" class="brand-title">Training Systems</a>
-        <div class="navbar-links">
-          <ul>
-            <li><a href="/training">Training</a></li>
-            <li><a href="/tools/volume">Volumenrechner</a></li>
-            <li><a href="/exercises">Übungen</a></li>
-            <!-- <li><a href="/tools">Tools</a></li> -->
-            <li><a href="/logout">LOGOUT</a></li>
-          </ul>
-        </div>
-        <a href="#" class="toggle-button">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </a>
-        
-      </nav>
-    </body>
-</html>
+
+<header class="primary-header flex">
+  <button class="mobile-nav-toggle" aria-controls="primary-navigation">
+      <span class="sr-only" aria-expanded="false">Menu</span>
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="feather feather-menu">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+
+      <svg style="display: none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="feather feather-x">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+  </button>
+  <nav>
+      <ul id="primary-navigation" data-visible="false" class="primary-navigation underline-indicators flex">
+          <li><a class="ff-sans-cond uppercase text-white letter-spacing-2" href="/"><span
+                      aria-hidden="true">00</span>Home</a>
+          <li><a class="ff-sans-cond uppercase text-white letter-spacing-2" href="/training"><span
+                      aria-hidden="true">01</span>Training</a>
+          <li><a class="ff-sans-cond uppercase text-white letter-spacing-2" href="/tools/volume"><span
+                      aria-hidden="true">02</span>Volumenrechner</a>
+          <li><a class="ff-sans-cond uppercase text-white letter-spacing-2" href="/exercises"><span
+                      aria-hidden="true">03</span>Übungen</a>
+        <li><a class="ff-sans-cond uppercase text-white letter-spacing-2" href="/logout"><span
+                      aria-hidden="true">04</span>Logout</a>
+      </ul>
+  </nav>
+</header>

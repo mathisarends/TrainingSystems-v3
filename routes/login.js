@@ -16,7 +16,7 @@ const {
 const User = require("../models/user");
 
 Router.get("/", checkNotAuthenticated, (req, res) => {
-  res.render("login/index", { layout: false });
+  res.render("login/index", {layout: false});
 });
 
 Router.post(

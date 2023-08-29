@@ -1,74 +1,14 @@
-<link rel="stylesheet" href="/stylesheets/homePage.css">
+    <main id="main" class="grid-container grid-container--home">
 
-<h2 class="headline">Wilkommen zurück, <%= name %>!</h2>
 
-<div class="section-container">
-    <div class="profile-picture-container">
-        <button id="change-profile-picture-button" class="invisible-btn">
-                <% if (userProfilePicturePath) { %>
-                    <img class="profile-picture" src="<%= userProfilePicturePath %>" alt="">
-                    <% } else if (gender==="männlich" ) { %>
-                        <img class="profile-picture" src="/images/profile_placeholder_male.jpg" alt="">
-                        <% } else if (gender==="weiblich" ) {%>
-                            <img class="profile-picture" src="/images/profile_placeholder_female.jpg" alt="">
-                            <% } else { %>
-                                <img class="profile-picture" src="/images/profilePicturePlaceholder.png" alt="">
-                                <% } %>
-        </button>
-    </div>
-    <div class="profile-data-container">
-        <h2 class="trainingPlan-headline data-headline" id="data-headline-id">Daten</h2>
-        <div class="user-data-container">
-            <div class="desktop-version-extra-informations">
-                <% if (user.strengthLevel && user.trainingExperience) { %>
-                    <p>Strength Level - <%= user.strengthLevel %></p>
-                    <p>Training Experience - <%= user.trainingExperience.charAt(0).toUpperCase() + user.trainingExperience.slice(1); %></p>
-                <% }  else { %>    
-                    <p>Benutze den Volumenrechner um hier Daten anzeigen zu lassen.</p>
-                <% } %>
-            </div>
-            <% if (formattedDate) { %>
-            <p>Dein letztes Training war am <%= formattedDate %></p>
-            <% } %>
+        <div class="flow">
+            <h1 class="text-accent fs-500 ff-sans-cond uppercase letter-spacing-1">TYR Training Systems
+                <span class="d-block fs-900 ff-serif text-white">TYR</span>
+            </h1>
+            <a href="<%= mostRecentTrainingPlanURI %>" class="main-page-button uppercase">Starten</a>
         </div>
         
-    </div>
-</div>
-
-<form action="/upload-profile-picture" method="POST" enctype="multipart/form-data" id="change-profile-picture-form" style="display: none">
-    <label for="profile-picture" class="link-btn profile-picture-btn">
-        Profilbild auswählen
-    </label>
-    <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
-    <button type="submit" class="link-btn profile-picture-btn">Ändern</button>
-</form>
+    </main>
 
 
 
-<!--Auf Grundlage der besten sätze dieser Trainingswoche das Total berechnen: wenn keine gültigen Werte, dann backup-record werte-->
-
-
-<div class="section-container">
-    <div class="inner-section-container">
-        <h2 class="headline homepage-headline">Trainingstotal diese Woche</h2>
-        <input type="text" id="training-total" value="<%= mostRecentTrainingTotal %>" readonly>
-    </div>
-</div>
-
-<!--Auf Grundlage des Index rausfinden welcher Trainingstag der woche ist und wie viele es gibt-->
-<div class="section-container">
-    <div class="inner-section-container">
-        <h2 class="headline homepage-headline">Abgeschlossene Trainings diese Woche</h2>
-        <progress id="training-week-progress" value="<%= currentTrainingDay %>"
-            max="<%= mostRecentTrainingPlan?.trainingFrequency%>"></progress>
-    </div>
-</div>
-
-
-<h2 class="headline homepage-headline">Dein nächstes Training: <span><%= trainingPlanTitle %> - W<%= trainingWeek %>D<%= nextTrainingday %></span></h2>
-<a href="<%= mostRecentTrainingPlanURI %>" class="link-btn">Training fortsetzen</a>
-
-<a href="/logout" class="link-btn">LOGOUT</a>
-
-
-<script src="/javascripts/homepage/homePage.js"></script>

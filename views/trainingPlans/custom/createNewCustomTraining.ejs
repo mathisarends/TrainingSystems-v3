@@ -1,231 +1,76 @@
-<style>
-    .create-training-plan-input {
-        display: block;
-        width: 100%;
-        border: 1px solid #dddddd;
-        outline: none;
-        background: linear-gradient(to left, var(--color-td), var(--color-hellgrau));
-        font-family: "Roboto", "sans-serif";
+<!DOCTYPE html>
+<html lang="en">
 
-        font-size: 1.25rem;
-        font-weight: 400;
-        letter-spacing: 1.25px;
-        padding: 0.5rem 0.85rem 0.5rem 0.85rem;
-        border-radius: 1rem;
-    }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/shared/index.css">
+    <link rel="stylesheet" href="/stylesheets/login.css">
+    <link rel="manifest" href="/manifest/manifest.webmanifest">
+    <title>Trainingsplan erstellen</title>
+</head>
 
-    .create-training-input-container .input-section .select-container .generic-selector,
-    .create-training-input-container .input-section input[type="text"] {
-        border: 1px solid #dddddd;
-        background: linear-gradient(to left, var(--color-td), var(--color-hellgrau));
-        padding: 0.5rem 0.85rem 0.5rem 0.85rem;
-    }
+<body class="home">
 
-    .create-training-input-container {
-        margin-top: 2rem;
-    }
-
-    .create-training-input-container .input-section  {
-        
-        margin: 0;
-        letter-spacing: 1.5px;
-
-        /* border: 2px solid var(--color-hellgrau); */
-        border-radius: 0.5rem;
-        font-size: 1.35rem;
-        padding-left: 0.85rem;
-        margin-bottom: 1.25rem;
-        box-shadow: 0 2px 4px rgba(223, 223, 223, 0.1);
-    }
-
-    .create-training-input-container .input-section .select-container,
-    .create-training-input-container .input-section input[type="text"] {
-        margin-top: 0.35rem;
-    }
-
-
-    
-
-    .create-training-input-container .input-section .select-container #training-mode-selector {
-        padding: 0;
-        padding: 0.5rem 0.85rem 0.5rem 0.85rem;
-    }
-
-    
-
-    .create-training-input-container .input-section label {
-        font-weight: 400;
-        font-size: 1.125rem;
-        letter-spacing: 1.125px;
-    }
-
-    .input-headline {
-        font-weight: 500;
-        width: 100%;
-        border: none;
-        background-color: var(--color-input);
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0.25rem 0.5rem;
-        font-size: 1.2rem;
-        color: #444;
-        box-shadow: 0 8px 16px rgba(228, 228, 228, 0.3);
-        border-radius: 0.5rem;
-    }
-
-
-</style>
-
-
-<div class="inner-inner-container"> <!--from Training Index Page-->
     <form action="/training/create-training-plan" method="POST">
-        <h2 class="headline">
-            Neuen Trainingsplan erstellen
-        </h2>
-    
-        <div class="create-training-input-container">
+        <h3 class="text-white ff-serif fs-7 00 letter-spacing-1 uppercase">Training</h3>
+
+        <label for="training_title" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Titel</label>
+        <input type="text" id="training-title" class="create-training-plan-input" name="training_title" required>
+
+        <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainingsphase</label>
+        <select name="training_phase" class="generic-selector" required>
+            <option value="" disabled selected hidden></option>
+            <option value="hypertrophie">Hypertrophie</option>
+            <option value="kraft">Kraft</option>
+            <option value="peaking">Peaking</option>
+        </select>
+
+        <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainings / Woche</label>
+        <select name="training_frequency" class="generic-selector" required>
+            <option value="" disabled selected hidden></option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
 
 
-            <div class="input-section">
-                <label for="training-title" class="input-headline">Wähle einen passenden Namen</label>
-                <input type="text" id="training-title" class="create-training-plan-input" name="training_title" required>
-            </div>
-        
+        <label for="repeat-password" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Blocklänge (Wochen)</label>
+        <select name="training_weeks" class="generic-selector" required>
+            <option value="" disabled selected hidden></option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
 
-            <div class="input-section">
-                <label for="training-mode-selector">In welcher Trainingsphase befindest du dich?</label>
-            <div class="select-container remove-margin">
-                <select name="training_phase" class="generic-selector" required>
-                    <option value="" disabled selected hidden></option>
-                    <option value="hypertrophie">Hypertrophie</option>
-                    <option value="kraft">Kraft</option>
-                    <option value="peaking">Peaking</option>
-                </select>
-                <div class="icon-container">
-                    <div class="svg-container" style="display: none">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-arrow-up">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                    </div>
-                    <div class="svg-container" style="display: block">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-arrow-down">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <polyline points="19 12 12 19 5 12"></polyline>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            </div>
-            
-        
-            <div class="input-section">
-                <label for="training-mode-selector">Wie oft möchtest du pro Woche trainieren?</label>
-            <div class="select-container remove-margin">
-                <select name="training_frequency" class="generic-selector" required>
-                    <option value="" disabled selected hidden></option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                </select>
-                <div class="icon-container">
-                    <div class="svg-container" style="display: none">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-arrow-up">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                    </div>
-                    <div class="svg-container" style="display: block">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-arrow-down">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <polyline points="19 12 12 19 5 12"></polyline>
-                        </svg>
-                    </div>
-                </div>
-            </div>  
-            </div>
-            
-            
-            <div class="input-section">
-                <label for="training-mode-selector">Wie lang soll der Block gehen?</label>
-                <div class="select-container remove-margin">
-                    <select name="training_weeks" class="generic-selector" required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                    </select>
-                    <div class="icon-container">
-                        <div class="svg-container" style="display: none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-arrow-up">
-                                <line x1="12" y1="19" x2="12" y2="5"></line>
-                                <polyline points="5 12 12 5 19 12"></polyline>
-                            </svg>
-                        </div>
-                        <div class="svg-container" style="display: block">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-arrow-down">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <polyline points="19 12 12 19 5 12"></polyline>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="input-section">
-                <label for="training-mode-selector">Auf was für einen Gerät befindest du dich momentan?</label>
-            <div class="select-container remove-margin">
-                <select name="currentDevice" class="generic-selector" required>
-                    <option value="" disabled selected hidden></option>
-                    <option value="Handy">Handy</option>
-                    <option value="PC">PC</option>
-                    <option value="Tablet">Tablet</option>
-                </select>
-                <div class="icon-container">
-                    <div class="svg-container" style="display: none">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-arrow-up">
-                            <line x1="12" y1="19" x2="12" y2="5"></line>
-                            <polyline points="5 12 12 5 19 12"></polyline>
-                        </svg>
-                    </div>
-                    <div class="svg-container" style="display: block">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-arrow-down">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <polyline points="19 12 12 19 5 12"></polyline>
-                        </svg>
-                    </div>
-                </div>
-            </div>  
-            </div>
-              
-        
-    
-            <button class="btn">Trainingsplan erstellen</button>
-        </div>
-    
-        
+
+        <button type="submit" class="uppercase alt-button">Create</button>
+        </button>
+        <button class="uppercase fs-500" id="cancel-button" style="border: none;">Back</button>
+
+
     </form>
-</div>
 
+<script>
+    const cancelButton = document.getElementById("cancel-button");
+
+    cancelButton.addEventListener("click", e => {
+        e.preventDefault();
+        window.location.href = "/training";
+    })
+
+</script>
+
+</html>
 
 
 

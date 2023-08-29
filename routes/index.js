@@ -71,6 +71,14 @@ Router.post(
   }
 );
 
+Router.get("/newIndex", async (req, res) => {
+  try {
+    res.render("newIndex", { layout: false });
+  } catch (e) {
+    console.log("Fehler aufgetreten: " + e);
+  }
+})
+
 
 
 Router.get("/", checkAuthenticated, async (req, res) => {

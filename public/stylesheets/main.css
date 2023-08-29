@@ -1,35 +1,10 @@
-@import "shared/variables.css";
-@import "shared/header.css";
-@import "shared/headlines.css";
-@import "shared/button.css";
-@import "shared/tables.css";
-@import "shared/training.css";
-@import "shared/trainingIndex.css";
-@import "shared/volumeCalculator.css";
-@import "shared/confirmation-modal.css";
-@import "shared/tools.css";
-@import "shared/progressBars.css";
+@import "shared/index.css";
 @import "shared/select.css";
+@import "shared/trainingNew.css";
+@import "shared/tablesNew.css";
+@import "shared/progressBars.css";
+@import "shared/button.css";
 
-@import "shared/inputs.css";
-@import "shared/roots.css";
-
-
-.remove-margin {
-    margin: 0;
-}
-
-.remove-padding {
-    padding: 0 !important;
-}
-
-.hidden {
-    display: none;
-}
-
-*, *::before, *::after {
-    box-sizing: border-box;
-}
 
 /*scrollbar settings*/
 body::-webkit-scrollbar {
@@ -42,66 +17,4 @@ body::-webkit-scrollbar-track {
 
 body::-webkit-scrollbar-thum {
     background-color: var(--color-navigation);
-}
-
-body {
-    --color-background-start: #F5F5F5; /* Define the start color for the gradient */
-    --color-background-end: #f4f4f4; /* Define the end color for the gradient */
-
-    color: var(--color-text);
-    background-image: linear-gradient(to left, var(--color-background-start), var(--color-background-end));
-    color: var(--color-text);
-    background-color: var(--color-background);
-    justify-content: space-evenly; /*dont know wheter its needed*/
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-}
-
-.inner-container {
-    margin-top: 8rem;
-    padding-bottom: 70px;
-}
-
-@media screen and (max-width: 320px) {
-    body {
-        padding-left: 0.65rem;
-        padding-right: 0.65rem;
-    }
-}
-
-@media screen and (min-width: 321px) and (max-width: 480px) {
-    body {
-        padding-left: 0.35rem;
-        padding-right: 0.35rem;
-    }
-}
-
-@media screen and (min-width: 481px) and (max-width: 768px) {
-    body {
-        padding-left: 0.85rem;
-        padding-right: 0.85rem;
-    }
-}
-
-@media screen and (min-width: 769px) and (max-width: 1024px) {
-    body {
-        padding-left: 1.35rem;
-        padding-right: 1.35rem;
-    }
-}
-
-/* Desktops mit mittleren Bildschirmen */
-@media screen and (min-width: 1500px) {
-    body {
-        padding-left: 3.5rem;
-        padding-right: 3.5rem;
-    }
-}
-
-/* Desktops mit größeren Bildschirmen */
-@media screen and (min-width: 2000px) {
-    body {
-        padding-left: 9rem;
-        padding-right: 9rem;
-    }
 }

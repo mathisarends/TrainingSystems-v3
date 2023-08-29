@@ -1,340 +1,182 @@
-<div class="inner-container">
+<main id="main" class="grid-container grid-container--training flow">
+    <h1 class="numbered-title"><span aria-hidden="true">01</span>CUSTOM</h1>
+    
+    <div class="tab-list underline-indicators flex" role="tablist" aria-label="destination list" style="justify-content: space-between;">
+        <button aria-selected="true" role="tab" aria-controls="custom-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Custom</button>
+        <button aria-selected="false" role="tab" aria-controls="session-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Session</button>
+        <button aria-selected="false" role="tab" aria-controls="template-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
+    </div>
 
-    <div class="inner-inner-container">
+    <!--Custom Trainings-->
+    <section class="custom-view-container flow" style="--flow-space: 2em;">
 
-        <h2 class="headline">
-            Art von Trainingsplan auswählen
-        </h2>
-        <div class="select-container">
-            <select name="trainingMode" id="training-mode-selector">
-                <option value="scratch" <%=lastVisitedTrainingMode==="scratch" ? "selected" : "" %>>Training</option>
-                <option value="custom" <%=lastVisitedTrainingMode==="custom" ? "selected" : "" %>>Benutzerdefiniert
-                </option>
-                <option value="template" <%=lastVisitedTrainingMode==="template" ? "selected" : "" %> >Vorlagen</option>
-            </select>
-            <div class="icon-container">
-
-                <div class="svg-container" style="display: none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-arrow-up">
-                        <line x1="12" y1="19" x2="12" y2="5"></line>
-                        <polyline points="5 12 12 5 19 12"></polyline>
-                    </svg>
-                </div>
-                <div class="svg-container" style="display: block">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-arrow-down">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <polyline points="19 12 12 19 5 12"></polyline>
-                    </svg>
-                </div>
-
-
+        <% if (errorCreatingNewCustomTrainingPlan) { %>
+            <div class="ff-sans-cond letter-spacing-3 fs-500" style="text-align: center;">
+                <%= errorCreatingNewCustomTrainingPlan %>
             </div>
-        </div>
+            <% } %>
 
-        <div class="training-plan-view-container custom-view-container" style="display: block">
-
-            <button class="btn create-training-btn" id="createCustomTrainingPlanBTN">Neuen Trainingsplan
-                erstellen</button>
-
-            <% if (errorCreatingNewCustomTrainingPlan) { %>
-                <div class="no-workout-available-container" style="color:#d32f2f">
-                    <%= errorCreatingNewCustomTrainingPlan %>
-                </div>
-                <% } %>
-
-                    <h2 class="headline show-more-training-information-button">
-                        <div class="show-training-headline">
-                            Gespeicherte Trainingspläne
-                        </div>
-
-                        <button>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-bar-chart">
-                                <line x1="12" y1="20" x2="12" y2="10"></line>
-                                <line x1="18" y1="20" x2="18" y2="4"></line>
-                                <line x1="6" y1="20" x2="6" y2="16"></line>
-                            </svg>
-                        </button>
-                    </h2>
-
-                    <div class="more-training-info-container" style="display: none">
-                        Hier kannst du dein Training komplett individuell und auf deine Bedürfnisse abgestimmt planen.
-                        Falls du primär die Grundübungen trainierst empfehle ich dir vorher den Volumenrechner zu
-                        verwenden.
-                        <p>Hinweis: Ein Einrichtung auf dem PC ist aufjedenfall zu empfehlen um alle Funktionen nutzen
-                            zu können!</p>
-                        <p>Ein einzelnes Training kannst du <a href="/training/createTraining">hier</a> aufzeichnen</p>
+                <% if (userCustomTrainings.length===0) { %>
+                    <div class="ff-sans-cond letter-spacing-3 fs-500" style="text-align: center;">
+                        Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
+                        Erstelle mit Klick auf den Button deinen eigenen Trainingsplan.
+                        <p>Hinweis: Dies solltest du am PC machen damit du auf alle Funktionalitäten wie die
+                            übungsspezifische Pausenzeiten oder den integrierte Backoff Rechner zugreifen kannst.
+                            Um stattdessen ein einzelnes Training aufzuzeichnen <a
+                                href="/training/createTraining">klicke hier.</a> </p>
                     </div>
-
-                    <% if (userCustomTrainings.length===0) { %>
-                        <div class="no-workout-available-container">
-                            Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
-                            Erstelle mit Klick auf den Button deinen eigenen Trainingsplan.
-                            <p>Hinweis: Dies solltest du am PC machen damit du auf alle Funktionalitäten wie die
-                                übungsspezifische Pausenzeiten oder den integrierte Backoff Rechner zugreifen kannst.
-                                Um stattdessen ein einzelnes Training aufzuzeichnen <a
-                                    href="/training/createTraining">klicke hier.</a> </p>
-                        </div>
-                        <% } %>
-
-
-                            <div class="trainingPlan-container">
-                                <% for (let i=0; i < userCustomTrainings.length; i++) { %>
-                                    <a href="#">
-                                        <div style="display: none" class="hidden-index">
-                                            <%= i %>
-                                        </div>
-                                        <input type="text" class="customNextTrainingWeek" value="<%= customCurrentTrainingWeek[i] %>" style="display: none">
-                                        <div class="workout-preview-headline">
-                                            <%= userCustomTrainings[i].title || "Custom A" %>
-                                        </div>
-                                        <div class="workout-preview-container">
-                                            <%= formattedTrainingPlanDates[i] %>
-                                        </div>
-                                        <div class="workout-preview-outer-container">
-                                            <!-- Hier können Sie die neu berechneten Daten für das benutzerdefinierte Training anzeigen -->
-                                            <% if (customNextTrainingdayInformation[i] && customNextTrainingdayInformation[i].length > 0) { %>
-                                              <% for (let j = 0; j < customNextTrainingdayInformation[i].length; j++) { %>
-                                                <%= customNextTrainingdayInformation[i][j].exercise %> <%= customNextTrainingdayInformation[i][j].sets %> x <%= customNextTrainingdayInformation[i][j].reps %> @ <%= customNextTrainingdayInformation[i][j].targetRPE %><br>
-                                              <% } %>
-                                              <div class="workout-preview-outer-container">
-                                                + Assistenzen
-                                              </div>
-
-
-                                            <% } else { %>
-                                              <!-- Wenn keine Daten verfügbar sind -->
-                                              Keine Trainingsvorschau verfügbar
-                                            <% } %>
-                                          </div>
-                                        </a>
-
-
-                                    <% } %>
-                            </div>
-
-
-
-                            <div class="training-button-container">
-                                <button class="calc-button remove-margin training-plan-button">Training
-                                    fortsetzen</button>
-
-                            <!--Dieser Button soll nur dann angezeigt werden wenn ein mobiles Gerät vorliegt <1042px breite-->
-                                <!--Plan bearbeiten auf dem Handy-->
-                                <button class="calc-button remove-margin edit-training-plan-button">Plan Aufsetzen</button>
-
-                                <button class="calc-button remove-margin"
-                                    id="custom-delete-placeholder-button">Löschen</button>
-                                <!--Placeholder button der removed wird wenn ein link ausgewählt wird-->
-
-                                <% for (let i=0; i < userCustomTrainings.length; i++) { %>
-                                    <form action="/training/delete-training-plan?_method=DELETE" method="POST"
-                                        class="delete-form" style="display: none">
-                                        <input type="hidden" value="<%= i %>" name="deleteIndex">
-                                        <button class="calc-button remove-margin" type="submit">Löschen</button>
-                                    </form>
-                                    <% } %>
-
-                            </div>
-
-
-        </div>
-
-        <div class="training-plan-view-container template-view-container" style="display: none">
-
-
-            <button class="btn create-training-btn remove-margin" id="start-template-training-button">Training Starten
-            </button>
-
-            <h2 class="headline show-more-training-information-button">
-                <div class="show-training-headline">
-                    Gespeicherte Templates
-                </div>
-
-                <% for (let i=0; i < 2; i++) { %>
-                    <form action="/training/reset-template-training" method="POST" class="reset-template-training-form"
-                        style="display: none">
-                        <input type="hidden" value="<%= i %>" name="resetIndex">
-                        <button class="invisible-btn reset-template-training-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-trash">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path
-                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                </path>
-                            </svg></button> <!--TODO implementieren-->
-                    </form>
                     <% } %>
 
-            </h2>
 
-            <div class="more-training-info-container" style="display: none">
-                Diese Trainingstemplates kannst du abtrainieren oder einfach zur Inspiration nutzen deine eigenen Pläne
-                zu erstellen.
-            </div>
+                        <div class="training-plan-container flex" style="--gap: 1rem;">
+                            <% for (let i=0; i < userCustomTrainings.length; i++) { %>
 
-            <div class="trainingPlan-container">
-                <% for (let i=0; i < userTemplateTrainings.length; i++) { %>
-                    <a>
-                        <div style="display: none" class="hidden-index">
-                            <%= i %>
-                        </div>
-                        <input type="text" class="templateNextTrainingWeek" value="<%= templateCurrentTrainingWeek[i] %>" style="display: none">
-                        <div class="workout-preview-headline">
-                            <% const templateLetters="ABCDEFGHIJKLMNOPQRSTUVWXYZ" ; %>
-                                <%= userTemplateTrainings[i].title || ("Template " + templateLetters[i]); %>
-                            </div>
-                            <div class="workout-preview-container">
-                                <%= formattedTemplateTrainingPlanDates[i] %>
-                            </div>
-                            <div class="workout-preview-outer-container">
-                                <!-- Hier können Sie die neu berechneten Daten für das benutzerdefinierte Training anzeigen -->
-                                <% if (templateNextTrainingDayInformation[i] && templateNextTrainingDayInformation[i].length > 0) { %>
-                                  <% for (let j = 0; j < templateNextTrainingDayInformation[i].length; j++) { %>
-                                    <%= templateNextTrainingDayInformation[i][j].exercise %> <%= templateNextTrainingDayInformation[i][j].sets %> x <%= templateNextTrainingDayInformation[i][j].reps %>
-                                    <% if (templateNextTrainingDayInformation[i][j].targetRPE !== undefined) { %>
-                                      @ <%= templateNextTrainingDayInformation[i][j].targetRPE %>
-                                    <% } %><br>
-                                  <% } %>
-
-                                  <div class="workout-preview-outer-container">
-                                    + Assistenzen
-                                </div>
-                                <% } else { %>
-                                  <!-- Wenn keine Daten verfügbar sind -->
-                                  Keine Trainingsvorschau verfügbar
-                                <% } %>
-                              </div>
-
-                    </a>
-                    <% } %>
-            </div>
-
-        </div>
-
-        <div class="training-plan-view-container scratch-view-container" style="display: none">
-            <!--Create Training from Scratch-->
-            <button id="start-scratch-training-btn" class="btn create-training-btn">Neues Training
-                Beginnen
-            </button>
-
-            <% if (errorCreatingNewCustomTraining) { %>
-                <div class="no-workout-available-container" style="color:#d32f2f">
-                    <%= errorCreatingNewCustomTraining %>
-                </div>
-                <% } %>
-
-                    </button>
-                    <h2 class="headline show-more-training-information-button">
-                        <div class="show-training-headline">
-                            Abgeschlossene Trainings
-                        </div>
-
-                        <% for (let i=0; i < userTrainings.length; i++) { %>
-                            <form action="/training/delete-training?_method=DELETE" method="POST" class="delete-form-training delete-form" style="display: none"> 
-                                <input type="hidden" value="<%= i %>" name="deleteIndex">
-                                <button class="invisible-btn delete-training-button" type="submit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="feather feather-trash">
-                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                        <path
-                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                        </path>
-                                    </svg></button>
-                            </form>
-                            <% } %>
-                    </h2>
-
-                    <div class="more-training-info-container" style="display: none">
-                        Hier kannst du ein einzelnes Training aufzeichnen falls du dich gerade nicht in einer bestimmten
-                        Trainingsphase befindest bzw. einfach
-                        mal so ein Training außerhalb der Reihe machen möchtest.
-                    </div>
-
-
-                    <% if (userTrainings.length===0) { %>
-                        <div class="no-workout-available-container">
-                            Es sieht so aus als hättest du keine gespeicherten Trainings.
-                            Starte eines mit dem Button oben!
-                        </div>
-                        <% } %>
-
-
-
-                            <div class="trainingPlan-container" id="trainingContainer">
-                                <% for (let i=0; i < userTrainings.length; i++) { %>
-                                    <% const plan=userTrainings[i]; %>
-                                        <% const previewInformation=trainingPreviewInformation[i]; %>
-                                            <a href="#">
-                                                <div style="display: none" class="hidden-index">
-                                                    <%= i %>
-                                                </div>
-                                                <div class="workout-preview-headline">
-                                                    <%= plan.title %>
-                                                </div>
-                                                <div class="workout-preview-container">
-                                                    <%= trainingFormattedDates[i] %>
-                                                </div>
-                                                <div class="workout-preview-outer-container">
-                                                    <% for (let j=0; j < previewInformation.length; j++) { %>
-                                                        <% const exerciseData=previewInformation[j]; %>
-
-                                                            <% if (exerciseData.exercise) { %>
-                                                                <div class="workout-preview-container">
-                                                                    <%= exerciseData.exercise %>
-                                                                        <span>
-                                                                            <%= exerciseData.sets %> x <%=
-                                                                                    exerciseData.reps %> @<%=
-                                                                                        exerciseData.rpe %>
-                                                                        </span>
-                                                                </div>
-
-                                                                <% } %>
-                                                                    <% } %>
-                                                </div>
-                                            </a>
-                                            <% } %>
-                            </div>
-
-                            <!--TODO: hier entsprechende logik implementieren-->
-                            <div class="training-button-container">
-                                <div id="training-button-placeholder-container">
-                                    <button class="calc-button remove-margin">Trainieren</button>
-                                    <button class="calc-button remove-margin">Bearbeiten</button>
-                                </div>
-
-                                <% for (let i=0; i < userTrainings.length; i++) { %>
-                                    <div class="training-button-inner-container" style="display: none">
-                                        <button
-                                            class="calc-button remove-margin start-training-button">Trainieren</button>
-                                        <button
-                                            class="calc-button remove-margin edit-training-button">Bearbeiten</button>
+                                <div class="custom-training-container">
+                                    <div style="display: none" class="hidden-index">
+                                        <%= i %>
                                     </div>
+                                    <input type="text" class="customNextTrainingWeek" value="<%= customCurrentTrainingWeek[i] %>" style="display: none">
+                                    <div class="uppercase">
+                                        <%= userCustomTrainings[i].title || "Custom A" %>
+                                    </div>
+                                    <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                        <%= formattedTrainingPlanDates[i] %>
+                                    </div>
+                                </div>
+                                <% } %>
+                        </div>
 
-                                    <% } %>
-                            </div>
+
+
+                        <div class="training-button-container">
+                            <button class="main-page-button training-plan-button uppercase" id="start-custom-training-button">Trainieren</button>
+
+                            <button class="main-page-button edit-training-plan-button uppercase" id="edit-custom-training-button">Bearbeiten</button>
+                           
+                            <% for (let i=0; i < userCustomTrainings.length; i++) { %>
+                                <form action="/training/delete-training-plan?_method=DELETE" method="POST"
+                                    class="delete-form" style="display: none">
+                                    <input type="hidden" value="<%= i %>" name="deleteIndex">
+                                    <button class="main-page-button uppercase" type="submit">Löschen</button>
+                                </form>
+                                <% } %>
+
+                        </div>
+                        
+                        <button class="main-page-button training-page-button uppercase letter-spacing-1" id="createCustomTrainingPlanBTN">
+                            Erstellen</button>
+    </section>
+
+    <!--Training Sessions-->
+    <section class="custom-view-container scratch-view-container flow" hidden>
+
+        <% if (errorCreatingNewCustomTraining) { %>
+            <div class="ff-sans-cond letter-spacing-3 fs-500" style="text-align: center;">
+                <%= errorCreatingNewCustomTraining %>
+            </div>
+        <% } %>
+        <% if (userTrainings.length===0) { %>
+            <div class="ff-sans-cond letter-spacing-3 fs-500" style="text-align: center;">
+                Es sieht so aus als hättest du keine gespeicherten Trainings.
+                Starte eines mit dem Button unten!
+            </div>
+            <% } %>
+        
+        <div class="training-plan-container flex">
+            <% for (let i = 0; i < userTrainings.length; i++) { %>
+
+                <div class="custom-training-container">
+                    <% const plan = userTrainings[i] %>
+                    <div style="display: none" class="hidden-index">
+                        <%= i %>
+                    </div>
+                    <div class="uppercase">
+                        <%= plan.title %>
+                    </div>
+                    <div class="ff-sans-cond fs-400 letter-spacing-4">
+                        <%= trainingFormattedDates[i] %>
+                    </div>
+                </div>
+
+                
+            <% } %>
         </div>
 
-        <div id="confirmationModal" class="modal">
-            <div class="modal-content">
-                <p>Bist du dir sicher dass du das Training löschen möchtest?</p>
-                <div class="modal-buttons">
-                    <button class="modal-button" id="confirmResetButton">LÖSCHEN</button>
-                    <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+        <div class="training-button-container">
+            <button class="main-page-button training-plan-button uppercase" id="start-session">
+                Trainieren
+            </button>
+            <button class="main-page-button training-plan-button uppercase" id="edit-session">
+                Bearbeiten
+            </button>   
+            <% for (let i = 0; i < userTrainings.length; i++) { %>
+                <form action="/training/delete-training?_method=DELETE" method="POST"
+                class="delete-form-training delete-form" style="display: none">
+                    <input type="hidden" value="<%= i %>" name="deleteIndex">
+                    <button class="main-page-button trainin-plan-button uppercase" type="submit">Löschen</button>
+                </form>
+            <% } %>
+        </div>
+
+        <button class="main-page-button training-page-button uppercase letter-spacing-1" id="create-training-btn">
+            Erstellen
+        </button>
+
+    </section>
+
+    <!--Template Pläne-->
+    <section class="custom-view-container template-view-container flow" hidden>
+
+        <div class="training-plan-container flex" style="--gap: 1rem">
+            <% for (let i = 0; i < user.trainingPlanTemplate.length; i++) { %>
+                <div class="custom-training-container">
+                    <div style="display: none" class="hidden-index">
+                        <%= i %>
+                    </div>
+                    <input type="text" class="templateNextTrainingWeek" value="<%= templateCurrentTrainingWeek[i] %>" style="display: none">
+                    <div class="uppercase">
+                        <% const templateLetters="ABCDEFGHIJKLMNOPQRSTUVWXYZ" ; %>
+                            <%= userTemplateTrainings[i].title || ("Template " + templateLetters[i]); %>
+                    </div>
+                    <div class="ff-sans-cond fs-400 letter-spacing-4">
+                        <%= formattedTemplateTrainingPlanDates[i] %>
+                    </div>
                 </div>
+            <% } %>
+        </div>
+
+        <div class="training-button-container">
+            <button class="main-page-button training-plan-button uppercase" id="start-template-training-button">
+                Trainieren
+            </button>
+            <button class="main-page-button edit-training-plan-button uppercase" id="edit-template-training-button">
+                Bearbeiten
+            </button>
+            <% for (let i = 0; i < user.trainingPlanTemplate.length; i++) { %>
+                <form action="/training/reset-template-training" method="POST" class="reset-template-training-form" style="display: none;">
+                    <input type="hidden" value="<%= i %>" name="resetIndex">
+                    <button class="main-page-button uppercase" type="submit">Löschen</button>
+
+                </form>
+            <% } %>
+        </div>
+        
+    </section>
+
+    <div id="confirmationModal" class="modal" style="display: none">
+        <div class="modal-content">
+            <p>Bist du dir sicher dass du das Training löschen möchtest?</p>
+            <div class="modal-buttons">
+                <button class="modal-button" id="confirmResetButton">LÖSCHEN</button>
+                <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
             </div>
         </div>
     </div>
+</main>
 
 
-</div>
+
+
 
 <script src="/javascripts/trainingIndexPage/animateSelect.js"></script>
 <script src="/javascripts/trainingIndexPage/trainingPlanCategorySelector.js"></script>
@@ -346,13 +188,9 @@
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        const createCustomTrainingPlanBTN = document.getElementById("createCustomTrainingPlanBTN");
+        /*TODO: Ähnliche Logik umsetzen auch ohne Select element*/
 
-        createCustomTrainingPlanBTN.addEventListener("click", e => {
-            console.log("hr")
-            e.preventDefault();
-            window.location.href = "http://localhost:3000/training/create-training-plan";
-        })
+       let selectedMode = null;
 
         const customPlaceHolderDeleteButton = document.getElementById("custom-delete-placeholder-button");
         customPlaceHolderDeleteButton.addEventListener("click", e => {

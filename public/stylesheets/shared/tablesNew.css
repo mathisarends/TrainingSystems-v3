@@ -1,0 +1,239 @@
+form { /*works as a wrapper*/
+    margin-inline: 2.5%;
+    padding-bottom: 5rem;
+}
+
+input {
+    background: inherit;
+    border: none;
+    /* border-bottom: 1px solid hsl( var(--clr-white) / 0.5); */
+    text-align: center;
+    color: hsl( var(--clr-white) / 1);
+    letter-spacing: 1.5px;
+    padding: 0.5em 1em;
+    width: 100%;
+    height: 100%;
+}
+
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--clr-light) / 1); 
+    bordeR: none;
+}
+
+.exercise-category-selector,
+.exercise-name-selector {
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    /* color: hsl( var(--clr-white) / 0.85); */
+}
+
+.exercise-category-selector option,
+.exercise-name-selector option {
+    color: black;
+}
+
+th:first-of-type,
+th:nth-of-type(2) {
+    text-align: left
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    color: hsl( var(--clr-white) / 0.85);
+}
+
+::placeholder {
+    color: hsl( var(--clr-light) / 1);
+    letter-spacing: 1.5px;
+}
+
+table {
+    background-color: inherit;
+    padding: 1rem;
+    border-collapse: collapse;
+    width: 100%;
+    font-family: var(--ff-sans-normal);
+}
+
+th,td, caption {
+    padding: 0.5em 0.75em;
+}
+
+caption, th {
+    text-align: center;
+}
+
+caption {
+    padding: 0.5em 0;
+
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: var(--ff-sans-normal);
+    color: hsl( var(--clr-light) / 0.85) !important;
+    letter-spacing: 2.5px;
+    text-align: left;
+}
+
+th {
+    background-color: hsl( var(--clr-dark));
+    padding: 1em;
+    border-top: 1px solid hsl( var(--clr-white) / 0.5);
+}
+
+tr {
+    background-color: hsl( var(--clr-light) / 0.095);
+}
+
+tr:nth-of-type(2n) {
+    background-color: hsl( var(--clr-light) / 0.135);
+}
+
+table .table-row td:first-of-type,
+table .table-row td:nth-of-type(2),
+table .table-row td:last-of-type {
+    min-width: 15ch;
+    text-align: left;
+}
+
+.table-container {
+    max-width: 100%;
+    overflow-x: scroll;
+}
+
+
+.rest-pause-container {
+    display: none;
+}
+
+.calculate-table {
+    margin-top: 4rem;
+}
+
+
+/*Session Tables*/
+
+.create-training-table th:first-of-type,
+.create-training-table th:nth-of-type(2) {
+    text-align: center;
+}
+
+/*Utility reset class for volume-table*/
+.left {
+    text-align: left !important;
+    padding-left: 0 !important;
+}
+
+.calculate-table .volume-selector {
+    text-align: center;
+}
+
+.calculate-table tr td:last-of-type {
+    padding-left: 1em;
+}
+
+.calculate-table tr td input[type="text"],
+.calculate-table tr td select {
+    padding: 0;
+    text-align: left;
+}
+
+.calculate-table th:last-of-type {
+    text-align: left;
+}
+
+
+@media (max-width: 1154px) {
+
+    .create-training-table th {
+        display: none !important;
+    }
+
+    form {
+        margin-inline: 0;
+    }
+
+    th {
+        display: none;
+    }
+
+    td {
+        display: grid;
+        gap: 0.5rem;
+        grid-template-columns: 15ch auto;
+        padding: 0.75rem 1rem;
+        font-size: 1.1rem;
+    }
+
+    td::before {
+        color:hsl( var(--clr-white) / 1);
+        content: attr(data-cell) ": ";
+        font-size: 1.1rem;
+        text-transform: capitalize;
+    }
+
+    caption {
+        padding-top: 0.75em;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .rest-pause-container {
+        display: block;
+        margin-top: 0.5em;
+    }
+
+    .rest-pause-container .rest-pause-timer {
+        font-size: 0.75em;
+    }
+
+    .exercise-category-selector,
+    .exercise-name-selector,
+    input {
+        text-align: left;
+        padding: 0;
+    }
+
+    .exercise-category-selector {
+        text-transform: uppercase;
+    }
+
+    td:first-child {
+        padding-top: 1.5rem;
+    }
+
+    td:last-child {
+        padding-bottom: 1.5rem;
+    }
+    
+
+    td input {
+        width: auto;
+    }
+
+    .navigate-week-button-container {
+        height: 4rem;
+    }
+
+    .navigate-week-button-container a {
+        height: 1.75rem;
+    }
+
+    .calculate-table, table { /*where volume recommandations are shown*/
+        margin-top: 2rem;
+        border-top: 2px solid hsl( var(--clr-white) / 0.5);
+    }
+
+    .dot-indicators {
+        --gap: 2rem;
+    }
+}

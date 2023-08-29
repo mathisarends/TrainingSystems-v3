@@ -4,67 +4,39 @@
 <form id="workout-form" method="POST" action="?_method=PATCH" name="editTraining"> <!--name ist wichtig für modal-->
 
     <div class="table-section">
-        <!--Workout Description-->
-        <div class="training-day-information-container">
-            <div class="training-name-more-options-container">
-                <input type="text" class="training-name" value="<%= trainingTitle || " Workout 1" %>"
-                name="training_name">
-                <div class="more-info-button-time-container">
-                    <button class="more-info-button">
-                        <svg class="exercise-show-more-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <div class="rest-pause-timer" style="display: none">
-                00:00
-            </div>
-            <input class="notes-regarding-workout" name="notes_regarding_workout" type="text"
-                placeholder="Bemerkungen zum Workout">
-        </div>
 
         <table class="workout-table create-training-table">
             <thead>
+                <caption>
+                    <input class="uppercase fs-500 letter-spacing-3 text-accent" type="text" value="<%= trainingTitle || " Workout 1" %>"
+                    name="training_name">
+                </caption>
                 <tr class="table-header-row">
-                    <th>Übung</th>
-                    <th>Sätze</th>
+                    <th>Exericse</th>
+                    <th>Sets</th>
                     <th>Reps</th>
-                    <th>Gewicht</th>
+                    <th>Weight</th>
                     <th>RPE</th>
                     <th>1RM</th>
                 </tr>
             </thead>
             <tbody>
-                <!--nur für Abstand kriege das anders nicht hin-->
-                <tr class="table-row">
-                    <td>a</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
                 <!--TODO: den inputs die jeweiligen klassen geben die name attribute setzen: im post verarbeiten und javascript fehler behebend-->
 
                 <% for (let i=1; i <=9; i++) { %>
                     <% const exerciseData=trainingData[i - 1]; %>
                         <tr class="table-row">
-                            <td><input type="text" class="exercise-name" name="exercise_name_<%= i %>"
+                            <td data-cell="Exercise"><input type="text" class="exercise-name" name="exercise_name_<%= i %>"
                                     value="<%= exerciseData.exercise || "" %>"></td>
-                            <td><input type="number" class="sets" name="exercise_sets_<%= i %>"
+                            <td data-cell="Sets"><input type="number" class="sets" name="exercise_sets_<%= i %>"
                                     value="<%= exerciseData.sets %>"></td>
-                            <td><input type="number" class="reps" name="exercise_reps_<%= i %>"
+                            <td data-cell="Reps"><input type="number" class="reps" name="exercise_reps_<%= i %>"
                                     value="<%= exerciseData.reps %>"></td>
-                            <td><input type="text" class="weight" name="exercise_weight_<%= i %>"
+                            <td data-cell="Weight"><input type="text" class="weight" name="exercise_weight_<%= i %>"
                                     value="<%= exerciseData.weight %>"></td>
-                            <td><input type="number" class="actualRPE" step="0.5" name="exercise_actualRPE_<%= i %>"
+                            <td data-cell="RPE"><input type="number" class="actualRPE" step="0.5" name="exercise_actualRPE_<%= i %>"
                                     value="<%= exerciseData.rpe %>"></td>
-                            <td><input type="number" class="estMax" step="0.5" name="exercise_max_<%= i %>"
+                            <td data-cell="1RM"><input type="number" class="estMax" step="0.5" name="exercise_max_<%= i %>"
                                     value="<%= exerciseData.estMax %>"></td>
                         </tr>
                         <% } %>
@@ -73,33 +45,16 @@
         </table>
     </div>
 
+    <div class="flow" style="--flow-space: 0.5rem">
+        <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit" style="margin: 0;">Save</button>
+        <button class="main-page-button save-training-button uppercase ff-sans-normal" style="margin: 0;" id="show-training-history">History</button>
+    </div>
+
     <div class="training-history-container">
-        <button class="invisible-btn" id="show-training-history">
-            <h2 class="headline">
-                <div>
-                    Absolvierte Trainings
-                </div>
-
-                <svg class="arrow-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-arrow-down">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <polyline points="19 12 12 19 5 12"></polyline>
-                </svg>
-
-
-                <svg class="arrow-svg" style="display: none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-arrow-up">
-                    <line x1="12" y1="19" x2="12" y2="5"></line>
-                    <polyline points="5 12 12 5 19 12"></polyline>
-                </svg>
-            </h2>
-        </button>
 
         <div class="training-history" style="display: none">
             <% if (training.trainings.length < 2) { %>
-                <div class="no-workout-available-container">
+                <div class="ff-sans-cond text-accent letter-spacing-3 fs-400" style="text-align: center; margin-top: 1.5em;">
                     Es sieht so aus als hättest du keine weiteren gespeicherten Trainings dieser Art.
                 </div>
                 <% } else { %>
@@ -116,40 +71,31 @@
                             <table class="workout-table create-training-table">
                                 <thead>
                                     <tr class="table-header-row">
-                                        <th>Übung</th>
-                                        <th>Sätze</th>
+                                        <th>Exericse</th>
+                                        <th>Sets</th>
                                         <th>Reps</th>
-                                        <th>Gewicht</th>
+                                        <th>Weight</th>
                                         <th>RPE</th>
                                         <th>1RM</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!--nur für Abstand kriege das anders nicht hin-->
-                                    <tr class="table-row">
-                                        <td>a</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
                                     
                                     <!--Soll nur eine anzeige werden deswegen disabled und fehlende Name attribute-->
                                     <% for (let j=1; j <=9; j++) { %>
                                         <% const previousExerciseData = previousWeekData[j - 1]; %>
                                             <tr class="table-row">
-                                                <td><input disabled type="text" class="exercise-name"
+                                                <td data-cell="Exercise"><input disabled type="text" class="exercise-name"
                                                         value="<%= previousExerciseData.exercise || "" %>"></td>
-                                                <td><input disabled type="number" class="sets"
+                                                <td data-cell="Sets"><input disabled type="number" class="sets"
                                                     value="<%= previousExerciseData.sets || "" %>"></td>
-                                                <td><input disabled type="number" class="reps"
+                                                <td data-cell="Reps"><input disabled type="number" class="reps"
                                                     value="<%= previousExerciseData.reps || "" %>"></td>
-                                                <td><input disabled type="text" class="weight"
+                                                <td data-cell="Weight"><input disabled type="text" class="weight"
                                                     value="<%= previousExerciseData.weight || "" %>"></td>
-                                                <td><input disabled type="number" class="actualRPE" step="0.5"
+                                                <td data-cell="RPE"><input disabled type="number" class="actualRPE" step="0.5"
                                                     value="<%= previousExerciseData.rpe || "" %>"></td>
-                                                <td><input disabled type="number" class="estMax" step="0.5"
+                                                <td data-cell="1RM"><input disabled type="number" class="estMax" step="0.5"
                                                     value="<%= previousExerciseData.estMax || "" %>"></td>
                                             </tr>
                                             <% } %>
@@ -165,9 +111,6 @@
 
 
     </div>
-
-    <button class="link-btn" type="submit" id="save-training-button">Training
-        Speichern</button>
 
     <div id="confirmationModal" class="modal">
         <div class="modal-content">
