@@ -96,7 +96,7 @@ body {
     display: grid;
     grid-template-rows: min-content 1fr;
     
-    overflow-x: hidden;
+    overflow-x: none;
 }
 
 /* make images easier to work with */
@@ -329,8 +329,8 @@ select {
         justify-content: center;
         position: absolute;
         z-index: 2000;
-        right: 2.5rem;
-        top: 2rem;
+        right: 1.5em;
+        top: 2em;
         background: transparent;
         background-image: url("../assets/shared/icon-hamburger.svg");
         color: hsl( var(--clr-light) );

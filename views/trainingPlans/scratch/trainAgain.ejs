@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/stylesheets/shared/confirmation-modal.css">
 
-<form id="workout-form" method="POST" action="" name="editTraining"> <!--name ist wichtig für modal-->
+<form id="workout-form" method="POST" action="" name="editTraining" class="flow" style="padding-bottom: 5em;"> <!--name ist wichtig für modal-->
 
     <input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>">
     <!--Parameter für loop im javascript-->
@@ -17,89 +17,92 @@
             <% } %>
 
 
-                <table class="workout-table create-training-table">
-                    <caption class="flow text-accent letter-spacing-3" style="--flow-space: 0rem;">
-                        <input class="letter-spacing-3 text-accent fs-500" type="text" value="Workout 1"
-                            name="training_name" style="padding: 0; text-align: left;">
-                        <div class="rest-pause-container" style="display: none;">
-                            <div class="rest-pause-timer">
-                                00:00
-                            </div>
-                            <div>
-                                <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
-                            </div>
+                <div class="table-section">
+                    <h1 class="numbered-title" style="margin: 0; padding-top: 0.5em; padding-left: 0.65em;"><span
+                            aria-hidden="true">01</span>
+                        <%= trainingTitle %>
+                    </h1>
+                    <div class="rest-pause-container" style="display: none;">
+                        <div class="rest-pause-timer">
+                            00:00
                         </div>
+                        <div>
+                            <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+                        </div>
+                    </div>
 
-                    </caption>
 
-                    <thead>
-                        <tr class="table-header-row">
-                            <th>Category</th>
-                            <th>Exercise</th>
-                            <th>Sets</th>
-                            <th>Reps</th>
-                            <th>Weight</th>
-                            <th>RPE</th>
-                            <th>@</th>
-                            <th>1RM</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!--nur für Abstand kriege das anders nicht hin-->
-                        <!--TODO: den inputs die jeweiligen klassen geben die name attribute setzen: im post verarbeiten und javascript fehler behebend-->
+                    <table class="workout-table create-training-table">
+                        <thead>
+                            <tr class="table-header-row">
+                                <th>Category</th>
+                                <th>Exercise</th>
+                                <th>Sets</th>
+                                <th>Reps</th>
+                                <th>Weight</th>
+                                <th>RPE</th>
+                                <th>@</th>
+                                <th>1RM</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--nur für Abstand kriege das anders nicht hin-->
+                            <!--TODO: den inputs die jeweiligen klassen geben die name attribute setzen: im post verarbeiten und javascript fehler behebend-->
 
-                        <% for (let i=1; i <=9; i++) { %>
-                            <% const exerciseData=trainingData[i - 1]; %>
-                                <tr class="table-row">
-                                    <td data-cell="category">
-                                        <select name="exercise_category_<%= i %>"
-                                            class="exercise-category-selector">
-                                            <% for (const category of exerciseCategories) { %>
-                                                <option value="<%= category %>" <%=exerciseData.category===category
-                                                    ? 'selected' : '' %>>
-                                                    <%= category %>
-                                                </option>
-                                                <% } %>
-                                        </select>
-                                    </td>
-                                    <td data-cell="Exercise">
-                                        <% for (const category in categorizedExercises) { %>
-
-                                            <select name="exercise_name_<%= i %>" class="exercise-name-selector"
-                                                <%=exerciseData.category ===category ? '' : 'disabled' %>
-                                                style="<%= exerciseData.category === category ? '' : 'display: none;'
-                                                    %>">
-                                                    <% for (const exerciseName of
-                                                        categorizedExercises[category]) { %>
-                                                        <option value="<%= exerciseName %>"
-                                                            <%=exerciseData.exercise ===exerciseName ? 'selected' : ''
-                                                            %>
-                                                            >
-                                                            <%= exerciseName %>
-                                                        </option>
-                                                        <% } %>
+                            <% for (let i=1; i <=9; i++) { %>
+                                <% const exerciseData=trainingData[i - 1]; %>
+                                    <tr class="table-row mainExercise">
+                                        <td data-cell="category">
+                                            <select name="exercise_category_<%= i %>"
+                                                class="exercise-category-selector">
+                                                <% for (const category of exerciseCategories) { %>
+                                                    <option value="<%= category %>" <%=exerciseData.category===category
+                                                        ? 'selected' : '' %>>
+                                                        <%= category %>
+                                                    </option>
+                                                    <% } %>
                                             </select>
-                                            <% } %>
-                                    </td>
-                                    <td data-cell="Sets"><input type="number" class="sets" name="exercise_sets_<%= i %>"
-                                            value="<%= exerciseData.sets %>"></td>
-                                    <td data-cell="Reps"><input type="number" class="reps" name="exercise_reps_<%= i %>"
-                                            value="<%= exerciseData.reps %>"></td>
-                                    <td data-cell="Weight"><input type="text" class="weight"
-                                            name="exercise_weight_<%= i %>">
-                                    </td>
-                                    <td data-cell="RPE"><input type="number" class="targetRPE"
-                                                    name="exercise_targetRPE_<%= i %>" value="<%= exerciseData.targetRPE %>"></td>
-                                    <td data-cell="RPE"><input type="number" class="actualRPE" step="0.5"
-                                            name="exercise_actualRPE_<%= i %>"></td>
-                                    <td data-cell="1RM"><input type="number" class="estMax" step="0.5"
-                                            name="exercise_max_<%= i %>" value="<%= exerciseData.estMax %>"></td>
-                                </tr>
-                                <% } %>
+                                        </td>
+                                        <td data-cell="Exercise">
+                                            <% console.log(exerciseData.exercise) %>
+                                                <% for (const category in categorizedExercises) { %>
 
-                    </tbody>
-                </table>
+                                                    <select name="exercise_name_<%= i %>" class="exercise-name-selector"
+                                                        <%=exerciseData.category===category ? '' : 'disabled' %>
+                                                        style="<%= exerciseData.category===category ? ''
+                                                            : 'display: none;' %>">
+                                                            <% for (const exerciseName of
+                                                                categorizedExercises[category]) { %>
+                                                                <option value="<%= exerciseName %>"
+                                                                    <%=exerciseData.exercise===exerciseName ? 'selected'
+                                                                    : '' %>
+                                                                    >
+                                                                    <%= exerciseName %>
+                                                                </option>
+                                                                <% } %>
+                                                    </select>
+                                                    <% } %>
+                                        </td>
+                                        <td data-cell="Sets"><input type="number" class="sets"
+                                                name="exercise_sets_<%= i %>" value="<%= exerciseData.sets %>"></td>
+                                        <td data-cell="Reps"><input type="number" class="reps"
+                                                name="exercise_reps_<%= i %>" value="<%= exerciseData.reps %>"></td>
+                                        <td data-cell="Weight"><input type="text" class="weight"
+                                                name="exercise_weight_<%= i %>">
+                                        </td>
+                                        <td data-cell="RPE"><input type="number" class="targetRPE"
+                                                name="exercise_targetRPE_<%= i %>"
+                                                value="<%= exerciseData.targetRPE %>"></td>
+                                        <td data-cell="RPE"><input type="number" class="actualRPE" step="0.5"
+                                                name="exercise_actualRPE_<%= i %>"></td>
+                                        <td data-cell="1RM"><input type="number" class="estMax" step="0.5"
+                                                name="exercise_max_<%= i %>" value="<%= exerciseData.estMax %>"></td>
+                                    </tr>
+                                    <% } %>
+
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="flow" style="--flow-space: 0.5rem">
@@ -113,7 +116,8 @@
 
                     <div class="training-history flow" style="display: none">
                         <!--Wir sind auf der Train-again Page hier sollen alle Trainings nochmal angezeigt werden-->
-                        <% for (let i=0; i < training.trainings.length; i++) { %>
+                        <% if (training.trainings.length > 1) { %>
+                            <% for (let i=0; i < training.trainings.length; i++) { %>
                             <% const previousWeekData=previousTrainingData[i]; %>
                                 <div class="table-section">
                                     <table class="workout-table create-training-table">
@@ -139,16 +143,16 @@
                                                 <% const previousExerciseData=previousWeekData[j - 1]; %>
                                                     <tr class="table-row">
                                                         <td data-cell="category">
-                                                            <select disabled
-                                                                class="exercise-category-selector">
+                                                            <select disabled class="exercise-category-selector">
                                                                 <% for (const category of exerciseCategories) { %>
-                                                                    <option value="<%= category %>" <%=previousExerciseData.category===category
+                                                                    <option value="<%= category %>"
+                                                                        <%=previousExerciseData.category===category
                                                                         ? 'selected' : '' %>>
                                                                         <%= category %>
                                                                     </option>
                                                                     <% } %>
                                                             </select>
-                                                      </td>
+                                                        </td>
                                                         <td data-cell="Exercise"><input disabled type="text"
                                                                 class="exercise-name"
                                                                 value="<%= previousExerciseData.exercise || "" %>"></td>
@@ -161,10 +165,12 @@
                                                                 value="<%= previousExerciseData.weight || "" %>"></td>
                                                         <td data-cell="RPE"><input disabled type="number"
                                                                 class="actualRPE" step="0.5"
-                                                                value="<%= previousExerciseData.targetRPE || "" %>"></td>
+                                                                value="<%= previousExerciseData.targetRPE || "" %>">
+                                                        </td>
                                                         <td data-cell="@RPE"><input disabled type="number"
                                                                 class="actualRPE" step="0.5"
-                                                                value="<%= previousExerciseData.actualRPE || "" %>"></td>
+                                                                value="<%= previousExerciseData.actualRPE || "" %>">
+                                                        </td>
                                                         <td data-cell="1RM"><input disabled type="number" class="estMax"
                                                                 step="0.5"
                                                                 value="<%= previousExerciseData.estMax || "" %>"></td>
@@ -178,6 +184,13 @@
                                 </div>
 
                                 <% } %>
+                        <% } else { %>
+                            <div class="ff-sans-cond text-accent letter-spacing-3 fs-400"
+                                style="text-align: center; margin-top: 1.5em;">
+                                Es sieht so aus als hättest du keine weiteren gespeicherten Trainings dieser Art.
+                            </div>
+                            <% } %>
+                        
 
                     </div>
 
@@ -197,33 +210,7 @@
 
 </form>
 
-<!--scripts in preparation-->
-<script src="/javascripts/trainingPage/calcVolumeMedians.js"></script>
-<script src="/javascripts/trainingPage/showTrainingDays.js"></script>
-<script src="/javascripts/trainingPage/displayCalculatedVolumes.js"></script>
-<script src="/javascripts/trainingPage/removePlaceholder.js"></script>
-
-<!--actual Functionality-->
-<script src="/javascripts/trainingPage/workoutTitle.js"></script>
-<script src="/javascripts/trainingPage/pauseTimer.js"></script>
-<script src="/javascripts/trainingPage/showTimer.js"></script>
-<script src="/javascripts/trainingPage/calcBackoffMax.js"></script>
-<script src="/javascripts/trainingPage/calculateSetsTonnage.js"></script>
-<script src="/javascripts/trainingPage/displayDefaultSetSchema.js"></script>
-<script src="/javascripts/trainingPage/displayTrainingDay.js"></script>
-
-
-<!--Validation etc.-->
-<script src="/javascripts/trainingPage/weightInput.js"></script>
-<script src="/javascripts/trainingPage/rpeInput.js"></script>
-<script src="/javascripts/trainingPage/changeExerciseName.js"></script>
-
-<!--Navigation-->
-<script src="/javascripts/trainingPage/navigateWeeks.js"></script>
-<!--nur weil das in chrome nicht funktioniert hat funktioniert aber immer noch nicht top ja-->
-
-
-<script src="/javascripts/scratch/confirmation_modal.js"></script>
+<%- include("../../partials/trainingPage/volumeRecommandations") %>
 
 <script>
     const trainingHistoryContainer = document.getElementsByClassName("training-history")[0];

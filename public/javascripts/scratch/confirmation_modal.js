@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("Alles klar?")
     const confirmationModal = document.getElementById("confirmationModal");
     const confirmResetButton = document.getElementById("confirmResetButton");
     const cancelResetButton = document.getElementById("cancelResetButton"); 
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmResetButton.addEventListener("click", () => {
             document.forms["editTraining"].submit();
             confirmationModal.style.display = "none";
+            window.location.href = "/training";
     });
 
 })

@@ -5,7 +5,13 @@
             <h1 class="text-accent fs-500 ff-sans-cond uppercase letter-spacing-1">TYR Training Systems
                 <span class="d-block fs-900 ff-serif text-white">TYR</span>
             </h1>
-            <a href="<%= mostRecentTrainingPlanURI %>" class="main-page-button uppercase">Starten</a>
+
+            <% if (user) { %>
+                <!-- <a href="/training" class="main-page-button uppercase">Starten</a> -->
+                <a href="/logout" %>" class="main-page-button uppercase">Logout</a>
+            <% } else { %>
+                <a href="/login" %>" class="main-page-button uppercase">Login</a>
+            <% } %>
         </div>
         
     </main>

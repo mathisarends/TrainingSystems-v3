@@ -2,9 +2,9 @@
     <h1 class="numbered-title"><span aria-hidden="true">01</span>CUSTOM</h1>
     
     <div class="tab-list underline-indicators flex" role="tablist" aria-label="destination list" style="justify-content: space-between;">
-        <button aria-selected="true" role="tab" aria-controls="custom-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Custom</button>
-        <button aria-selected="false" role="tab" aria-controls="session-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Session</button>
-        <button aria-selected="false" role="tab" aria-controls="template-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
+        <button id="custom-tab" aria-selected="false" role="tab" aria-controls="custom-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Custom</button>
+        <button id="session-tab" aria-selected="false" role="tab" aria-controls="session-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Session</button>
+        <button id="template-tab" aria-selected="false" role="tab" aria-controls="template-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
     </div>
 
     <!--Custom Trainings-->
@@ -55,8 +55,9 @@
                            
                             <% for (let i=0; i < userCustomTrainings.length; i++) { %>
                                 <form action="/training/delete-training-plan?_method=DELETE" method="POST"
-                                    class="delete-form" style="display: none">
+                                    class="delete-custom-form" style="display: none">
                                     <input type="hidden" value="<%= i %>" name="deleteIndex">
+                                    <input type="hidden" class="deleteTitle" value="<%= userCustomTrainings[i].title %>">
                                     <button class="main-page-button uppercase" type="submit">Löschen</button>
                                 </form>
                                 <% } %>
@@ -107,12 +108,13 @@
                 Trainieren
             </button>
             <button class="main-page-button training-plan-button uppercase" id="edit-session">
-                Placeholder
+                Bearbeiten
             </button>   
             <% for (let i = 0; i < userTrainings.length; i++) { %>
                 <form action="/training/delete-training?_method=DELETE" method="POST"
-                class="delete-form-training delete-form" style="display: none">
+                class="delete-form-training" style="display: none">
                     <input type="hidden" value="<%= i %>" name="deleteIndex">
+                    <input type="hidden" class="deleteTitle" value="<%= userTrainings[i].title %>">
                     <button class="main-page-button trainin-plan-button uppercase" type="submit">Löschen</button>
                 </form>
             <% } %>
@@ -163,12 +165,12 @@
         
     </section>
 
-    <div id="confirmationModal" class="modal" style="display: none">
-        <div class="modal-content">
-            <p>Bist du dir sicher dass du das Training löschen möchtest?</p>
+    <div id="confirmationModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
+        <div class="modal-content flow" style="--flow-space: 0.5em;">
+            <input type="text" readonly value="Training löschen">
             <div class="modal-buttons">
-                <button class="modal-button" id="confirmResetButton">LÖSCHEN</button>
-                <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+                <button class="modal-button text-accent" id="confirmResetButton">LÖSCHEN</button>
+                <button class="modal-button text-accent" id="cancelResetButton">ABBRECHEN</button>
             </div>
         </div>
     </div>
@@ -183,45 +185,18 @@
 <script src="/javascripts/trainingIndexPage/showTrainingModeDescription.js"></script>
 <script src="/javascripts/trainingIndexPage/redirect.js"></script>
 <script src="/javascripts/trainingIndexPage/deleteTrainingConfirmation.js"></script>
+<script src="/javascripts/trainingIndexPage/showRightTabFromStart.js"></script>
 
 <script>
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        /*TODO: Ähnliche Logik umsetzen auch ohne Select element*/
 
-       let selectedMode = null;
 
         const customPlaceHolderDeleteButton = document.getElementById("custom-delete-placeholder-button");
         customPlaceHolderDeleteButton.addEventListener("click", e => {
             e.preventDefault();
             console.log("Hier vielleicht eine Info anzeigen dass kein TrainingPlan zum löschen vorhanden ist");
-
-        })
-
-        window.addEventListener("beforeunload", function (event) {
-            const selectedElement = document.getElementById("training-mode-selector");
-            const selectedValue = selectedElement.value;
-
-            fetch("/training/save-training-mode", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ trainingMode: selectedValue }),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Fehler beim Speichern des Modus")
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log("Modus wurde erfolgreich gespeichert! " + data);
-                })
-                .catch((error) => {
-                    console.error("Fehler beim Speichern des Modus");
-                })
 
         })
     })

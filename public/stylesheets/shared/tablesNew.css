@@ -1,6 +1,5 @@
 form { /*works as a wrapper*/
     margin-inline: 2.5%;
-    padding-bottom: 5rem;
 }
 
 input {
@@ -98,6 +97,13 @@ tr:nth-of-type(2n) {
     background-color: hsl( var(--clr-light) / 0.135);
 }
 
+tr td input:focus {
+    border-color: hsl(var(--clr-light) / 1);
+    border-bottom: 1px solid;
+    box-shadow: 0 0 0px hsl( var(--clr-light) / 1)
+
+}
+
 table .table-row td:first-of-type,
 table .table-row td:nth-of-type(2),
 table .table-row td:last-of-type {
@@ -160,6 +166,7 @@ table .table-row td:last-of-type {
 
     form {
         margin-inline: 0;
+        max-width: 100%;
     }
 
     th {
@@ -171,17 +178,22 @@ table .table-row td:last-of-type {
         gap: 0.5rem;
         grid-template-columns: 15ch auto;
         padding: 0.75rem 1rem;
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     td::before {
         color:hsl( var(--clr-white) / 1);
         content: attr(data-cell) ": ";
-        font-size: 1.1rem;
+        font-size: 1rem;
         text-transform: capitalize;
     }
 
+    td:nth-of-type(9n) {
+        border-bottom: 1px solid hsl( var(--clr-white) / .5)
+    }
+
     caption {
+        /* text-align: center; */
         padding-top: 0.75em;
         padding-left: 1rem;
         padding-right: 1rem;
@@ -193,12 +205,16 @@ table .table-row td:last-of-type {
     }
 
     .rest-pause-container {
-        display: block;
+        padding-inline-start: 1em;
+        padding-inline-end: 1.25em;
         margin-top: 0.5em;
+        display: flex;
     }
 
     .rest-pause-container .rest-pause-timer {
-        font-size: 0.75em;
+        font-size: 1.2em;
+        margin-bottom: 0.25em;
+        color: hsl( var(--clr-white) / .25);
     }
 
     .exercise-category-selector,
@@ -235,7 +251,7 @@ table .table-row td:last-of-type {
 
     .calculate-table, table { /*where volume recommandations are shown*/
         margin-top: 2rem;
-        border-top: 2px solid hsl( var(--clr-white) / 0.5);
+        border-top: 1.5px solid hsl( var(--clr-white) / 0.5);
     }
 
     .dot-indicators {

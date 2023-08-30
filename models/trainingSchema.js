@@ -9,6 +9,7 @@ const trainingSchema = new mongoose.Schema({
   },
   title: String,
   lastUpdated: Date,
+  trainingPhase: String,
   trainings: [
     {
       trainingDate: Date,

@@ -1,8 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+
+    /*Modal vor dem Löschen: ------------------------- */
+    const confirmationModal = document.getElementById("confirmationModal");
+    const confirmResetButton = document.getElementById("confirmResetButton");
+
+    //gets called by all delete or reset buttons
+    function setupConfirmationModal(button, form, titleSelector, defaultTitle) {
+        button.addEventListener("click", e => {
+            e.preventDefault();
+    
+            const modalContent = confirmationModal.querySelector('.modal-content input[type="text"]');
+            const deleteTitle = form.querySelector(titleSelector)?.value || defaultTitle;
+            console.log(deleteTitle);
+            modalContent.value = `"${deleteTitle}" löschen?`;
+            confirmResetButton.textContent = "BESTÄTIGEN";
+            confirmationModal.style.display = "block";
+    
+            confirmResetButton.addEventListener("click", () => {
+                form.submit();
+                confirmationModal.style.display = "none";
+            });
+        });
+    }
+
+
     /*COSTUM ------------------------------------------*/
     const customTrainingContainers = document.querySelectorAll("section:nth-of-type(1) .custom-training-container");
-    const deleteForms = document.getElementsByClassName("delete-form");
+    const deleteCustomTrainingForms = document.getElementsByClassName("delete-custom-form");
+    const deleteCustomTrainingButtons = document.querySelectorAll(".delete-custom-form button");
     const startCustomTrainingButton = document.getElementById("start-custom-training-button");
     const createCustomTrainingPlanBTN = document.getElementById("createCustomTrainingPlanBTN");
     const customNextTrainingWeeks = document.getElementsByClassName("customNextTrainingWeek");
@@ -14,9 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function selectCustomTraining(index) {
         for (let i = 0; i < customTrainingContainers.length; i++) {
             customTrainingContainers[i].classList.remove("selected");
-            deleteForms[i].style.display = "none";
+            deleteCustomTrainingForms[i].style.display = "none";
         }
-        deleteForms[index].style.display = "block";
+        deleteCustomTrainingForms[index].style.display = "block";
         customTrainingContainers[index].classList.add("selected");
         lastSelectedLinkIndex = index;
         customCurrentSelectedTrainingWeek = customNextTrainingWeeks[index].value;
@@ -51,9 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = customPlanPage;
         }
     })
+
+    //deletes CustomTrainings
+    deleteCustomTrainingButtons.forEach((button, index) => {
+        setupConfirmationModal(button, deleteCustomTrainingForms[index], ".deleteTitle", "");
+    });
     
-    //TEMPLATE
-    // Selektoren für Template-Trainingselemente
+    /* TEMPLATE ------------------------------------------*/
     const templateTrainingPlanLinks = document.querySelectorAll("section:nth-of-type(3) .training-plan-container .custom-training-container");
     const startTemplateTrainingPlanBTN = document.getElementById("start-template-training-button");
     const resetTemplateTrainingForm = document.getElementsByClassName("reset-template-training-form");
@@ -102,47 +132,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Event-Handler für das Zurücksetzen des Template-Trainings
-    const confirmationModal = document.getElementById("confirmationModal");
-    const confirmResetButton = document.getElementById("confirmResetButton");
-    const cancelResetButton = document.getElementById("cancelResetButton");
-    const resetTemplateTrainingBTNs = document.getElementsByClassName("reset-template-training-button");
+    const resetTemplateTrainingBTNs = document.querySelectorAll(".reset-template-training-form button");
 
-    Array.from(resetTemplateTrainingBTNs).forEach((resetButton, index) => {
-        resetButton.addEventListener("click", (e) => {
-            e.preventDefault();
-            
-            const modalContent = confirmationModal.querySelector(".modal-content p");
-            modalContent.textContent = "Bist du sicher, dass du das Template Training zurücksetzen möchtest?";
-            confirmResetButton.textContent = "RESET";
-            confirmationModal.style.display = "block";
+    resetTemplateTrainingBTNs.forEach((resetButton, index) => {
+        setupConfirmationModal(resetButton, resetTemplateTrainingForm[index], null, "Template Training");
+    });    
 
-            confirmResetButton.addEventListener("click", () => {
-                resetTemplateTrainingForm[index].submit();
-                confirmationModal.style.display = "none"; // Verbergen des Modal nach der Bestätigung
-            });
-        });
-    });
-
-    cancelResetButton.addEventListener("click", () => {
-        confirmationModal.style.display = "none"; // Verbergen des Modal bei Abbrechen
-    });
-
-    
-
-    //TRAINING
+    /*SCRATCH TRAINING ------------------------------------------*/
     const createTrainingButton = document.getElementById("create-training-btn");
     const scratchTrainingContainers = document.querySelectorAll("section:nth-of-type(2) .training-plan-container .custom-training-container");
-    const deleteFormsTraining = document.getElementsByClassName("delete-form-training");
+    const deleteTrainingForms = document.getElementsByClassName("delete-form-training");
+    const deleteTrainingButtons = document.querySelectorAll(".delete-form-training button");
     let lastSelectedTrainingIndex = null;
 
     function selectTraining(index) {
         if (lastSelectedTrainingIndex !== null) {
             scratchTrainingContainers[lastSelectedTrainingIndex].classList.remove("selected");
-            deleteFormsTraining[lastSelectedTrainingIndex].style.display = "none";
+            deleteTrainingForms[lastSelectedTrainingIndex].style.display = "none";
         }
         
         scratchTrainingContainers[index].classList.add("selected");
-        deleteFormsTraining[index].style.display = "block";
+        deleteTrainingForms[index].style.display = "block";
         lastSelectedTrainingIndex = index;
     }
 
@@ -172,12 +182,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editSessionButton.addEventListener("click", (e) => {
         e.preventDefault();
-        navigateToTrainingPage("session");
+        navigateToTrainingPage("session-edit");
     });
 
     createTrainingButton.addEventListener("click", (e) => {
         e.preventDefault();
         window.location.href = "/training/createTraining";
+    });
+
+    deleteTrainingButtons.forEach((button, index) => {
+        setupConfirmationModal(button, deleteTrainingForms[index], ".deleteTitle", "Workout 1");
     });
 
 })

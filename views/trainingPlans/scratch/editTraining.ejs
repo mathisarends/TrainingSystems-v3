@@ -13,30 +13,32 @@
     <link rel="stylesheet" href="/stylesheets/shared/index.css">
     <link rel="stylesheet" href="/stylesheets/login.css">
     <link rel="manifest" href="/manifest/manifest.webmanifest">
-    <title>Trainingsplan erstellen</title>
+    <title>Session Bearbeiten</title>
 </head>
 
 <body class="home">
 
-    <form action="/training/createTraining" method="POST">
-        <h3 class="text-white ff-serif fs-7 00 letter-spacing-1 uppercase">Training</h3>
+    <form action="/training/session-edit-<%= sessionIndex + 1 %>?_method=PATCH" method="POST">
+        <h3 class="text-white ff-serif fs-7 00 letter-spacing-1 uppercase">Bearbeiten</h3>
 
         <label for="training_title" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Titel</label>
-        <input type="text" id="training-title" class="create-training-plan-input" name="training_title" required>
+        <input type="text" id="training-title" class="create-training-plan-input" name="training_title"
+            value="<%= trainingTitle %>" required>
 
-        <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainingsstyle</label>
+        <label for="training-mode-selector"
+            class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainingsstyle</label>
         <select name="training_phase" class="generic-selector" required>
             <option value="" disabled selected hidden></option>
-            <option value="hypertrophie">Hypertrophie</option>
-            <option value="kraft">Kraft</option>
-            <option value="peaking">Peaking</option>
+            <option <%=trainingPhase==="hypertrophie" ? "selected" : "" %> value="hypertrophie">Hypertrophie</option>
+            <option <%=trainingPhase==="kraft" ? "selected" : "" %> value="kraft">Kraft</option>
+            <option <%=trainingPhase==="peaking" ? "selected" : "" %> value="peaking">Peaking</option>
         </select>
         <button type="submit" class="uppercase alt-button">Create</button>
-        </button>
         <button class="uppercase fs-500" id="cancel-button" style="border: none;">Back</button>
 
 
     </form>
+</body>
 
 <script>
     const cancelButton = document.getElementById("cancel-button");
@@ -45,11 +47,6 @@
         e.preventDefault();
         window.location.href = "/training";
     })
-
 </script>
 
 </html>
-
-
-
-

@@ -6,6 +6,7 @@ const express = require("express");
 const session = require("express-session");
 const flash = require("express-flash");
 const path = require("path");
+const bodyParser = require('body-parser');
 
 const passport = require("passport");
 const expressLayouts = require("express-ejs-layouts");
@@ -53,7 +54,8 @@ app.use(expressLayouts);
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static("public", { maxAge: 0 }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true })); //ACHTUNG HIER AUF FEHLER PRÜFEN
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const secret = process.env.SESSION_SECRET || generateRandomSecret();
 

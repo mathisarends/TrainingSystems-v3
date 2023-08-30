@@ -14,23 +14,6 @@ const templates = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]; //template U
 const customTemplateLetters = ["A", "B", "C", "D"]; //customURL-Endings
 const maxWeeks = 6; 
 
-//saves last selected element
-Router.post("/save-training-mode", checkAuthenticated, async (req, res) => {
-  try {
-    const user = await User.findOne({ name: req.user.name });
-    if (!user) {
-      return res.status(404).send("Benutzer nicht gefunden");
-    }
-
-    const selectedTrainingMode = req.body.trainingMode;
-    user.lastVisitedTrainingMode = selectedTrainingMode;
-    await user.save();
-
-  } catch (err) {
-    console.error(err);
-  }
-})
-
 Router.get("/", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
@@ -77,7 +60,6 @@ Router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
     const trainingPlanPhase = trainingPlanData.training_phase;
     const trainingPlanFrequency = trainingPlanData.training_frequency;
     const trainingPlanWeeks = trainingPlanData.training_weeks;
-    const currentDevice = trainingPlanData.currentDevice;
 
     const lastUpdated = new Date();
 
@@ -169,8 +151,9 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
       console.log("Daten erfolgreich gespeichert")
 
 
-      const referer = req.headers.referer || "/";
-      res.redirect(referer); //302
+      /* const referer = req.headers.referer || "/";
+      res.redirect(referer);  */
+      res.status(200).json({});
 
       } catch (err) {
         console.log(`Fehler beim Patchen der Seite CUSTOM ${letter}${week}! ` + err);
@@ -178,6 +161,22 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
     })
   }
 }
+
+// retrieves lastTrainingDay of the week based on weight input
+function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
+  const trainingWeek = trainingPlan.trainingWeeks[weekIndex];
+  
+  for (let i = trainingWeek.trainingDays.length - 1; i >= 0; i--) {
+    const trainingDay = trainingWeek.trainingDays[i];
+
+    if (trainingDay.exercises?.some(exercise => exercise.weight)) {
+      console.log("gefunden auf " + (i + 1));  
+      return i + 1;
+      }
+    }
+
+    return 1; //ansonsten ist es woche 1;
+  }
 
 //GET CUSTOM TRAININGS
 for (let i = 0; i < customTemplateLetters.length; i++) {
@@ -202,6 +201,8 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         }
 
         const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+
+        const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, week - 1);
 
         const trainingWeekData = [];
         for (let j = 0; j < amountOfTrainingDays; j++) {
@@ -253,6 +254,8 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
           beforePage: beforePage,
           afterPage: afterPage,
           week: week,
+
+          lastTrainingDay: lastTrainingDay,
     
           templatePlanName: `${letter}${week}`,
         });
@@ -379,6 +382,8 @@ for (let i = 0; i < templates.length; i++) {
 
       const trainingPlan = user.trainingPlanTemplate[templateType];
       const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+      const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, weekIndex);
+
 
       const trainingWeekData = []; //this training week
       for (let j = 0; j < amountOfTrainingDays; j++) {
@@ -437,6 +442,8 @@ for (let i = 0; i < templates.length; i++) {
         afterPage: afterPage,
         week: weekIndex + 1,
 
+        lastTrainingDay: lastTrainingDay,
+
         templatePlanName: templateName,
       });
 
@@ -488,8 +495,7 @@ for (let i = 0; i < templates.length; i++) {
       }
     
       await user.save();
-      const referer = req.headers.referer || "/";
-      res.redirect(referer);  
+      res.status(200).json({});
     } catch (err) {
       console.log(`Ein Fehler ist beim Patchen der Ressource aufgetreten (${templateName}): ${err}`);
     }
@@ -528,14 +534,14 @@ Router.post("/reset-template-training", checkAuthenticated, async (req, res) => 
 
 //TODO: Hier müssen gleich anpassungen gemacht werden
 for (let i = 1; i <= 5; i++) { // 5 Training Slots GET
-  Router.get(`/session-${i}`, checkAuthenticated, (req, res) => {
-    handleSessionRoute(req, res, i - 1);
+  Router.get(`/session-edit-${i}`, checkAuthenticated, (req, res) => {
+    handleSessionEdit(req, res, i - 1);
   });
 }
 
 for (let i = 1; i <= 5; i++) { // 5 Training Slots POST
-  Router.patch(`/session-${i}`, checkAuthenticated, async (req, res) => {
-    await handleSessionPatch(req, res, i - 1);
+  Router.patch(`/session-edit-${i}`, checkAuthenticated, async (req, res) => {
+    await handleSessionEditPatch(req, res, i - 1);
   });
 }
 
@@ -564,6 +570,7 @@ async function handleTrainingSessionGET(req, res, index) {
 
     const training = user.trainings[index];
     const trainingTitle = training.title;
+    const trainingPhase = training.trainingPhase;
     const trainingData = extractTrainingExerciseData(training, 0); //JUMP
     const previousTrainingData = [];
     for (let i = 0; i < training.trainings.length; i++) {
@@ -579,6 +586,8 @@ async function handleTrainingSessionGET(req, res, index) {
     //JUMP
     const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
 
+    const volumeMarkers = user.trainingData.length > 0 ? user.trainingData[0] : {}; //volume recomandations
+
     const date = formatDateWithDay(training.lastUpdated); //newst date from newest training
 
     res.render("trainingPlans/scratch/trainAgain", {
@@ -588,6 +597,14 @@ async function handleTrainingSessionGET(req, res, index) {
       categorizedExercises,
       defaultRepSchemeByCategory,
 
+      volumeMarkers: volumeMarkers,
+      squatmev: volumeMarkers.minimumSetsSquat || "",
+      squatmrv: volumeMarkers.maximumSetsSquat || "",
+      benchmev: volumeMarkers.minimumSetsBench || "",
+      benchmrv: volumeMarkers.maximumSetsBench || "",
+      deadliftmev: volumeMarkers.minimumSetsDeadlift || "",
+      deadliftmrv: volumeMarkers.maximumSetsDeadlift || "",
+
       trainingTitle: trainingTitle,
 
       trainingData: trainingData,
@@ -595,6 +612,7 @@ async function handleTrainingSessionGET(req, res, index) {
       previousTrainingDates: previousTrainingDates,
 
       training: training,
+      trainingPhase: trainingPhase,
 
       date: date,
         });
@@ -630,21 +648,13 @@ Router.get("/createTraining", checkAuthenticated, async (req, res) => {
       return res.status(404).send("Benutzer nicht gefunden");
     }
 
-    //JUMP
-    const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
-
-    if (user.trainings.length >= 2) {
+    if (user.trainings.length >= 3) {
       renderTrainingPlansView(res, user, {
         errorCreatingNewCustomTraining: "Du hast bereits die maximale Anzahl an Trainings gespeichert!"
       });
 
     } else {
-      res.render("trainingPlans/scratch/createTraining", {
-        exerciseCategories,
-        categoryPauseTimes,
-        categorizedExercises,
-        defaultRepSchemeByCategory,
-      });
+      res.render("trainingPlans/scratch/createTraining", {layout: false});
     }
 
 
@@ -663,34 +673,37 @@ Router.post("/createTraining", checkAuthenticated, async (req, res) => {
       return res.status(404).send("Benutzer nicht gefunden");
     }
 
+    console.log(req.body);
+
     const trainingData = req.body;
-    const trainingTitle = req.body.training_name;
-    const trainingNotes = req.body.notes_regarding_workout;
+    const trainingTitle = req.body.training_title;
+    const trainingPhase = req.body.training_phase;
+    console.log(trainingPhase);
+    const date = new Date();
+    const userID = req.user._id;
+
 
     const exercises = [];
 
     // weil auf der page maximal 9 übungen erlaubt sind
     for (let i = 1; i <= 9; i++) {
       const exerciseObject = {
-        category: trainingData[`exercise_category_${i}`],
-        exercise: trainingData[`exercise_name_${i}`],
-        sets: trainingData[`exercise_sets_${i}`],
-        reps: trainingData[`exercise_reps_${i}`],
-        weight: trainingData[`exercise_weight_${i}`],
-        targetRPE: trainingData[`exercise_targetRPE_${i}`],
-        actualRPE: trainingData[`exercise_actualRPE_${i}`],
-        estMax: trainingData[`exercise_max_${i}`],
-        notes: trainingData[`exercise_notes_${i}`],
+        category: "",
+        exercise: "",
+        sets: null,
+        reps: null,
+        weight: null,
+        targetRPE: null,
+        actualRPE: null,
+        estMax: null,
+        notes: "",
       }
       exercises.push(exerciseObject);
     }
 
-    const date = new Date();
-    const userID = req.user._id;
 
     const trainingObject = { //create object which we can save in trainings-array
       trainingDate: date,
-      trainingNote: trainingNotes,
       exercises: exercises,
     }
 
@@ -698,7 +711,7 @@ Router.post("/createTraining", checkAuthenticated, async (req, res) => {
       user: userID,
       title: trainingTitle,
       lastUpdated: date,
-      notes : trainingNotes,
+      trainingPhase: trainingPhase,
       trainings: trainingObject,
     });
 
@@ -708,7 +721,7 @@ Router.post("/createTraining", checkAuthenticated, async (req, res) => {
     user.trainings.sort((a, b) => b.lastUpdated - a.lastUpdated); //Trainingspläne sollen immer nach datum absteigend sortiert sein TODO: Testen ob das funktioniert
     await user.save();
     console.log("Daten gespeichert und werden an die Hauptpage weitergeleitet?");
-    res.redirect("/training");
+    res.redirect("/training/session-train-1");
 
   } catch (err) {
     console.error(err);
@@ -789,8 +802,8 @@ function categorizeExercises(exercises) {
     };
 }
 
-//GET für session-i | hauptunterschied: anderes ejs-template wird gerendert
-async function handleSessionRoute(req, res, sessionIndex) { //function for handling GET with a single Training session
+//GET für session-edit-i JUMP
+async function handleSessionEdit(req, res, sessionIndex) { //function for handling GET with a single Training session
   try {
     const user = await User.findOne({ name: req.user.name });
 
@@ -800,33 +813,15 @@ async function handleSessionRoute(req, res, sessionIndex) { //function for handl
 
     const training = user.trainings[sessionIndex];
     const trainingTitle = training.title;
-    const trainingData = extractTrainingExerciseData(training, 0); //JUMP
-
-    const previousTrainingData = [];
-    for (let i = 1; i < training.trainings.length; i++) {
-      previousTrainingData.push(extractTrainingExerciseData(training, i));
-    }
-
-    // retrieve information then previous trainings were mad
-    const previousTrainingDates = [];
-    for (let i = 1; i < training.trainings.length; i++) {
-      previousTrainingDates.push(extractPreviousTrainingDates(training, i));
-    }
-
-    const date = formatDateWithDay(training.lastUpdated); //newst date from newest training
+    const trainingPhase = training.trainingPhase;
 
     //hier müssen wir mehr informationen retrieven über die einzelnen trainingstage
 
-    res.render("trainingPlans/scratch/displayTraining", {
-      trainingTitle: trainingTitle,
-
-      trainingData: trainingData,
-      previousTrainingData: previousTrainingData,
-      previousTrainingDates: previousTrainingDates,
-
-      training: training,
-
-      date: date,
+    res.render("trainingPlans/scratch/editTraining", {
+      sessionIndex: sessionIndex,
+      trainingTitle,
+      trainingPhase,
+      layout: false,
     });
 
   } catch (err) {
@@ -834,7 +829,7 @@ async function handleSessionRoute(req, res, sessionIndex) { //function for handl
   }
 }
 
-async function handleSessionPatch(req, res, index) {
+async function handleSessionEditPatch(req, res, index) {
   try {
     const user = await User.findOne({ name: req.user.name });
     
@@ -842,20 +837,25 @@ async function handleSessionPatch(req, res, index) {
       return res.status(404).send("Benutzer nicht gefunden");
     }
 
-    const updatedData = req.body;
     const trainingSession = user.trainings[index];
-    const training = trainingSession.trainings[0];
 
-    // hier überall gucken ob die Felder schon geupdatet wurden alle Felder also 9
-    for (let i = 0; i < 9; i++) {
-      const exercise = training.exercises[i];
-      updateTrainingExerciseDetails(training, updatedData, exercise, i + 1); //welche Parameter brauche ich hier?
+    console.log("wir sind in der richtigen rotue")
+
+    const updatedData = req.body;
+
+
+    const newTitle = req.body.training_title;
+    const newTrainingPhase = req.body.training_phase;
+    console.log(newTitle);
+    console.log(newTrainingPhase);
+
+    if (trainingSession.title !== newTitle) {
+      trainingSession.title = newTitle;
+    }
+    if (trainingSession.trainingPhase !== newTrainingPhase) {
+      trainingSession.trainingPhase = newTrainingPhase;
     }
 
-    const reqTrainingTitle = updatedData["training_name"];
-    if (reqTrainingTitle !== trainingSession.title) {
-      trainingSession.title = reqTrainingTitle;
-    }
 
     await user.save();
     res.redirect("/training");
@@ -910,7 +910,7 @@ async function handleTrainingSessionPOST(req, res, index) {
       // Speichern des aktualisierten Benutzers
       await user.save();
   
-      res.redirect("/training");
+      res.status(200).json({});
   
     } catch(err) {
       console.log("Es ist ein Fehler beim Posten des Trainingsmodus vorgefallen! " + err);

@@ -1,4 +1,4 @@
-<form action="/training/custom-<%= templatePlanName %>?_method=PATCH" method="POST" class="flow">
+<form action="/training/custom-<%= templatePlanName %>?_method=PATCH" method="POST" class="flow" style="padding-bottom: 5em;">
 
     <input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>">
     <!--Parameter für loop im javascript-->
@@ -15,21 +15,22 @@
             <% } %>
 
 
-                <% for (let i=0; i < amountOfTrainingDays; i++) { %>
-                    <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>" >
-                        <table class="workout-table">
-                            <caption class="flow text-accent letter-spacing-3" style="--flow-space: 0.5rem;">
-                                E - W<%= week %>D<%= i + 1 %>
-                                    <div class="rest-pause-container" style="display: none;">
-                                        <div class="rest-pause-timer">
-                                            00:00
-                                        </div>
-                                        <div>
-                                            <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
-                                        </div>
-                                    </div>
+            
 
-                            </caption>
+
+                <% for (let i=0; i < amountOfTrainingDays; i++) { %>
+                    <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>">
+                        <h1 class="numbered-title" style="margin: 0; padding-top: 0.5em; padding-left: 0.65em;"><span aria-hidden="true">W<%= week %>D<%= i + 1 %></span><%= workoutName %></h1>
+                        <div class="rest-pause-container" style="display: none;">
+                            <div class="rest-pause-timer">
+                                00:00
+                            </div>
+                            <div>
+                                <progress class="rest-pause-progress-bar" max="100"
+                                    value="100"></progress>
+                            </div>
+                        </div>
+                        <table class="workout-table">
 
                             <thead>
                                 <tr class="table-header-row">
@@ -160,29 +161,29 @@
                             </tbody>
                         </table>
 
-                        <div>
-                            <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">Save</button>
-                        </div>
+                    </div>
+                    <% } %>
 
-                    
-                        <div class="dot-indicators flex" style="justify-content: center; margin-top: 1.5rem;">
+                    <div class="dot-indicators flex" style="justify-content: center; margin-top: 1.5rem;">
                             <% for (let j=0; j < amountOfTrainingDays; j++) { %>
-                                <button aria-selected="<%= j === i %>"><span class="sr-only">Slide
+                                <button aria-selected="<%= j + 1 === lastTrainingDay %>"><span class="sr-only">Slide
                                         Title</span></button>
                                 <% } %>
                         </div>
 
- 
+                        <div>
+                            <button class="main-page-button save-training-button uppercase ff-sans-normal"
+                                type="submit" type="submit">Save</button>
+                        </div>
 
-                    </div>
-                    <% } %>
 
-                        <div id="confirmationModal" class="modal" style="display: none">
-                            <div class="modal-content">
-                                <p>Bist du dir sicher dass du das Training abbrechen möchtest</p>
+
+                        <div id="confirmationModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
+                            <div class="modal-content flow" style="--flow-space: 0.5em;">
+                                <input type="text" readonly value="Training löschen">
                                 <div class="modal-buttons">
-                                    <button class="modal-button" id="confirmResetButton">LÖSCHEN</button>
-                                    <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+                                    <button class="modal-button text-accent" id="confirmResetButton">LÖSCHEN</button>
+                                    <button class="modal-button text-accent" id="cancelResetButton">ABBRECHEN</button>
                                 </div>
                             </div>
                         </div>
@@ -190,5 +191,9 @@
                         <%- include("../../partials/trainingPage/volumeRecommandations") %>
                             <%- include("../../partials/trainingPage/trainingNavigationBar", {beforePage: beforePage ,
                                 nextPage: afterPage , week: week}) %>
+
+
+                        <script>
+                            </script>
 
 </form>
