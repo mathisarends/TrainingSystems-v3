@@ -20,7 +20,7 @@
 
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>">
-                        <h1 class="numbered-title" style="margin: 0; padding-top: 0.5em; padding-left: 0.65em;"><span aria-hidden="true">W<%= week %>D<%= i + 1 %></span><%= workoutName %></h1>
+                        <h1 class="numbered-title" style="margin: 0"><span aria-hidden="true">W<%= week %>D<%= i + 1 %></span><%= workoutName %></h1>
                         <div class="rest-pause-container" style="display: none;">
                             <div class="rest-pause-timer">
                                 00:00
@@ -29,6 +29,12 @@
                                 <progress class="rest-pause-progress-bar" max="100"
                                     value="100"></progress>
                             </div>
+                        </div>
+                        <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent" style="margin-top: 1em; padding-left: 1em;">
+                            Daten erfolgreich gespeichert
+                        </div>
+                        <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent" style="margin-top: 1em; padding-left: 1em;">
+                            Fehler beim speichern der Daten
                         </div>
                         <table class="workout-table">
 

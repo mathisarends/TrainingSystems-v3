@@ -139,8 +139,9 @@ table .table-row td:last-of-type {
     padding-left: 0 !important;
 }
 
-.calculate-table .volume-selector {
-    text-align: center;
+.calculate-table .volume-selector,
+.calculate-table #strength-level-input {
+        text-align: center;
 }
 
 .calculate-table tr td:last-of-type {
@@ -157,11 +158,27 @@ table .table-row td:last-of-type {
     text-align: left;
 }
 
+.exercise-table caption {
+    display: none;
+}
+
+/*Failure-Success Status Animation*/
+.hidden {
+    opacity: 0;
+    height: 0;
+    font-size: 0px;
+    color: inherit;
+    transition: opacity 0.35s linear, height 0.35s linear, font-size 0.35s linear, color 0.35s linear;
+}
 
 @media (max-width: 1154px) {
 
     .create-training-table th {
         display: none !important;
+    }
+
+    .exercise-table caption {
+        display: block;
     }
 
     form {
@@ -186,6 +203,17 @@ table .table-row td:last-of-type {
         content: attr(data-cell) ": ";
         font-size: 1rem;
         text-transform: capitalize;
+    }
+
+    .exercise-table td {
+        grid-template-columns: initial;
+    }
+
+    .exercise-table td::before {
+        color: initial;
+        content: initial;
+        font-size: initial;
+        text-transform: initial;
     }
 
     td:nth-of-type(9n) {
@@ -256,5 +284,10 @@ table .table-row td:last-of-type {
 
     .dot-indicators {
         --gap: 2rem;
+    }
+
+    .calculate-table .volume-selector,
+    .calculate-table #strength-level-input {
+        text-align: left;
     }
 }

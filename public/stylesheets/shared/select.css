@@ -9,6 +9,10 @@ select {
     color: hsl( var(--clr-white) / 1);
 }
 
+select option {
+    color: black !important;
+}
+
 select:focus {
     border: none;
     outline: none;

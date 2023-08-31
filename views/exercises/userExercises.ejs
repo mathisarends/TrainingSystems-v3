@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/stylesheets/exercises.css">
 
-<main class="grid-container grid-container--exercises flow" style="--flow-space: 0.5rem;">
-    <h1 class="numbered-title"><span aria-hidden="true" style="padding-left: 1em;">03</span>Übungen</h1>
+<main class="grid-container grid-container--exercises flow" style="--flow-space: 1rem; padding-inline: 0;">
+    <h1 class="numbered-title" style="text-align:left; padding-top: 1.2em;"><span aria-hidden="true">03</span>Übungen</h1>
 
     <!-- <div class="tab-list underline-indicators flex" role="tablist" aria-label="exercise list">
       <button aria-selected="true" role="tab" aria-controls="Main-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Main</button>
@@ -25,6 +25,7 @@
               <% for (let categoryIndex=0; categoryIndex < exerciseCategories.length; categoryIndex++) { %>
                 <% const category=exerciseCategories[categoryIndex]; %>
                   <table class="exercise-table">
+                    <caption><%= category %></caption>
                     <thead>
                       <tr class="table-header-row">
                         <th class="exericse-table-th" style="text-align: left;">

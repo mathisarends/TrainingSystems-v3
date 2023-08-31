@@ -133,10 +133,6 @@ select {
 
 /* general */
 
-.hidden {
-    display: none;
-}
-
 .flex {
     display: flex;
     gap: var(--gap, 1rem);
@@ -309,7 +305,8 @@ select {
         margin: 0;
         flex-direction: column;
         transform: translateX(100%);
-        transition: transform 500ms ease-in-out;
+        /* transition: transform 500ms ease-in-out; */
+        transition: none;
     }
     
     .primary-navigation[data-visible="true"] {
@@ -494,6 +491,8 @@ select {
 }
 
 .grid-container--exercises .numbered-title {
+    justify-self: left;
+    padding-left: 0.65em;
     grid-area: title;
 }
 

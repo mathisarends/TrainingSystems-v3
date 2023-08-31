@@ -1,417 +1,444 @@
 <link rel="stylesheet" href="/stylesheets/exercises.css">
 
-  <form action="/tools/volume" method="POST">
-    <table class="calculate-table volume-table">
-      <caption>Total</caption>
-      <thead>
-        <tr class="table-header-row">
-          <th style="text-align: center;">Exercise</th>
-          <th style="text-align: center;">Weight</th>
-          <th>Reps</th>
-          <th>1RM</th>
-        </tr>
-      </thead>
+<form action="/tools/volume" method="POST">
+  <h1 class="numbered-title" style="margin: 0; padding-top: 1.2em; padding-left: 0.65em;"><span
+      aria-hidden="true">03</span>Volumenrechner</h1>
+  <table class="calculate-table volume-table">
+    <thead>
+      <tr class="table-header-row">
+        <th style="text-align: center;">Exercise</th>
+        <th style="text-align: center;">Weight</th>
+        <th>Reps</th>
+        <th>1RM</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--nur für Abstand kriege das anders nicht hin-->
+      <tr class="table-row">
+        <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
+        <td data-cell="Weight">
+          <input type="number" name="squatWeight" id="squat-weight" value="<%= recentSquatWeight %>" required />
+        </td>
+        <td data-cell="Reps">
+          <input type="number" name="squatReps" id="squat-reps" value="<%= recentSquatReps %>" required />
+        </td>
+        <td data-cell="1RM">
+          <input type="number" name="squatEstMax" id="squat-estmax" value="<%= squatMax %>" readonly required />
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
+        <td data-cell="Weight">
+          <input type="number" name="benchWeight" id="bench-weight" value="<%= recentBenchWeight %>" required />
+        </td>
+        <td data-cell="Reps">
+          <input type="number" name="benchReps" id="bench-reps" value="<%= recentBenchReps %>" required />
+        </td>
+        <td data-cell="1RM">
+          <input type="number" name="benchEstMax" id="bench-estmax" value="<%= benchMax %>" readonly required />
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
+        <td data-cell="Weight">
+          <input type="number" name="deadliftWeight" id="deadlift-weight" value="<%= recentDeadliftWeight %>"
+            required />
+        </td>
+        <td data-cell="Reps">
+          <input type="number" name="deadliftReps" id="deadlift-reps" value="<%= recentDeadliftReps %>" required />
+        </td>
+        <td data-cell="1RM">
+          <input type="number" name="deadliftEstMax" id="deadlift-estmax" value="<%= deadliftMax %>" readonly
+            required />
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td data-cell="Exercise" class="category-name"><input type="text" value="TOTAL" readonly></td>
+        <td data-cell="Weight"><input type="number" /></td>
+        <td data-cell="Reps"><input type="number" /></td>
+        <td data-cell="Total">
+          <input type="number" name="totalEstMax" id="total-result" value="<%= total %>" readonly required />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="table-section">
+    <table class="calculate-table volume-table explanation-table">
       <tbody>
-        <!--nur für Abstand kriege das anders nicht hin-->
+        <caption>Lifestyle</caption>
+        <tr class="table-header-row">
+          <th>Category</th>
+          <th style="text-align: center;">Selection</th>
+          <th>Adjustment</th>
+          <th>Explanation</th>
+        </tr>
         <tr class="table-row">
-          <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
-          <td data-cell="Weight">
-            <input type="number" name="squatWeight" id="squat-weight" value="<%= recentSquatWeight %>" required />
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Geschlecht" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <select name="gender" id="gender-selector" class="volume-selector" required>
+              <option value="männlich" <%=gender==='männlich' ? 'selected' : '' %>>männlich</option>
+              <option value="weiblich" <%=gender==='weiblich' ? 'selected' : '' %>>weiblich</option>
+            </select>
           </td>
-          <td data-cell="Reps">
-            <input type="number" name="squatReps" id="squat-reps" value="<%= recentSquatReps %>" required />
+          <td data-cell="Adjustment" class="volume-adjustment-field">
+            <input type="number" id="gender-result-field" value="0" readonly />
           </td>
-          <td data-cell="1RM">
-            <input type="number" name="squatEstMax" id="squat-estmax" value="<%= squatMax %>" readonly required />
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Männlich/Weiblich">
           </td>
         </tr>
         <tr class="table-row">
-          <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
-          <td data-cell="Weight">
-            <input type="number" name="benchWeight" id="bench-weight" value="<%= recentBenchWeight %>" required />
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Körpergewicht [kg]" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <input type="number" name="bodyweight" id="bodyweight-input-field" value="<%= bodyweight %>" required />
           </td>
-          <td data-cell="Reps"> 
-            <input type="number" name="benchReps" id="bench-reps" value="<%= recentBenchReps %>" required />
-          </td>
-          <td data-cell="1RM">
-            <input type="number" name="benchEstMax" id="bench-estmax" value="<%= benchMax %>" readonly required />
-          </td>
-        </tr>
-        <tr class="table-row">
-          <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
-          <td data-cell="Weight">
-            <input type="number" name="deadliftWeight" id="deadlift-weight" value="<%= recentDeadliftWeight %>"
-              required />
-          </td>
-          <td data-cell="Reps">
-            <input type="number" name="deadliftReps" id="deadlift-reps" value="<%= recentDeadliftReps %>" required />
-          </td>
-          <td data-cell="1RM">
-            <input type="number" name="deadliftEstMax" id="deadlift-estmax" value="<%= deadliftMax %>" readonly
-              required />
+          <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="bodyweight-result-field"
+              readonly /></td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Körpergewicht eintragen">
           </td>
         </tr>
         <tr class="table-row">
-          <td data-cell="Exercise" class="category-name"><input type="text" value="TOTAL" readonly></td>
-          <td data-cell="Weight"><input type="number" /></td>
-          <td data-cell="Reps"><input type="number" /></td>
-          <td data-cell="Total"> 
-            <input type="number" name="totalEstMax" id="total-result" value="<%= total %>" readonly required />
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Körpergröße [cm]" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <input type="number" name="bodyheight" id="bodyHeight-input-field" value="<%= bodyheight %>" required />
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="bodyHeight-result-field"
+              readonly /></td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Größe eintragen">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Kraftlevel" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <input type="text" id="strength-level-input" name="strengthLevel" value="<%= strengthLevel %>" required
+              readonly />
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="strength-level-result"
+              readonly /></td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Wird automatisch für dich berechnet">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Trainingserfahrung" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <select name="trainingExperience" id="training-experience-selector" class="volume-selector" required>
+              <option value="beginner" <%=trainingExperience==="beginner" ? "selected" : "" %>>Beginner</option>
+              <option value="fortgeschritten" <%=trainingExperience==="fortgeschritten" ? "selected" : "" %>
+                >Fortgeschritten</option>
+              <option value="sehrFortgeschritten" <%=trainingExperience==="sehrFortgeschritten" ? "selected" : "" %>
+                >Sehr fortgeschritten</option>
+              <option value="experte" <%=trainingExperience==="experte" ? "selected" : "" %>>Experte</option>
+            </select>
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field">
+            <input type="number" id="training-experience-result-field" value="0" readonly />
+          </td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Beginner = &lt 4 Jahre, Fortgeschritte 4-8 Jahre, Sehr
+                Fortgeschritten 8-12 Jahre, Experte 12+ Jahre">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Alter" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <input type="number" id="age-input-field" value="<%= age %>" name="age" required />
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="age-result-field"
+              readonly /></td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td"><input type="text"
+              value="Hier dein Alter eintragen" readonly></td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Ernährung" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <select name="nutrition" id="nutrition-selector" class="volume-selector" required>
+              <option value="schlecht" <%=nutrition==="schlecht" ? "selected" : "" %>>schlecht</option>
+              <option value="gut" <%=nutrition==="gut" ? "selected" : "" %>>gut</option>
+              <option value="optimal" <%=nutrition==="optimal" ? "selected" : "" %>>optimal</option>
+            </select>
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field">
+            <input type="number" id="nutrition-result-field" value="0" readonly />
+          </td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Schlecht = zu wenig & unregelmäßige Kalorien, Durchschnitt =
+                Ausreichend Kalorien & Protein, Gut = optimale Enährung, Makros,
+                Timining">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Schlafqualität" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <select name="sleep" id="sleep-selector" class="volume-selector" required>
+              <option value="schlecht" <%=sleep==="schlecht" ? "selected" : "" %>>schlecht</option>
+              <option value="gut" value="0" <%=sleep==="gut" ? "selected" : "" %>>gut</option>
+              <option value="optimal" <%=sleep==="optimal" ? "selected" : "" %>>optimal</option>
+            </select>
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field">
+            <input type="number" id="sleep-result-field" value="0" readonly />
+          </td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Schlecht &lt 5h /Nacht; Durchschnitt = 5-7h / Nacht; Gut = 7h+
+                /Nacht">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Stress" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <select name="stress" id="stress-selector" class="volume-selector" required>
+              <option value="hoch" <%=stress==="hoch" ? "selected" : "" %>>hoch</option>
+              <option value="mittel" <%=stress==="mittel" ? "selected" : "" %> value="0">mittel</option>
+              <option value="niedrig" <%=stress==="niedrig" ? "selected" : "" %>>niedrig</option>
+            </select>
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field">
+            <input type="number" id="stress-result-field" value="0" readonly />
+          </td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Niedrig = wenig Stress; Mittelmäßig = ausgeglichen zwischen
+                Stress/Erholung; Hoch = Sehr stressig">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Doping" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <select name="doping" id="steroid-selector" class="volume-selector" required>
+              <option value="nein" <%=doping==="nein" ? "selected" : "" %>>nein</option>
+              <option value="ja" <%=doping==="ja" ? "selected" : "" %>>ja</option>
+            </select>
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field">
+            <input type="number" id="steroid-result-field" value="0" readonly />
+          </td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Konsumierst du leistungssteigernde Medikamente?">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Regenerationsfähigkeit" readonly></td>
+          <td data-cell="Selection" class="selection-td">
+            <select name="regeneration" id="regeneration-selector" class="volume-selector" required>
+              <option value="schlecht" <%=regeneration==="schlecht" ? "selected" : "" %>>schlecht</option>
+              <option value="unterdurchschnittlich" <%=regeneration==="unterdurchschnittlich" ? "selected" : "" %>>
+                unterdurchschnittlich
+              </option>
+              <option value="durchschnittlich" <%=regeneration==="durchschnittlich" ? "selected" : "" %>>
+                durchschnittlich
+              </option>
+              <option value="gut" <%=regeneration==="gut" ? "selected" : "" %>>gut</option>
+              <option value="perfekt" <%=regeneration==="perfekt" ? "selected" : "" %>>perfekt</option>
+            </select>
+          </td>
+          <td data-cell="Adjustment" class="volume-adjustment-field">
+            <input type="number" id="regeneration-result-field" value="0" readonly />
+          </td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Beurteile deine Regenerationsfähigkeit rückblickend, wie schätzt
+                du dich ein?">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+              value="Berechneter Anpassungfaktor für dein Volumen" readonly></td>
+          <td data-cell="Selection"></td>
+          <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" value="0"
+              id="volumeAdjustmentField" /></td>
+          <td data-cell="Explanation" class="volume-calculator-explanation-td">
+            <input type="text" value="Diese Zahl wird genutzt um dein Volumen für jeden einzelnen Lift
+                zu erhöhen oder herabzusetzen! Der Rechner unten übernimmt dies
+                für dich! Die Zahl im Feld -Median- ist deine Empfehlung für das
+                Startvolumen, dies ist die Mitte zwischen deiner Empfehlung für
+                das MEV und das MRV. Du findest diese Zahl auch in deinem
+                Trainingsplan unter jeder Woche!">
           </td>
         </tr>
       </tbody>
     </table>
-
-    <div class="table-section">
-      <table class="calculate-table volume-table explanation-table">
-        <tbody>
-          <caption>Lifestyle</caption>
-          <tr class="table-header-row">
-            <th>Category</th>
-            <th style="text-align: center;">Selection</th>
-            <th>Adjustment</th>
-            <th>Explanation</th>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Geschlecht" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <select name="gender" id="gender-selector" class="volume-selector" required>
-                <option value="männlich" <%=gender==='männlich' ? 'selected' : '' %>>männlich</option>
-                <option value="weiblich" <%=gender==='weiblich' ? 'selected' : '' %>>weiblich</option>
-              </select>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field">
-              <input type="number" id="gender-result-field" value="0" readonly />
-            </td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Männlich/Weiblich">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Körpergewicht [kg]" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <input type="number" name="bodyweight" id="bodyweight-input-field" value="<%= bodyweight %>" required />
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="bodyweight-result-field" readonly /></td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Körpergewicht eintragen">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Körpergröße [cm]" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <input type="number" name="bodyheight" id="bodyHeight-input-field" value="<%= bodyheight %>" required />
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="bodyHeight-result-field" readonly /></td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Größe eintragen">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Kraftlevel" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <input type="text" id="strength-level-input" name="strengthLevel" value="<%= strengthLevel %>" required
-                readonly style="text-align: center;"/>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="strength-level-result" readonly /></td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td"> 
-              <input type="text" value="Wird automatisch für dich berechnet">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Trainingserfahrung" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <select name="trainingExperience" id="training-experience-selector" class="volume-selector" required>
-                <option value="beginner" <%=trainingExperience==="beginner" ? "selected" : "" %>>Beginner</option>
-                <option value="fortgeschritten" <%=trainingExperience==="fortgeschritten" ? "selected" : "" %>
-                  >Fortgeschritten</option>
-                <option value="sehrFortgeschritten" <%=trainingExperience==="sehrFortgeschritten" ? "selected" : "" %>
-                  >Sehr fortgeschritten</option>
-                <option value="experte" <%=trainingExperience==="experte" ? "selected" : "" %>>Experte</option>
-              </select>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field">
-              <input type="number" id="training-experience-result-field" value="0" readonly />
-            </td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Beginner = &lt 4 Jahre, Fortgeschritte 4-8 Jahre, Sehr
-              Fortgeschritten 8-12 Jahre, Experte 12+ Jahre">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Alter" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <input type="number" id="age-input-field" value="<%= age %>" name="age" required />
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="age-result-field" readonly /></td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td"><input type="text" value="Hier dein Alter eintragen" readonly></td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Ernährung" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <select name="nutrition" id="nutrition-selector" class="volume-selector" required>
-                <option value="schlecht" <%=nutrition==="schlecht" ? "selected" : "" %>>schlecht</option>
-                <option value="gut" <%=nutrition==="gut" ? "selected" : "" %>>gut</option>
-                <option value="optimal" <%=nutrition==="optimal" ? "selected" : "" %>>optimal</option>
-              </select>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field">
-              <input type="number" id="nutrition-result-field" value="0" readonly />
-            </td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Schlecht = zu wenig & unregelmäßige Kalorien, Durchschnitt =
-              Ausreichend Kalorien & Protein, Gut = optimale Enährung, Makros,
-              Timining">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Schlafqualität" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <select name="sleep" id="sleep-selector" class="volume-selector" required>
-                <option value="schlecht" <%=sleep==="schlecht" ? "selected" : "" %>>schlecht</option>
-                <option value="gut" value="0" <%=sleep==="gut" ? "selected" : "" %>>gut</option>
-                <option value="optimal" <%=sleep==="optimal" ? "selected" : "" %>>optimal</option>
-              </select>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field">
-              <input type="number" id="sleep-result-field" value="0" readonly />
-            </td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Schlecht &lt 5h /Nacht; Durchschnitt = 5-7h / Nacht; Gut = 7h+
-              /Nacht">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Stress" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <select name="stress" id="stress-selector" class="volume-selector" required>
-                <option value="hoch" <%=stress==="hoch" ? "selected" : "" %>>hoch</option>
-                <option value="mittel" <%=stress==="mittel" ? "selected" : "" %> value="0">mittel</option>
-                <option value="niedrig" <%=stress==="niedrig" ? "selected" : "" %>>niedrig</option>
-              </select>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field">
-              <input type="number" id="stress-result-field" value="0" readonly />
-            </td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Niedrig = wenig Stress; Mittelmäßig = ausgeglichen zwischen
-              Stress/Erholung; Hoch = Sehr stressig">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Doping" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <select name="doping" id="steroid-selector" class="volume-selector" required>
-                <option value="nein" <%=doping==="nein" ? "selected" : "" %>>nein</option>
-                <option value="ja" <%=doping==="ja" ? "selected" : "" %>>ja</option>
-              </select>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field">
-              <input type="number" id="steroid-result-field" value="0" readonly />
-            </td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Konsumierst du leistungssteigernde Medikamente?">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Regenerationsfähigkeit" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <select name="regeneration" id="regeneration-selector" class="volume-selector" required>
-                <option value="schlecht" <%=regeneration==="schlecht" ? "selected" : "" %>>schlecht</option>
-                <option value="unterdurchschnittlich" <%=regeneration==="unterdurchschnittlich" ? "selected" : "" %>>
-                  unterdurchschnittlich
-                </option>
-                <option value="durchschnittlich" <%=regeneration==="durchschnittlich" ? "selected" : "" %>>
-                  durchschnittlich
-                </option>
-                <option value="gut" <%=regeneration==="gut" ? "selected" : "" %>>gut</option>
-                <option value="perfekt" <%=regeneration==="perfekt" ? "selected" : "" %>>perfekt</option>
-              </select>
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field">
-              <input type="number" id="regeneration-result-field" value="0" readonly />
-            </td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Beurteile deine Regenerationsfähigkeit rückblickend, wie schätzt
-              du dich ein?">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left" value="Berechneter Anpassungfaktor für dein Volumen" readonly></td>
-            <td data-cell="Selection"></td>
-            <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" value="0" id="volumeAdjustmentField" /></td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td">
-              <input type="text" value="Diese Zahl wird genutzt um dein Volumen für jeden einzelnen Lift
-              zu erhöhen oder herabzusetzen! Der Rechner unten übernimmt dies
-              für dich! Die Zahl im Feld -Median- ist deine Empfehlung für das
-              Startvolumen, dies ist die Mitte zwischen deiner Empfehlung für
-              das MEV und das MRV. Du findest diese Zahl auch in deinem
-              Trainingsplan unter jeder Woche!">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <div>
-      <table class="calculate-table volume-table">
-        <caption>Volumenempfehlung - Hypertrophiephase</caption>
-        <thead>
-          <tr class="table-header-row">
-            <th style="text-align: center;">Exercise</th>
-            <th style="text-align: center;">MEV</th>
-            <th>MRV</th>
-            <th>Median</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
-            <td data-cell="MEV">
-              <input type="number" name="squatmev" id="squat-mev"  readonly required />
-            </td>
-            <td data-cell="MRV">
-              <input type="number" name="squatmrv" id="squat-mrv" readonly required />
-            </td>
-            <td data-cell="Median">
-              <input type="number" readonly name="squat-median-volume" id="squat-median-volume-result">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
-            <td data-cell="MEV">
-              <input type="number" name="benchmev" id="bench-mev" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="MRV">
-              <input type="number" name="benchmrv" id="bench-mrv" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Median">
-              <input type="number" readonly name="bench-median-volume" id="bench-median-volume-result">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
-            <td data-cell="MEV">
-              <input type="number" name="deadliftmev" id="deadlift-mev" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="MRV">
-              <input type="number" name="deadliftmrv" id="deadlift-mrv" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Median">
-              <input type="number" readonly name="deadlift-median-volume" id="deadlift-median-volume-result">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <div>
-      <table class="calculate-table volume-table recommandation-table">
-        <caption>Volumenempfehlung - Kraftphase</caption>
-        <thead>
-          <tr class="table-header-row">
-            <th style="text-align: center;">Exercise</th>
-            <th style="text-align: center;">MEV</th>
-            <th>MRV</th>
-            <th>Median</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
-            <td data-cell="MEV">
-              <input type="number" name="squat-mev-strength" id="squat-mev-strength"  readonly required />
-            </td>
-            <td data-cell="MRV">
-              <input type="number" name="squat-mrv-strength" id="squat-mrv-strength" readonly required />
-            </td>
-            <td data-cell="Median">
-              <input type="number" readonly name="squat-median-volume-strength" id="squat-median-volume-result-strength">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
-            <td data-cell="MEV">
-              <input type="number" name="bench-mev-strength" id="bench-mev-strength" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="MRV">
-              <input type="number" name="bench-mrv-strength" id="bench-mrv-strength" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Median">
-              <input type="number" readonly name="bench-median-volume-strength" id="bench-median-volume-result-strength">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
-            <td data-cell="MEV">
-              <input type="number" name="deadlift-mev-strength" id="deadlift-mev-strength" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="MRV">
-              <input type="number" name="deadlift-mrv-strength" id="deadlift-mrv-strength" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Median">
-              <input type="number" readonly name="deadlift-median-volume-strength" id="deadlift-median-volume-result-strength">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <div>
-      <table class="calculate-table volume-table">
-        <caption>Volumenempfehlung - Peaking</caption>
-        <thead>
-          <tr class="table-header-row">
-            <th style="text-align: center;">Exercise</th>
-            <th style="text-align: center;">MEV</th>
-            <th>MRV</th>
-            <th>Median</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
-            <td data-cell="Exercise">
-              <input type="number" name="squat-mev-peaking" id="squat-mev-peaking"  readonly required />
-            </td>
-            <td data-cell="Exercise">
-              <input type="number" name="squat-mrv-peaking" id="squat-mrv-peaking" readonly required />
-            </td>
-            <td data-cell="Exercise">
-              <input type="number" readonly name="squat-median-volume-peaking" id="squat-median-volume-result-peaking">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
-            <td data-cell="Exercise">
-              <input type="number" name="bench-mev-peaking" id="bench-mev-peaking" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Exercise">
-              <input type="number" name="bench-mrv-peaking" id="bench-mrv-peaking" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Exercise"> 
-              <input type="number" readonly name="bench-median-volume-peaking" id="bench-median-volume-result-peaking">
-            </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
-            <td data-cell="Exercise">
-              <input type="number" name="deadlift-mev-peaking" id="deadlift-mev-peaking" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Exercise">
-              <input type="number" name="deadlift-mrv-peaking" id="deadlift-mrv-peaking" value="<%=  %>" readonly required />
-            </td>
-            <td data-cell="Exercise">
-              <input type="number" readonly name="deadlift-median-volume-peaking" id="deadlift-median-volume-result-peaking">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">Save</button>
   </div>
-  </form>
+
+  <div>
+    <table class="calculate-table volume-table">
+      <caption>Volumenempfehlung - Hypertrophiephase</caption>
+      <thead>
+        <tr class="table-header-row">
+          <th style="text-align: center;">Exercise</th>
+          <th style="text-align: center;">MEV</th>
+          <th>MRV</th>
+          <th>Median</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
+          <td data-cell="MEV">
+            <input type="number" name="squatmev" id="squat-mev" readonly required />
+          </td>
+          <td data-cell="MRV">
+            <input type="number" name="squatmrv" id="squat-mrv" readonly required />
+          </td>
+          <td data-cell="Median">
+            <input type="number" readonly name="squat-median-volume" id="squat-median-volume-result">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
+          <td data-cell="MEV">
+            <input type="number" name="benchmev" id="bench-mev" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="MRV">
+            <input type="number" name="benchmrv" id="bench-mrv" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="Median">
+            <input type="number" readonly name="bench-median-volume" id="bench-median-volume-result">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
+          <td data-cell="MEV">
+            <input type="number" name="deadliftmev" id="deadlift-mev" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="MRV">
+            <input type="number" name="deadliftmrv" id="deadlift-mrv" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="Median">
+            <input type="number" readonly name="deadlift-median-volume" id="deadlift-median-volume-result">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <table class="calculate-table volume-table recommandation-table">
+      <caption>Volumenempfehlung - Kraftphase</caption>
+      <thead>
+        <tr class="table-header-row">
+          <th style="text-align: center;">Exercise</th>
+          <th style="text-align: center;">MEV</th>
+          <th>MRV</th>
+          <th>Median</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
+          <td data-cell="MEV">
+            <input type="number" name="squat-mev-strength" id="squat-mev-strength" readonly required />
+          </td>
+          <td data-cell="MRV">
+            <input type="number" name="squat-mrv-strength" id="squat-mrv-strength" readonly required />
+          </td>
+          <td data-cell="Median">
+            <input type="number" readonly name="squat-median-volume-strength" id="squat-median-volume-result-strength">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
+          <td data-cell="MEV">
+            <input type="number" name="bench-mev-strength" id="bench-mev-strength" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="MRV">
+            <input type="number" name="bench-mrv-strength" id="bench-mrv-strength" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="Median">
+            <input type="number" readonly name="bench-median-volume-strength" id="bench-median-volume-result-strength">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
+          <td data-cell="MEV">
+            <input type="number" name="deadlift-mev-strength" id="deadlift-mev-strength" value="<%=  %>" readonly
+              required />
+          </td>
+          <td data-cell="MRV">
+            <input type="number" name="deadlift-mrv-strength" id="deadlift-mrv-strength" value="<%=  %>" readonly
+              required />
+          </td>
+          <td data-cell="Median">
+            <input type="number" readonly name="deadlift-median-volume-strength"
+              id="deadlift-median-volume-result-strength">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <table class="calculate-table volume-table">
+      <caption>Volumenempfehlung - Peaking</caption>
+      <thead>
+        <tr class="table-header-row">
+          <th style="text-align: center;">Exercise</th>
+          <th style="text-align: center;">MEV</th>
+          <th>MRV</th>
+          <th>Median</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
+          <td data-cell="Exercise">
+            <input type="number" name="squat-mev-peaking" id="squat-mev-peaking" readonly required />
+          </td>
+          <td data-cell="Exercise">
+            <input type="number" name="squat-mrv-peaking" id="squat-mrv-peaking" readonly required />
+          </td>
+          <td data-cell="Exercise">
+            <input type="number" readonly name="squat-median-volume-peaking" id="squat-median-volume-result-peaking">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
+          <td data-cell="Exercise">
+            <input type="number" name="bench-mev-peaking" id="bench-mev-peaking" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="Exercise">
+            <input type="number" name="bench-mrv-peaking" id="bench-mrv-peaking" value="<%=  %>" readonly required />
+          </td>
+          <td data-cell="Exercise">
+            <input type="number" readonly name="bench-median-volume-peaking" id="bench-median-volume-result-peaking">
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
+          <td data-cell="Exercise">
+            <input type="number" name="deadlift-mev-peaking" id="deadlift-mev-peaking" value="<%=  %>" readonly
+              required />
+          </td>
+          <td data-cell="Exercise">
+            <input type="number" name="deadlift-mrv-peaking" id="deadlift-mrv-peaking" value="<%=  %>" readonly
+              required />
+          </td>
+          <td data-cell="Exercise">
+            <input type="number" readonly name="deadlift-median-volume-peaking"
+              id="deadlift-median-volume-result-peaking">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">Save</button>
+  </div>
+
+
+</form>
 
 
 

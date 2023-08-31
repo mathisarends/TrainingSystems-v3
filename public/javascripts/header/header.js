@@ -35,4 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (currentPath === "/exercises") {
     navOptions[3].classList.add("active");
   }
+
+  //um anfangsanimation zu verhindern wird diese css property erst nachträglich hinzugefügt
+  setTimeout(() => {
+    primaryNav.style.transition = "transform 500ms ease-in-out"; // Fügen Sie die Transition hinzu
+  }, 100); 
 });

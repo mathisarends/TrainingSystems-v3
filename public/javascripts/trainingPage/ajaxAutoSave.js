@@ -1,62 +1,100 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
-    console.log("Ajax ready");
+  // for showing the failure and sucess messages
+  let indexVisibleSection = findIndexOfVisibleSection();
+  const navButtons = document.querySelectorAll(".dot-indicators button");
 
-    const form = document.querySelector("form");
-    /* const submitButton = document.querySelector('form button[type="submit"]');
-    console.log(submitButton);
-    console.log(form); */
+  navButtons.forEach((btn, index) => {
+    btn.addEventListener("click", () => {
+      indexVisibleSection = index;
+    });
+  });
 
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
+  function findIndexOfVisibleSection() {
+    const tableSections = document.querySelectorAll(".table-section");
+    let indexOfVisibleSection = -1;
 
-        const formData = new FormData(event.target);
+    for (let i = 0; i < tableSections.length; i++) {
+      const section = tableSections[i];
+      const displayStyle = window
+        .getComputedStyle(section)
+        .getPropertyValue("display");
 
-        // Wandele die FormData in ein JavaScript-Objekt um
-        const formDataObject = {};
-        formData.forEach((value, key) => {
-            formDataObject[key] = value;
-        });
+      if (displayStyle === "block") {
+        indexOfVisibleSection = i;
+        break;
+      }
+    }
 
-        try {
-            const response = await fetch(`${window.location.pathname}`, {
-                method: 'PATCH',
-                body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
-                headers: {
-                    'Content-Type': 'application/json', // Setze den Content-Type auf application/json
-                }
-            });
+    return indexOfVisibleSection;
+  }
 
-            if (response.ok) {
-                console.log("Erfolgreich aktualisiert");
-            } else {
-                console.error("Fehler beim Aktualisieren");
-            }
-        } catch (error) {
-            console.error("Fehler beim Aktualisieren ", error);
-        }
+  function showMessage(element, message, success = true, duration = 5000) {
+    const messageElement = document
+      .querySelectorAll(".table-section")
+      [indexVisibleSection].querySelector(element);
+
+    messageElement.classList.remove("hidden");
+    messageElement.textContent = message;
+
+    setTimeout(() => {
+      messageElement.classList.add("hidden");
+      messageElement.textContent = "";
+    }, duration);
+
+    if (success) {
+      console.log(message);
+    } else {
+      console.error(message);
+    }
+  }
+
+  const form = document.querySelector("form");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    // Wandele die FormData in ein JavaScript-Objekt um
+    const formDataObject = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value;
     });
 
-    const weightInputs = document.querySelectorAll(".weight");
+    try {
+      const response = await fetch(`${window.location.pathname}`, {
+        method: "PATCH",
+        body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
+        headers: {
+          "Content-Type": "application/json", // Setze den Content-Type auf application/json
+        },
+      });
 
-    weightInputs.forEach((weightInput) => {
-        weightInput.addEventListener("change", () => {
-            form.dispatchEvent(new Event("submit"));
-        })
-    })
+      if (response.ok) {
+        showMessage(".save-status-sucess", "Erfolgreich aktualisiert");
+      } else {
+        const errorData = await response.json();
+        showMessage(".save-status-failure", "Fehler beim Aktualisieren", false);
+      }
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren ", error);
+      document
+        .querySelectorAll(".table-section")
+        [indexVisibleSection].querySelector(
+          ".save-status-failure"
+        ).style.display = "block";
+    }
+  });
 
-    window.addEventListener("beforeunload", (event) => {
-        event.preventDefault();
+  /*TRIGGER submit for all weight changes*/
+  const weightInputs = document.querySelectorAll(".weight");
 
-        const confirmationModal = document.getElementById("confirmationModal");
-        confirmationModal.querySelector('input[type="text"]').value = "Willst du deine Änderungen speichern?";
-        confirmationModal.querySelector("#confirmResetButton").textContent = "JA";
-        confirmationModal.querySelector("#cancelResetButton").textContent = "NEIN";
+  weightInputs.forEach((weightInput) => {
+    weightInput.addEventListener("change", () => {
+      form.dispatchEvent(new Event("submit"));
+    });
+  });
 
-        confirmationModal.style.display = "block";
+  /*SAVE unchanged settings*/
 
-        
-    })
+
 });
-
-/*    res.status(200).json({}); das hier muss vom server als antwort kommen:*/

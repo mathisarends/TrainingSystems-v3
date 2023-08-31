@@ -118,6 +118,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         if (!user) {
           return res.status(404).send("Benutzer nicht gefunden");
         }
+        console.log("In der Patch _route")
 
         const updatedData = req.body;
         const trainingPlan = user.trainingPlansCustomNew[i];
@@ -138,14 +139,6 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         }
 
         //update Title and Training Phase
-      const reqTrainingTitle = updatedData["workout_name"];
-      if (reqTrainingTitle !== trainingPlan.title) {
-        trainingPlan.title = reqTrainingTitle;
-      }
-      const reqTrainingPhase = updatedData["volumePhase"];
-      if (reqTrainingPhase !== trainingPlan.trainingPhase) {
-        trainingPlan.trainingPhase = reqTrainingPhase;
-      }
       
       await user.save();
       console.log("Daten erfolgreich gespeichert")
@@ -157,6 +150,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 
       } catch (err) {
         console.log(`Fehler beim Patchen der Seite CUSTOM ${letter}${week}! ` + err);
+        res.status(500).json({ error: `Fehler beim Patchen der Seite CUSTOM ${letter}${week}! ` + err })
       }
     })
   }
@@ -170,7 +164,6 @@ function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
     const trainingDay = trainingWeek.trainingDays[i];
 
     if (trainingDay.exercises?.some(exercise => exercise.weight)) {
-      console.log("gefunden auf " + (i + 1));  
       return i + 1;
       }
     }
@@ -498,6 +491,7 @@ for (let i = 0; i < templates.length; i++) {
       res.status(200).json({});
     } catch (err) {
       console.log(`Ein Fehler ist beim Patchen der Ressource aufgetreten (${templateName}): ${err}`);
+      res.status(500).json({ error: `Ein Fehler ist beim Patchen der Ressource aufgetreten (${templateName}): ${err}` })
     }
   })
 }
@@ -554,7 +548,7 @@ for (let i = 1; i <= 5; i++) {
 }
 
 for (let i = 1; i <= 5; i++) {
-  Router.post(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
+  Router.patch(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
     await handleTrainingSessionPOST(req, res, i - 1);
   }) 
 }
@@ -615,6 +609,8 @@ async function handleTrainingSessionGET(req, res, index) {
       trainingPhase: trainingPhase,
 
       date: date,
+
+      number: index + 1,
         });
 
   } catch(err) {
