@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/shared/index.css">
+    <link rel="stylesheet" href="/stylesheets/login.css">
+    <link rel="manifest" href="/manifest/manifest.webmanifest">
+    <title>REGISTER</title>
+</head>
+
+<body class="home">
+
+    <form action="/register/config" method="POST">
+
+        <div class="content-page">
+            <h3 class="text-white ff-serif fs-700 letter-spacing-1 uppercase" style="font-weight: 500">Volume</h3>
+
+            <label for="name" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Squat</label>
+            <input type="number" id="name" name="name" class="form__input" required autofocus placeholder="">
+    
+            <label for="name" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Bench</label>
+            <input type="number" id="name" name="name" class="form__input" required autofocus placeholder="">
+    
+            <label for="name" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Deadlift</label>
+            <input type="number" id="name" name="name" class="form__input" required autofocus placeholder="">
+    
+            <button >WEITER</button>
+            <!-- <button id="google-btn"></button> -->
+            <div class="login-link-container">
+                <a href="/login" class="text-accent ff-sans-normal">Konfiguration später vornehmen?</a>
+            </div>
+        </div>
+
+        <div class="content-page">
+            <!--Hier weitere Einstellungen zulassen wenn der nutzer auf weiter drückt.-->
+        </div>
+
+       
+
+    </form>
+
+<script>
+    const googleBTN = document.getElementById("google-btn");
+
+    googleBTN.addEventListener("click", e => {
+        e.preventDefault();
+        window.location.href = "https://www.google.com";
+    })
+</script>
+
+</html>

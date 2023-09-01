@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "Shoulder",
         "Triceps",
         "Biceps",
-        "Core",
         "Legs"
       ];
 

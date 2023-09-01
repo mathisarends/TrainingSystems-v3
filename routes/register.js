@@ -9,7 +9,7 @@ const templateTrainingGenerator = require("../models/templateTrainingGenerator")
 const passwordValidator = require("password-validator");
 const passwordSchema = new passwordValidator();
 passwordSchema // Mindestlänge von 8 Zeichen
-  .is()
+/*   .is()
   .min(8)
   .is()
   .max(100)
@@ -24,7 +24,7 @@ passwordSchema // Mindestlänge von 8 Zeichen
   //Keine Leerzeichen
   .has()
   .not()
-  .spaces();
+  .spaces(); */
 
 Router.get("/", (req, res) => {
   res.render("register/index", { layout: false, error: "" });
@@ -89,7 +89,8 @@ Router.post("/", async (req, res) => {
     console.log("Template TrainingPlan erfolgreich gespeichert");
 
     // Redirect zur Login-Seite
-    res.redirect("/login");
+    res.redirect(`/register/config?userID=${newUser._id}`);
+/*     res.redirect("/login"); */
   } catch (err) {
     console.error(err);
 
@@ -106,5 +107,30 @@ Router.post("/", async (req, res) => {
     });
   }
 });
+
+// auf diese Seite wird man weitergeleitet nach der Restrierung und man kann seine einstellungen vornehmen
+Router.get("/config", async (req, res) => {
+  try {
+    const userID = req.query.userID; // from query-parameter
+
+    const user = await User.findById(userID);
+
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden.");
+    }
+
+    
+
+    res.render("register/registerConfig", { user, layout:false });
+  } catch (err) {
+    console.error("Fehler beim Aufrufen der Register Config Datei " + err);
+  }
+});
+
+
+
+
+
+
 
 module.exports = Router;
