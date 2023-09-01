@@ -93,5 +93,3 @@ app.listen(process.env.PORT || PORT, () => console.log(`Listening on port ${PORT
 function generateRandomSecret() {
   return crypto.randomBytes(32).toString("hex");
 }
-
-

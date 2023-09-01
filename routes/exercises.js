@@ -81,11 +81,61 @@ Router.post("/", checkAuthenticated, async (req, res) => {
 
     user.exercises = exercises;
     await user.save();
-    const referer = req.headers.referer || "/";
-    res.redirect(referer);
+    console.log("gespeichert")
+    res.status(200).json({});
 
   } catch (err) {
     console.log("Es ist ein Fehler beim Posten der Exercises aufgetreten.");
+  }
+});
+
+Router.patch("/", checkAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+
+    const exerciseData = req.body;
+    const maxAmountOfExercises = parseInt(req.body.maxExercises);
+    const exerciseCategoriesLength = parseInt(
+      req.body.exerciseCategoriesLength
+    );
+
+    // Get the existing exercises from the database.
+    const exercises = user.exercises
+    console.log(exercises.length);
+    console.log(exercises);
+
+    let exercisesArrayIndex = 0;
+    for (let i = 0; i < exerciseCategoriesLength; i++) {
+      for (let k = 0; k < maxAmountOfExercises; k++) {
+        
+        
+        exercisesArrayIndex++;
+      }
+    }
+
+
+    /* for (let i = 0; i < exerciseCategoriesLength; i++) {
+      for (let k = 0; k < maxAmountOfExercises; k++) {
+        const exerciseId = `exercise_${i}_${k}`;
+        if (exerciseData[exerciseId]) {
+          const exercise = exercises[i][k];
+          exercise.name = exerciseData[exerciseId];
+
+          // Update the other properties of the exercise, if necessary.
+
+          await exercise.save();
+        }
+      }
+    } */
+
+    res.status(200).json({});
+
+  } catch (err) {
+    console.log("Es ist ein Fehler beim Patchen der Exercises aufgetreten.");
   }
 });
 
@@ -100,6 +150,7 @@ Router.post("/reset", checkAuthenticated, async (req, res) => {
         user.exercises = standartExerciseCatalog;
     
         await user.save();
+        console.log("Exercises reset")
         res.redirect("/exercises");
     
       } catch (err) {
@@ -108,56 +159,6 @@ Router.post("/reset", checkAuthenticated, async (req, res) => {
 })
 
 module.exports = Router;
-
-function prepareExercisesData(user) {
-  const predefinedExercises = user.exercises;
-
-  const exerciseCategories = [
-    ...new Set(predefinedExercises.map((exercise) => exercise.category.name)),
-  ];
-
-  const categoryPauseTimes = {};
-  predefinedExercises.forEach((exercise) => {
-    const categoryName = exercise.category.name;
-    const pauseTime = exercise.category.pauseTime;
-    if (!categoryPauseTimes[categoryName]) {
-      categoryPauseTimes[categoryName] = pauseTime;
-    }
-  });
-
-  const defaultRepSchemeByCategory = {};
-  predefinedExercises.forEach((exercise) => {
-    const categoryName = exercise.category.name;
-    const defaultSets = exercise.category.defaultSets;
-    const defaultReps = exercise.category.defaultReps;
-    const defaultRPE = exercise.category.defaultRPE;
-
-    if (!defaultRepSchemeByCategory[categoryName]) {
-      defaultRepSchemeByCategory[categoryName] = {
-        defaultSets: defaultSets,
-        defaultReps: defaultReps,
-        defaultRPE: defaultRPE,
-      };
-    }
-  });
-
-  const categorizedExercises = predefinedExercises.reduce((acc, exercise) => {
-    const categoryName = exercise.category.name;
-    if (!acc[categoryName]) {
-      acc[categoryName] = [];
-    }
-    acc[categoryName].push(exercise.name);
-    return acc;
-  }, {});
-
-  return {
-    exerciseCategories: exerciseCategories,
-    categoryPauseTimes: categoryPauseTimes,
-    categorizedExercises: categorizedExercises,
-    defaultRepSchemeByCategory: defaultRepSchemeByCategory,
-    error: "",
-  };
-}
 
 function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTimes, exerciseCategorySets, exerciseCategoryReps, exerciseCategoryRPE) {
   
@@ -184,8 +185,6 @@ function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTime
     } else if (index === 9) {
       associatedCategory = "Biceps";
     } else if (index === 10) {
-      associatedCategory = "Core";
-    } else if (index === 11) {
       associatedCategory = "Legs";
     } else {
       console.log("Fehler im for-loop-index");
@@ -195,7 +194,7 @@ function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTime
     const object = {
       name: exerciseName,
       category: {
-        name: associatedCategory,  //todo hier pauseTime einfügen JUMP:
+        name: associatedCategory, 
         pauseTime: exerciseCategoryPauseTimes[index],
         defaultSets: exerciseCategorySets[index],
         defaultReps: exerciseCategoryReps[index],
@@ -204,4 +203,54 @@ function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTime
     }
   
     return object;
+  }
+
+  function prepareExercisesData(user) {
+    const predefinedExercises = user.exercises;
+  
+    const exerciseCategories = [
+      ...new Set(predefinedExercises.map((exercise) => exercise.category.name)),
+    ];
+  
+    const categoryPauseTimes = {};
+    predefinedExercises.forEach((exercise) => {
+      const categoryName = exercise.category.name;
+      const pauseTime = exercise.category.pauseTime;
+      if (!categoryPauseTimes[categoryName]) {
+        categoryPauseTimes[categoryName] = pauseTime;
+      }
+    });
+  
+    const defaultRepSchemeByCategory = {};
+    predefinedExercises.forEach((exercise) => {
+      const categoryName = exercise.category.name;
+      const defaultSets = exercise.category.defaultSets;
+      const defaultReps = exercise.category.defaultReps;
+      const defaultRPE = exercise.category.defaultRPE;
+  
+      if (!defaultRepSchemeByCategory[categoryName]) {
+        defaultRepSchemeByCategory[categoryName] = {
+          defaultSets: defaultSets,
+          defaultReps: defaultReps,
+          defaultRPE: defaultRPE,
+        };
+      }
+    });
+  
+    const categorizedExercises = predefinedExercises.reduce((acc, exercise) => {
+      const categoryName = exercise.category.name;
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
+      }
+      acc[categoryName].push(exercise.name);
+      return acc;
+    }, {});
+  
+    return {
+      exerciseCategories: exerciseCategories,
+      categoryPauseTimes: categoryPauseTimes,
+      categorizedExercises: categorizedExercises,
+      defaultRepSchemeByCategory: defaultRepSchemeByCategory,
+      error: "",
+    };
   }

@@ -269,6 +269,11 @@ const standartExerciseCatalog = [
           category: Legs
         },
         {
+          name: "Hyperextensions",
+          category: Legs
+        },
+
+        {
           name: "Leg Extension",
           category: Legs
         },

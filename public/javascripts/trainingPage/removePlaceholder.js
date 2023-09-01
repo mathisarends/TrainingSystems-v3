@@ -13,12 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (exerciseCategorySelectors[i].value === "- Bitte Auswählen -") {
                 exerciseCategorySelectors[i].style.opacity = "0";
             }
-            exerciseCategorySelectors[i].style.color = "black";
         });
 
-        exerciseCategorySelectors[i].addEventListener("blur", () => {
-            exerciseCategorySelectors[i].style.color = "hsl(0 0% 100%)";
-        })
     
         exerciseCategorySelectors[i].addEventListener("change", () => {
             if (exerciseCategorySelectors[i].value !== "- Bitte Auswählen -") {
@@ -26,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 exerciseCategorySelectors[i].style.opacity = "0";
             }
-            exerciseCategorySelectors[i].style.color = "hsl(0 0% 100%)";
         });
     }
 })

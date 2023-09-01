@@ -117,11 +117,7 @@
 
 
 @media (min-width: 45em) {
-    .grid-container--training {
-        grid-template-columns: minmax(3rem, 1fr) minmax(0, 50%) minmax(3rem, 1fr);
-        align-items: left;
-    }
-
+    
     .training-plan-container {
         flex-direction: row;
         --gap: 2rem;
@@ -148,18 +144,6 @@
         text-align: left;
         margin: 0;
         padding: 0.5em 1.4em;
-    }
-
-    .grid-container--training > *:first-child,
-    .grid-container--training .tab-list,
-    .grid-container--training .custom-view-container {
-        grid-column: 2;
-        justify-self: start;
-        align-self: start;
-    }
-
-    .grid-container--training .custom-view-container {
-        width: 100%;
     }
 
     .custom-view-container .flow {

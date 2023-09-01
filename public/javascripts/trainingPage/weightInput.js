@@ -27,4 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
           weightInput[i].value = gerundeteraverage;
         });
       }
+
+
+
 })

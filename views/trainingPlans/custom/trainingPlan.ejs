@@ -20,7 +20,7 @@
 
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>">
-                        <h1 class="numbered-title" style="margin: 0"><span aria-hidden="true">W<%= week %>D<%= i + 1 %></span><%= workoutName %></h1>
+                        <h1 class="numbered-title" style="padding-left: 0.65em; padding-top: 0.5em;"><span aria-hidden="true">W<%= week %>D<%= i + 1 %></span><%= workoutName %></h1>
                         <div class="rest-pause-container" style="display: none;">
                             <div class="rest-pause-timer">
                                 00:00
@@ -145,7 +145,7 @@
                                                                                     step="0.5">
                                                                             </td>
                                                                             <td data-cell="@RPE">
-                                                                                <input type="number" class="actualRPE"
+                                                                                <input type="text" class="actualRPE"
                                                                                     name="day<%=i + 1%>_exercise<%=k + 1%>_actualRPE"
                                                                                     value="<%= selectedActualRPE %>"
                                                                                     step="0.5">
@@ -182,6 +182,11 @@
                                 type="submit" type="submit">Save</button>
                         </div>
 
+                        <audio id="timerAudio">
+                            <source src="/audio/newTimer.mp3" type="audio/mpeg">
+                        Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
+                        </audio>
+
 
 
                         <div id="confirmationModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
@@ -199,7 +204,6 @@
                                 nextPage: afterPage , week: week}) %>
 
 
-                        <script>
-                            </script>
+                        <script src="/javascripts/trainingPage/timer-worker.js"></script>
 
 </form>

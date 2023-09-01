@@ -482,12 +482,14 @@ select {
 
 
 .grid-container--exercises {
-    --flow-space: 2rem;
+    --flow-space: 1rem;
     grid-template-columns: 1fr;
     grid-template-areas: 
         'title'
         'select'
-        'form';
+        'saveStatus'
+        'form'
+        'resetForm';
 }
 
 .grid-container--exercises .numbered-title {
@@ -498,10 +500,26 @@ select {
 
 .grid-container--exercises .tab-list {
     grid-area: select;
+    justify-self: left;
+    padding-left: 1em;
+}
+
+.grid-container--exercises .status-container {
+    grid-area: saveStatus;
+    justify-self: left;
+    padding-left: 1em;
 }
 
 .grid-container--exercises form[action="/exercises"] {
     grid-area: form;
+    justify-self: top;
+  }
+
+
+  .grid-container--exercises form[action="/exercises/reset"] {
+    grid-area: resetForm;
+    width: 100%;
+    margin-top: 0;
   }
 
 .grid-container--training {
@@ -547,8 +565,47 @@ select {
     }
 
     .grid-container--exercises {
-        grid-template-columns: 1fr;
-        justify-self: center;
+        grid-template-columns: minmax(3rem, 1fr) minmax(0, 50%) minmax(3rem, 1fr);
+        align-items: left;
+    }
+
+    /* .grid-container--exercises form[action="/exercises"] {
+        grid-area: form;
+        justify-self: top;
+      }
+    
+      .grid-container--exercises form[action="/exercises/reset"] {
+        grid-area: resetForm;
+        width: 100%;
+        margin-top: 0;
+      } */
+
+    .grid-container--exercises > *:first-child,
+    .grid-container--exercises .tab-list,
+    .grid-container--exercises form[action="/exercises?_method=PATCH"], /*falls ich das implementiere*/
+    .grid-container--exercises form[action="/exercises"],
+    .grid-container--exercises form[action="/exercises/reset"],
+    .grid-container--exercises .status-container {
+        grid-column: 2;
+        justify-self: start;
+        align-self: start;
+    }
+    .grid-container--exercises .exercise-container {
+        width: 100% !important;
+        justify-self: start;
+        align-self: start;
+    }
+
+    .grid-container--exercises form[action="/exercises?_method=PATCH"] {
+        border: 2px solid green;
+    }
+
+    .grid-container--exercises > *:first-child {
+        padding-left: 0;
+    }
+
+    .grid-container--exercises .tab-list {
+        padding-left: 0;
     }
     
 
@@ -565,6 +622,25 @@ select {
     .grid-container--home > *:last-child {
         grid-column: 3;
     }
+
+
+    .grid-container--training {
+        grid-template-columns: minmax(3rem, 1fr) minmax(0, 50%) minmax(3rem, 1fr);
+        align-items: left;
+    }
+
+    .grid-container--training > *:first-child,
+    .grid-container--training .tab-list,
+    .grid-container--training .custom-view-container {
+        grid-column: 2;
+        justify-self: start;
+        align-self: start;
+    }
+
+    .grid-container--training .custom-view-container {
+        width: 100%;
+    }
+
     
 
 }

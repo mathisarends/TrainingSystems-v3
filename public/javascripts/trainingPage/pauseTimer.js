@@ -1,10 +1,62 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Auf jedes change event der weight-eingabe wird reagiert damit dass der entsprechende timer wieder von vorne läuft
-  console.log("Test timer")
-  
-  const exerciseCategoryLength = document.getElementById("exercise-category-length").value; //12
+function initializeTimerWorker() {
+  timerWorker = new Worker(
+    URL.createObjectURL(
+      new Blob(
+        [
+          `
+    let remainingTime = 0;
+    let timer;
 
-  const categoryPauseTimes = document.getElementsByClassName("category-pause-time-input"); //12
+    self.addEventListener('message', function (e) {
+      const data = e.data;
+      if (data.command === 'start') {
+        remainingTime = data.duration;
+        if (!timer) {
+          startTimer();
+        }
+
+
+      }
+    });
+
+    function startTimer() {
+      const interval = 1000; // 1 Sekunde
+      timer = setInterval(function () {
+        if (remainingTime <= 0) {
+          clearInterval(timer);
+          self.postMessage({ command: 'complete' });
+        } else {
+          remainingTime -= interval;
+          self.postMessage({ command: 'currentTime', currentTime: remainingTime }); // Senden Sie die verbleibende Zeit in jeder Iteration
+        }
+      }, interval);
+    }
+    
+    // Funktion zum Stoppen des Timers
+/*     function stopTimer() {
+      clearInterval(timer);
+    }
+
+    self.addEventListener('stop', function () {
+      stopTimer();
+    }); */
+  `,
+        ],
+        { type: "application/javascript" }
+      )
+    )
+  );
+
+  return timerWorker;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const timerWorker = initializeTimerWorker();
+
+  const categoryPauseTimes = document.getElementsByClassName(
+    "category-pause-time-input"
+  );
 
   const exerciseCategorys = [
     "- Bitte Auswählen -",
@@ -18,10 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "Triceps",
     "Biceps",
     "Core",
-    "Legs"
+    "Legs",
   ];
-
-  console.log(getPauseTimeByExerciseCategory("Back"));
 
   function getPauseTimeByExerciseCategory(category) {
     for (let i = 0; i < exerciseCategorys.length; i++) {
@@ -30,76 +80,67 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
-    
+
   const workoutTables = document.querySelectorAll(".workout-table");
-  const moreInfoButtons = document.getElementsByClassName("more-info-button");
   const restPauseTimers = document.getElementsByClassName("rest-pause-timer");
-  const timerIntervals = [];
+  const restPauseProgressBars = document.getElementsByClassName(
+    "rest-pause-progress-bar"
+  );
 
-  const restPauseContainers = document.getElementsByClassName("rest-pause-container");
-  const restPauseProgressBars = document.getElementsByClassName("rest-pause-progress-bar");
+  workoutTables.forEach((workoutTable, index) => {
+    const weightInputs = workoutTable.querySelectorAll(".weight");
+    const exerciseCategorySelectors = workoutTable.querySelectorAll(".exercise-category-selector");
 
-  for (let i = 0; i < moreInfoButtons.length; i++) {
-    moreInfoButtons[i].addEventListener("click", (e) => {
-      e.preventDefault();
-      if (restPauseContainers[i].style.display === "none") {
-        restPauseContainers[i].style.display = "block";
-      } else {
-        restPauseContainers[i].style.display = "none";
-        clearInterval(timerIntervals[i]); //reset timer if the button is clicked again
-        //TODO: Hier progress bar auch zurücksetzen
-        restPauseTimers[i].textContent = "00:00";
+      weightInputs.forEach((weightInput, weightIndex) => {
+        weightInput.addEventListener("change", () => {
+          const category = exerciseCategorySelectors[weightIndex].value;
+
+          timerWorker.postMessage({
+            command: "start",
+            duration: getPauseTimeByExerciseCategory(category) * 1000, // Timerdauer in Millisekunden
+          });
+
+          startTimer(restPauseTimers[index], restPauseProgressBars[index], category);
+
+        })
+      })
+  })
+
+
+  function startTimer(timerElement, progressBar, category) {
+
+    const audioElement = document.getElementById("timerAudio");
+
+    const updateTimer = () => {
+      timerWorker.postMessage({ command: 'currentTime' }); // Anfrage an den Timer Worker, um die verbleibende Zeit abzurufen
+    };
+  
+    updateTimer();     // init
+  
+    const updateInterval = setInterval(updateTimer, 1000); //every second 
+  
+    timerWorker.addEventListener("message", function (e) { //listens for remaining time from timer worker
+      const data = e.data;
+      if (data.command === "currentTime") {
+        const currentTime = data.currentTime / 1000; // in secunds
+        const minutes = Math.floor(currentTime / 60);
+        const seconds = Math.floor(currentTime % 60);
+  
+        const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        timerElement.textContent = formattedTime;
+  
+        const progress = (currentTime / getPauseTimeByExerciseCategory(category)) * 100; // progress in percent
+        progressBar.value = progress;
+  
+        if (currentTime <= 0) {
+          clearInterval(updateInterval); // if timeout then intervall reset
+          audioElement.play();
+          //audio - element abspielen:
+        }
       }
     });
-  }
-
-  for (let i = 0; i < workoutTables.length; i++) {
-    const table = workoutTables[i];
-    const weightInputs = table.querySelectorAll(".weight"); //retrieve the weight input of the table
-    const exerciseCategorySelectors = table.querySelectorAll(".exercise-category-selector"); // per table
-
-    for (let k = 0; k < weightInputs.length; k++) {
-      weightInputs[k].addEventListener("change", () => {
-        const category = exerciseCategorySelectors[k].value;
-        console.log(category);
-
-        if (timerIntervals[i]) { //if there is a already a timer - clear
-          clearInterval(timerIntervals[i]);
-        }
-
-        startTimer(restPauseTimers[i], restPauseProgressBars[i], i, category);
-      });
     }
-  }
 
-  function startTimer(timerElement, progressBar, index, category) {
 
-    const pauseTime = getPauseTimeByExerciseCategory(category);
-  
-    let remainingSeconds = pauseTime; 
-  
-    const updateTimer = () => {
-      const minutes = Math.floor(remainingSeconds / 60);
-      const seconds = remainingSeconds % 60;
-  
-      const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-      timerElement.textContent = formattedTime;
-  
-      const progress = (remainingSeconds / pauseTime) * 100; //refresh progress bar
-      progressBar.value = progress;
-  
-      if (remainingSeconds <= 0) { //stop
-        clearInterval(timerIntervals[index]);
-      } else {
-        remainingSeconds--;
-      }
-    };
-
-    updateTimer();
-  
-    timerIntervals[index] = setInterval(updateTimer, 1000); //call timer-method every second
-  }
-  
 });
-
 

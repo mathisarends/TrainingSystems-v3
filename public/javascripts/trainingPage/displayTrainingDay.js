@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navButtons = document.querySelectorAll(".dot-indicators button");
     console.log(navButtons);
 
-    //show the currently selected one
+    //show the currently selected one the selected day is required from backend
     const selectedButton = document.querySelector(".dot-indicators button[aria-selected='true']");
 
     

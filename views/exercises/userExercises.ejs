@@ -1,14 +1,24 @@
 <link rel="stylesheet" href="/stylesheets/exercises.css">
 
-<main class="grid-container grid-container--exercises flow" style="--flow-space: 1rem; padding-inline: 0;">
+<main class="grid-container grid-container--exercises flow" style="padding-inline: 0;">
     <h1 class="numbered-title" style="text-align:left; padding-top: 1.2em;"><span aria-hidden="true">03</span>Übungen</h1>
 
-    <!-- <div class="tab-list underline-indicators flex" role="tablist" aria-label="exercise list">
-      <button aria-selected="true" role="tab" aria-controls="Main-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Main</button>
-      <button aria-selected="false" role="tab" aria-controls="Accesoires-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">ACC</button>
-      <button aria-selected="false" role="tab" aria-controls="All-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">All</button>
+    <div class="tab-list underline-indicators flex" role="tablist" aria-label="exercise list">
+      <button aria-selected="false" role="tab" aria-controls="All-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" id="all-tab">All</button>
+      <button aria-selected="false" role="tab" aria-controls="Main-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" id="main-tab">Main</button>
+      <button aria-selected="false" role="tab" aria-controls="Accesoires-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" id="acc-tab">ACC</button>
     </div>
-   -->
+
+    <div class="status-container">
+      <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent">
+      Daten erfolgreich gespeichert
+      </div>
+      <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent">
+      Fehler beim speichern der Daten
+      </div>
+    </div>
+
+  
   
     <% if (error) { %>
       <div class="ff-sans-normal fs-500 text-accent letter-spacing-3" style="text-align: left;">
@@ -18,10 +28,12 @@
     
         <% const maxExercises=Math.max(...exerciseCategories.map(category=> categorizedExercises[category].length)); %>
     
-          <form action="/exercises" method="POST">
+          <form action="/exercises" method="POST" id="post-form">
             <div class="exercise-container">
+
               <input type="hidden" name="maxExercises" value="<%= maxExercises %>">
               <input type="hidden" name="exerciseCategoriesLength" value="<%= exerciseCategories.length %>">
+              
               <% for (let categoryIndex=0; categoryIndex < exerciseCategories.length; categoryIndex++) { %>
                 <% const category=exerciseCategories[categoryIndex]; %>
                   <table class="exercise-table">
@@ -160,94 +172,43 @@
                   <% } %>
             </div>
             <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit" style="margin-bottom: 0;">Save</button>
-            <form action="/exercises/reset" method="POST" name="resetForm">
-              <button class="main-page-button save-training-button uppercase ff-sans-normal" type="button" id="reset-exercises-button">RESET</button>
-            </form>
           </form>
 
+          <form action="/exercises/reset" method="POST" id="reset-form">
+            <button class="main-page-button save-training-button uppercase ff-sans-normal" type="button" id="reset-exercises-button">RESET</button>
+          </form>
 
-  
-  
-        
-  
-        <div id="confirmationModal" class="modal" style="display: none;">
-          <div class="modal-content">
-            <p>Bist du sicher, dass du die Übungen auf die Standartwerte zurücksetzen möchtest?</p>
-            <div class="modal-buttons">
-              <button class="modal-button" id="confirmResetButton">ZURÜCKSETZEN</button>
-              <button class="modal-button" id="cancelResetButton">ABBRECHEN</button>
+          <div id="confirmationModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
+            <div class="modal-content flow" style="--flow-space: 0.5em;">
+                <input type="text" readonly value="Standartwerte wiederherstellen?">
+                <div class="modal-buttons">
+                    <button class="modal-button text-accent" id="confirmResetButton">JA</button>
+                    <button class="modal-button text-accent" id="cancelResetButton">NEIN</button>
+                </div>
             </div>
-          </div>
         </div>
-</main>
-
-
-
+    </main>
 
 
       <!-- <script src="/javascripts/volume/showExtraInfo.js"></script> -->
+      <script src="/javascripts/exercises/resetConfirmation.js"></script>
+      <script src="/javascripts/exercises/showSection.js"></script>
+      <script src="/javascripts/exercises/showRightTabFromStart.js"></script>
+      <script src="/javascripts/exercises/ajaxSave.js"></script>
+
       <script>
+        document.addEventListener("DOMContentLoaded", () => {
 
-      const showExercisesNav = document.querySelector(".tab-list");
-      const navButtons = showExercisesNav.querySelectorAll("button");
 
-      const exerciseTables = Array.from(document.querySelectorAll("table:not(:first-of-type)"));
-      const mainTables = exerciseTables.slice(0, 3);
-      const accesoireTables = exerciseTables.slice(3);
-      console.log(mainTables);
-      console.log(accesoireTables);
+        window.addEventListener("beforeunload", (event) => {
+          event.preventDefault();
+          const unsavedChanges = true;
 
-      navButtons.forEach((navButton, index) => {
-        navButton.addEventListener("click", e => {
-          e.preventDefault();
-
-          navButtons.forEach((btn) => {
-            btn.setAttribute("aria-selected", false);
-          })
-
-          navButton.setAttribute("aria-selected", true);
-
-          if (index === 0) {
-            showAllTables(mainTables);
-            removeAllTables(accesoireTables);
-          } else if (index === 1) {
-            showAllTables(accesoireTables);
-            removeAllTables(mainTables);
-          } else if (index === 3) {
-            showAllTables(exerciseTables);
+          if (unsavedChanges) {
+            event.returnValue = "Sie haben ungespeicherte Änderungen. Wollen Sie die Seite wirklich verlassen?";
+  
           }
         })
-      })
 
-      function showAllTables(tableList) {
-        tableList.forEach((table) => {
-          table.style.display = "block";
         })
-      }
-
-      function removeAllTables(tableList) {
-        tableList.forEach((table) => {
-          table.style.display = "none";
-        })
-      }
-
-        // Modal Shit
-        const resetExercisesButton = document.getElementById("reset-exercises-button");
-        const confirmationModal = document.getElementById("confirmationModal");
-        const confirmResetButton = document.getElementById("confirmResetButton");
-        const cancelResetButton = document.getElementById("cancelResetButton");
-
-        resetExercisesButton.addEventListener("click", e => {
-          e.preventDefault();
-          confirmationModal.style.display = "block";
-        });
-
-        cancelResetButton.addEventListener("click", () => {
-          confirmationModal.style.display = "none";
-        });
-
-        confirmResetButton.addEventListener("click", () => {
-          document.forms["resetForm"].submit();
-          confirmationModal.style.display = "none";
-        });
       </script>

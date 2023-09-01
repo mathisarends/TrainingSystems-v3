@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+/* document.addEventListener("DOMContentLoaded", () => {
   const trainingDaySelector = document.getElementById("training-day-selector");
   const trainingDaysTables = document.getElementsByClassName("table-section");
   
@@ -18,3 +18,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
+ */
