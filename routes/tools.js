@@ -20,6 +20,10 @@ Router.get("/volume", checkAuthenticated, async (req, res) => {
       const trainingData =
         user.trainingData.length > 0 ? user.trainingData[0] : {};
 
+        console.log("Sleep " + user.sleepQuality);
+        console.log("Stress " + user.stress);
+        console.log("Regeneration " + user.regenerationCapacity);
+
       res.render("tools/volume", {
         id: req.user.id,
         name: user.name,
@@ -36,7 +40,7 @@ Router.get("/volume", checkAuthenticated, async (req, res) => {
         nutrition: user.nutrition || "",
         sleep: user.sleepQuality || "",
         doping: user.doping || "",
-        regeneration: user.regeneration || "",
+        regeneration: user.regenerationCapacity || "",
         trainingExperience: user.trainingExperience || "",
         recentSquatWeight: trainingData.recentSquatWeight || "",
         recentSquatReps: trainingData.recentSquatReps || "",

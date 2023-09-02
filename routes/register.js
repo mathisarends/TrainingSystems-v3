@@ -127,6 +127,69 @@ Router.get("/config", async (req, res) => {
   }
 });
 
+Router.post("/config", async (req, res) => {
+  //Doping und regenerationsfähigkeit auf Standartwerte setzen:
+
+  try {
+    const userID = req.query.userID; // from query-parameter
+
+    const user = await User.findById(userID);
+  
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden.");
+    }
+  
+    const gender = req.body.gender;
+    const height = req.body.height;
+    const bodyWeight = req.body.bodyWeight;
+    const age = req.body.age;
+  
+    const maxSquat = req.body.maxSquat;
+    const maxBench = req.body.maxBench;
+    const maxDeadlift = req.body.maxDeadlift;
+    const strengthLevel = req.body.strengthLevel;
+  
+    const trainingExperience = req.body.trainingExperience;
+    const sleep = req.body.sleep;
+    const nutrition = req.body.nutrition;
+    const stress = req.body.stress;
+  
+    console.log(sleep + "schlafqualität");
+
+    user.gender = gender;
+    user.bodyHeight = height;
+    user.bodyWeight = bodyWeight;
+    user.age = age;
+    user.maxSquat = maxSquat;
+    user.maxBench = maxBench;
+    user.maxDeadlift = maxDeadlift;
+    user.strengthLevel = strengthLevel;
+    user.trainingExperience = trainingExperience;
+    user.sleepQuality = sleep;
+    user.nutrition = nutrition;
+    user.stress = stress;
+  
+    // Standartwerte die ich einfach mal so annehme
+    user.regenerationCapacity = "durchschnittlich";
+    user.doping = "nein";
+  
+    await user.save();
+
+    res.status(200).json({});
+  
+    console.log(user);
+  } catch (err) {
+    console.error("Es ist ein Fehler bei der Volumenconfig aufgetreten: " + err);
+    res.status(500).json({ error: "Fehler beim Verarbeiten der Formulardaten" });
+
+  }
+
+
+
+  
+
+})
+
 
 
 

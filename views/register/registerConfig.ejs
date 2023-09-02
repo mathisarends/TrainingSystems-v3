@@ -10,50 +10,147 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/shared/index.css">
     <link rel="stylesheet" href="/stylesheets/login.css">
+    <link rel="stylesheet" href="/stylesheets/shared/index.css">
     <link rel="manifest" href="/manifest/manifest.webmanifest">
     <title>REGISTER</title>
 </head>
 
 <body class="home">
 
-    <form action="/register/config" method="POST">
 
-        <div class="content-page">
-            <h3 class="text-white ff-serif fs-700 letter-spacing-1 uppercase" style="font-weight: 500">Volume</h3>
+    <form action="" method="POST">
 
-            <label for="name" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Squat</label>
-            <input type="number" id="name" name="name" class="form__input" required autofocus placeholder="">
-    
-            <label for="name" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Bench</label>
-            <input type="number" id="name" name="name" class="form__input" required autofocus placeholder="">
-    
-            <label for="name" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Deadlift</label>
-            <input type="number" id="name" name="name" class="form__input" required autofocus placeholder="">
-    
-            <button >WEITER</button>
-            <!-- <button id="google-btn"></button> -->
-            <div class="login-link-container">
-                <a href="/login" class="text-accent ff-sans-normal">Konfiguration später vornehmen?</a>
+        <div class="content-page flow" style="display: block;">
+
+            <h3 class="text-white-2 ff-serif fs-500 letter-spacing-1 uppercase" style="font-weight: 500;">CONFIG</h3>
+
+            <div>
+                <!-- <p class="text-accent">Nav Text - Barlow Condensed Regular - 16px - 2.7 Character Space</p> -->
+                <p class="text-white ff-sans-cond letter-spacing-3 fs-300" style="text-align: center;">
+                    Willst du jetzt die Einstellungen für den Volumenrechner vornehmen?
+                </p>
             </div>
+
+
+            <div>
+                <button class="form-button navigate-further-btn" style="margin-top: 1em;">WEITER</button>
+
+
+                <div class="login-link-container">
+                    <a href="/login" class="text-accent ff-sans-normal">Konfiguration später vornehmen</a>
+                </div>
+            </div>
+
         </div>
 
-        <div class="content-page">
-            <!--Hier weitere Einstellungen zulassen wenn der nutzer auf weiter drückt.-->
+
+        <div class="content-page" style="display: none;">
+            <h3 class="text-white ff-serif fs-500 letter-spacing-1 uppercase" style="font-weight: 500">Generelles</h3>
+
+            <label for="gender" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Geschlecht</label>
+            <select name="gender" id="gender" class="generic-selector" required>
+                <option value="" disabled selected hidden></option>
+                <option value="männlich">Mann</option>
+                <option value="weiblich">Frau</option>
+            </select>
+
+            <label for="height" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Körpergröße (cm)</label>
+            <input type="number" id="height" name="height" class="form__input" required>
+
+            <label for="bodyWeight" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Körpergewicht
+                (kg)</label>
+            <input type="number" id="bodyWeight" name="bodyWeight" class="form__input" required>
+
+            <label for="age" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Alter</label>
+            <input type="number" id="age" name="age" class="form__input" required>
+
+            <button class="form-button navigate-further-btn" style="margin-top: 1em;">WEITER</button>
+            <!-- <button id="google-btn"></button> -->
         </div>
 
-       
+        <div class="content-page" style="display: none;">
+            <h3 class="text-white ff-serif fs-500 letter-spacing-1 uppercase" style="font-weight: 500">Kraftlevel</h3>
+
+            <label for="maxSquat" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Squat</label>
+            <input type="number" id="maxSquat" name="maxSquat" class="form__input" required>
+
+            <label for="maxBench" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM Bench</label>
+            <input type="number" id="maxBench" name="maxBench" class="form__input" required>
+
+            <label for="maxDeadlift" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">1RM
+                Deadlift</label>
+            <input type="number" id="maxDeadlift" name="maxDeadlift" class="form__input" required>
+
+            <label for="strengthLevel" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Strength
+                Level</label>
+            <input type="text" id="strengthLevel" name="strengthLevel" readonly required>
+
+
+            <button class="form-button navigate-further-btn" style="margin-top: 1em;">WEITER</button>
+            <!-- <button id="google-btn"></button> -->
+        </div>
+
+        <div class="content-page" style="display: none;">
+            <h3 class="text-white ff-serif fs-500 letter-spacing-1 uppercase" style="font-weight: 500">Sonstiges</h3>
+
+            <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent" style="text-align: center;">
+                Daten erfolgreich gespeichert
+            </div>
+            <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent" style="text-align: center;">
+                Fehler beim speichern der Daten
+            </div>
+
+            <label for="trainingExperience"
+                class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Trainingserfahrung</label>
+            <select name="trainingExperience" id="trainingExperience" class="generic-selector" required>
+                <option value="" disabled selected hidden></option>
+                <option value="beginner">&lt 4 Jahre</option>
+                <option value="fortgeschritten">4-8 Jahre</option>
+                <option value="sehrFortgeschritten">8-12 Jahre</option>
+                <option value="experte">12+ Jahre</option>
+            </select>
+
+            <label for="sleep" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Schlaf</label>
+            <select name="sleep" id="sleep" class="generic-selector" required>
+                <option value="" disabled selected hidden></option>
+                <option value="schlecht">&lt 5h /Nacht</option>
+                <option value="gut">5-7h / Nacht</option>
+                <option value="optimal">7h+/Nacht</option>
+            </select>
+
+            <label for="nutrition"
+                class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Ernährung</label>
+            <select name="nutrition" id="nutrition" class="generic-selector" required>
+                <option value="" disabled selected hidden></option>
+                <option value="schlecht">Zu wenig & unregelmäßige Kalorien</option>
+                <option value="gut">Ausreichend Kalorien & Protein</option>
+                <option value="optimal">optimale Enährung, Makros</option>
+            </select>
+
+            <label for="stress" class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase">Stress</label>
+            <select name="stress" id="stress" class="generic-selector" required>
+                <option value="" disabled selected hidden></option>
+                <option value="hoch">wenig Stress</option>
+                <option value="mittel">ausgeglichen zwischen Stress/Erholung</option>
+                <option value="niedrig">sehr Stressig</option>
+            </select>
+
+            <button class="form-button navigate-further-btn" style="margin-top: 1em;">SPEICHERN</button>
+            <!-- <button id="google-btn"></button> -->
+        </div>
+
+        <div class="dot-indicators flex" style="justify-content: center; margin-top: 2.5rem; --gap: 2rem">
+            <button aria-selected="true"><span class="sr-only">Next</span></button>
+            <button aria-selected="false"><span class="sr-only">Next</span></button>
+            <button aria-selected="false"><span class="sr-only">Next</span></button>
+            <button aria-selected="false"><span class="sr-only">Next</span></button>
+        </div>
+
 
     </form>
 
-<script>
-    const googleBTN = document.getElementById("google-btn");
-
-    googleBTN.addEventListener("click", e => {
-        e.preventDefault();
-        window.location.href = "https://www.google.com";
-    })
-</script>
+    <script src="/javascripts/register/navigation.js"></script>
+    <script src="/javascripts/register/volumeCalculations.js"></script>
 
 </html>

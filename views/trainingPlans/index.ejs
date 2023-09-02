@@ -17,9 +17,11 @@
             <% } %>
 
                 <% if (userCustomTrainings.length===0) { %>
-                    <div class="ff-sans-cond letter-spacing-3 fs-500" style="text-align: center;">
-                        Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
-                        Erstelle einfach einen mit dem Button unten.
+                    <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500">
+                        <p>
+                            Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
+                            Erstelle einfach einen mit dem Button unten.
+                        </p>
                     </div>
                     <% } %>
 
@@ -73,7 +75,7 @@
             </div>
         <% } %>
         <% if (userTrainings.length===0) { %>
-            <div class="ff-sans-cond letter-spacing-3 fs-500" style="text-align: center;">
+            <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500">
                 Es sieht so aus als hättest du keine gespeicherten Trainings.
                 Starte eines mit dem Button unten!
             </div>

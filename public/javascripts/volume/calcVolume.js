@@ -102,6 +102,8 @@ let estTotalInputFields = [
   dlRepsInput,
 ];
 
+
+
 // Automatische Berechnung des Estimated Totals
 estTotalInputFields.forEach((inputField) => {
   inputField.addEventListener("change", calcEstMaxTotal);
@@ -113,7 +115,7 @@ genderSelector.addEventListener("change", () => {
   if (selectedGender === "männlich") {
     genderResultField.value = 0;
   } else if (selectedGender === "weiblich") {
-    genderResultField.value = 5;
+    genderResultField.value = 3;
   }
   calcVolumeAdjustment();
   calcIndividualizedVolume();
@@ -136,9 +138,9 @@ bodyWeightInputField.addEventListener("change", () => {
   } else {
     //weiblich
     if (weight < 57) {
-      bodyWeightResultField.value = 4;
+      bodyWeightResultField.value = 3;
     } else if (weight < 72) {
-      bodyWeightResultField.value = 2;
+      bodyWeightResultField.value = 1;
     } else if (weight <= 84) {
       bodyWeightResultField.value = -2;
     } else {
@@ -413,6 +415,7 @@ function calcEstMaxTotal() {
     dlWeight !== "" &&
     dlReps !== ""
   ) {
+
     let totalResultField = document.getElementById("total-result");
     totalResultField.value = sqEstmax + bEstMax + dlEstMax;
 
@@ -447,12 +450,23 @@ function setNumericValueOfStrengthLevel(strengthLevel) {
   }
 }
 
+const squatEstMax = document.getElementById("squat-estmax").value;
+const benchEstMax = document.getElementById("bench-estmax").value;
+const deadliftEstMax = document.getElementById("deadlift-estmax").value;
+
 function updateStrengthLevel(bodyweight, total, gender) {
   if (!isNaN(bodyweight) && !isNaN(total) && gender !== "undefined") {
     const strengthLevel = calcStrenghtLevel(bodyweight, total, gender);
     setStrengthLevel(strengthLevel);
     setNumericValueOfStrengthLevel(strengthLevel);
-  }
+
+  } else if (!isNaN(bodyweight) && squatEstMax && benchEstMax && deadliftEstMax && gender) { //wenn der volumenrechner selbst noch nicht benutzt wurde dafür aber in der registration
+    const tempTotal = parseFloat(squatEstMax) + parseFloat(benchEstMax) + parseFloat(deadliftEstMax);
+
+    const strengthLevel = calcStrenghtLevel(bodyweight, tempTotal, gender);
+    setStrengthLevel(strengthLevel);
+    setNumericValueOfStrengthLevel(strengthLevel);
+  } 
 }
 
 //Funktion wird immer aufgerufen wenn sich eines der relevanten Felder ändert || DOMCONTENTLOADED
