@@ -4,11 +4,11 @@ const bcrypt = require("bcrypt");
 const User = require("./models/user"); // Passe den Pfad entsprechend an
 
 function initialize(passport) {
-    const authenticateUser = async (name, password, done) => {
+    const authenticateUser = async (username, password, done) => {
         try {
-            const user = await User.findOne({ name: name });
+            const user = await User.findOne({ $or: [{ name: username }, { email: username }] });
             if (!user) {
-                return done(null, false, { message: "No user with that name" });
+                return done(null, false, { message: "No user with that name or email" });
             }
 
             const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
@@ -22,7 +22,7 @@ function initialize(passport) {
         }
     }
 
-    passport.use(new LocalStrategy({ usernameField: "name" }, authenticateUser));
+    passport.use(new LocalStrategy({ usernameField: "username" }, authenticateUser));
     passport.serializeUser((user, done) => done(null, user.id));
     passport.deserializeUser(async (id, done) => {
         try {

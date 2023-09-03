@@ -4,36 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/stylesheets/shared/variables.css">
-    <link rel="stylesheet" href="/stylesheets/shared/training.css">
-    <link rel="stylesheet" href="/stylesheets/shared/login_sign.css">
-    <title>Reset Password</title>
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/shared/index.css">
+    <link rel="stylesheet" href="/stylesheets/login.css">
+    <link rel="manifest" href="/manifest/manifest.webmanifest">
+    <title>LOGIN</title>
 </head>
 
-<body>
-    <div class="container">
-        <h2 class="trainingPlan-headline login-headline">Enter your Email</h2>
-        <% if (errorNotification === "Die Email wurde erfolgreich versandt!") { %>
-            <div class="form__message__sucess reset_error">
+<body class="home">
+        <form action="/login/reset" method="POST">
+            <h3 class="text-white ff-serif fs-700 letter-spacing-1 uppercase" style="font-weight: 500">RESET</h3>
+            <% if (errorNotification) { %>
+                <div class="ff-sans-normal letter-spacing-4 text-white fs-400" style="text-align: center; margin-top: 0.65em;">
                     <%= errorNotification %>
-            </div>
-            <% } else if (errorNotification) { %>
-                <div class="form__message__error reset_error">
-                        <%= errorNotification %>
                 </div>
                 <% } %>
-                <form action="/login/reset" method="POST">
-                    <div class="form__input-group" id="reset-input">
-                        <input type="email" id="email" name="email" class="form__input" placeholder="E-Mail" required
-                            autofocus>
+
+                    <label class="ff-sans-normal letter-spacing-4 text-accent fs-400 uppercase" for="email">email</label>
+                    <input type="email" placeholder="Enter your email" id="email" name="email" required autofocus style="margin-bottom: 1rem;">
+
+                    <button class="form-button" type="submit">SEND MAIL</button>
+
+                    <div class="login-link-container" style="margin-top: 0.35em;">
+                        <a href="/login" class="text-accent ff-sans-normal">Renember password? Log in</a>
                     </div>
-                    <button class="form__button reset-btn" type="submit">RESET</button>
-                </form>
-                <p class="form__text">
-                    <a href="/login" class="form__link">Remember Password? Log in</a>
-                </p>
-    </div>
 
 </body>
+
+<script>
+    const googleBTN = document.getElementById("google-btn");
+
+    googleBTN.addEventListener("click", e => {
+        e.preventDefault();
+        window.location.href = "https://www.google.com/";
+    })
+</script>
 
 </html>

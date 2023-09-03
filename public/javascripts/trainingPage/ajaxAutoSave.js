@@ -169,9 +169,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /*TRIGGER submit for all weight changes*/
   const weightInputs = document.querySelectorAll(".weight");
+  const saveAudio = document.getElementById("save-audio");
 
   weightInputs.forEach((weightInput) => {
     weightInput.addEventListener("change", () => {
+
+      saveAudio.play();
+
       form.dispatchEvent(new Event("submit"));
     });
   });

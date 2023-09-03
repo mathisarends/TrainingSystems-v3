@@ -9,7 +9,7 @@ const templateTrainingGenerator = require("../models/templateTrainingGenerator")
 const passwordValidator = require("password-validator");
 const passwordSchema = new passwordValidator();
 passwordSchema // Mindestlänge von 8 Zeichen
-/*   .is()
+  .is()
   .min(8)
   .is()
   .max(100)
@@ -24,7 +24,7 @@ passwordSchema // Mindestlänge von 8 Zeichen
   //Keine Leerzeichen
   .has()
   .not()
-  .spaces(); */
+  .spaces();
 
 Router.get("/", (req, res) => {
   res.render("register/index", { layout: false, error: "" });
@@ -56,9 +56,36 @@ Router.post("/", async (req, res) => {
 
     if (!passwordSchema.validate(password)) {
       // Das Passwort erfüllt nicht die Sicherheitsanforderungen
+      const errors = passwordSchema.validate(password, { list: true });
+      // errors enthält eine Liste der fehlenden Anforderungen
+    
+      let errorMessage = "";
+
+      if (errors.includes("uppercase")) {
+        errorMessage += "Mindestens 1 Großbuchstabe<br>";
+      }
+
+      if (errors.includes("lowercase")) {
+        errorMessage += "Mindestens 1 Kleinbuchstabe<br>";
+      }
+    
+      if (errors.includes("min")) {
+        errorMessage += "Mindestens 8 Zeichen<br>";
+      }
+
+      if (errors.includes("spaces")) {
+        errorMessage += "Keine Leerzeichen<br>";
+      }
+    
+      if (errors.includes("digits")) {
+        errorMessage += "Mindestens 1 Zahl<br>";
+      }
+    
+
+    
       return res.render("register/index", {
         layout: false,
-        error: "Das Passwort erfüllt nicht die Mindestanforderungen.",
+        error: errorMessage,
       });
     }
 

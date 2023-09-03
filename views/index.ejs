@@ -1,57 +1,30 @@
-    <main id="main" class="grid-container grid-container--home">
+<main id="main" class="grid-container grid-container--home">
 
 
-        <div class="flow">
-            <h1 class="text-accent fs-500 ff-sans-cond uppercase letter-spacing-1">TYR Training Systems
-                <span class="d-block fs-900 ff-serif text-white">TYR</span>
-            </h1>
+    <div class="flow" style="--flow-space: 0.25rem;">
+        <h1 class="headline-animation text-accent fs-500 ff-sans-cond uppercase letter-spacing-1">TYR Training Systems
+            <span class="d-block fs-900 ff-serif text-white">TYR</span>
+        </h1>
+        <!-- <button id="change-shit">change shit</button> -->
+    </div>
 
+    <div>
+        <div class="index-view" style="margin-top: 3rem; display: block">
             <% if (user) { %>
-                <!-- <a href="/training" class="main-page-button uppercase">Starten</a> -->
-                <a href="/logout" %>" class="main-page-button uppercase">Logout</a>
-            <% } else { %>
-                <a href="/login" %>" class="main-page-button uppercase">Login</a>
-            <% } %>
+                <a href="/training" class="large-button uppercase ff-serif fs-600 text-dark bg-white" style="padding-left: 2em; padding-right: 2em;">START</a>
+                <% } else { %>
+                    <a href="/login" class="large-button uppercase ff-serif fs-600 text-dark bg-white">LOGIN</a>
+                    <% } %>
         </div>
-        
-    </main>
+    
+        <div class="index-view" style="margin-top: 3rem; display: none;">
+                <button id="install-button" class="large-button uppercase ff-serif fs-600 text-dark bg-white" style="padding-left: 1.45em; padding-right: 1.45em;">Install</button>
+        </div>
+    </div>
 
 
-    <script>
-        //Installationsbanner anzeigen: 
-        // Code von chatgpt wenn möglich das modal verwenden
-
-        /* window.addEventListener('beforeinstallprompt', (e) => {
-        // Verhindern Sie, dass das Browser-interne Installations-Popup angezeigt wird
-        e.preventDefault();
-
-        // Speichern Sie das Ereignis-Objekt für spätere Verwendung
-        deferredPrompt = e;
-
-        // Zeigen Sie Ihr benutzerdefiniertes Installationsbanner an
-        showInstallBanner();
-        });
-
-        function showInstallBanner() {
-        // Zeigen Sie ein benutzerdefiniertes Installationsbanner an
-        // Dies kann ein Button oder ein anderes UI-Element sein, das den Benutzer zur Installation einlädt
-        const installButton = document.getElementById('install-button');
-        installButton.style.display = 'block'; // Zeigen Sie das Banner an
-        installButton.addEventListener('click', () => {
-            // Bitten Sie den Benutzer, die PWA zu installieren
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                console.log('Benutzer hat die Installation akzeptiert');
-            } else {
-                console.log('Benutzer hat die Installation abgelehnt');
-            }
-            deferredPrompt = null; // Setzen Sie das Ereignis-Objekt zurück
-            });
-        });
-        } */
-
-    </script>
+</main>
 
 
 
+<script src="/javascripts/homePage/pwaBanner.js"></script>

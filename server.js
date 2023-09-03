@@ -2,6 +2,9 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
+const baseUrl = process.env.BASE_URL;
+console.log(baseUrl);
+
 const express = require("express");
 const session = require("express-session");
 const flash = require("express-flash");

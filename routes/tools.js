@@ -62,11 +62,11 @@ Router.post("/volume", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
 
-    if (!user.trainingData || user.trainingData.length === 0) {
-      updateUserData(user, req.body);
-    } else {
-      user.trainingData[0] = { ...user.trainingData[0], ...req.body };
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
     }
+
+    updateUserData(user, req.body);
 
     await user.save();
 

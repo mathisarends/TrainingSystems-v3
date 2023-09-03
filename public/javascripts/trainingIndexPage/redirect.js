@@ -24,6 +24,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function pulseEffect(element) {
+        element.classList.add("pulsate-effect");
+
+            setTimeout(() => {
+                element.classList.remove("pulsate-effect");
+            }, 2000);
+    }
+
 
     /*COSTUM ------------------------------------------*/
     const customTrainingContainers = document.querySelectorAll("section:nth-of-type(1) .custom-training-container");
@@ -33,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const createCustomTrainingPlanBTN = document.getElementById("createCustomTrainingPlanBTN");
     const customNextTrainingWeeks = document.getElementsByClassName("customNextTrainingWeek");
     const editCustomTrainingBTN = document.getElementById("edit-custom-training-button");
+
+    const customTrainingPlanContainer = document.querySelectorAll(".training-plan-container")[0];
 
     let customCurrentSelectedTrainingWeek;
     let lastSelectedLinkIndex = null;
@@ -61,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndex);
             const customPlanPage = `/training/custom-${alphaValue}${customCurrentSelectedTrainingWeek}`;
             window.location.href = customPlanPage;
+        } else {
+            pulseEffect(customTrainingPlanContainer);
         }
     });
     
@@ -75,6 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndex);
             const customPlanPage = `/training/custom-${alphaValue}${customCurrentSelectedTrainingWeek}-edit`;
             window.location.href = customPlanPage;
+        } else {
+            pulseEffect(customTrainingPlanContainer);
         }
     })
 
@@ -90,6 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const templateNextTrainingWeeks = document.getElementsByClassName("templateNextTrainingWeek");
     const editTemplateTrainingBTN = document.getElementById("edit-template-training-button");
 
+    const templateTrainingPlanContainer = document.querySelectorAll(".training-plan-container")[2];
+
     // Variablen zur Verfolgung der Auswahl
     let lastSelectedLinkIndexTemplate = null;
     let lastSelectNextTrainingWeek = null;
@@ -101,14 +117,22 @@ document.addEventListener("DOMContentLoaded", () => {
             const customPlanPage = `/training/template-${alphaValue}${lastSelectNextTrainingWeek}`;
             console.log(alphaValue + " alphanumeric value");
             window.location.href = customPlanPage;
+        } else {
+            pulseEffect(templateTrainingPlanContainer);
         }
     });
 
     editTemplateTrainingBTN.addEventListener("click", () => {
-        const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndexTemplate);
+
+        if (lastSelectedLinkIndexTemplate !== null) {
+            const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndexTemplate);
             const customPlanPage = `/training/template-${alphaValue}${lastSelectNextTrainingWeek}-edit`;
             console.log(alphaValue + " alphanumeric value");
             window.location.href = customPlanPage;
+        } else {
+            pulseEffect(templateTrainingPlanContainer);
+        }
+
     })
 
     // Event-Handler für die Auswahl von Template-Trainingslinks
@@ -145,6 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteTrainingButtons = document.querySelectorAll(".delete-form-training button");
     let lastSelectedTrainingIndex = null;
 
+    const sessionTrainingPlanContainer = document.querySelectorAll(".training-plan-container")[1];
+
     function selectTraining(index) {
         if (lastSelectedTrainingIndex !== null) {
             scratchTrainingContainers[lastSelectedTrainingIndex].classList.remove("selected");
@@ -162,6 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const customPlanPage = `/training/${pageType}-${lastSelectedTrainingIndex + 1}`;
             console.log(alphaValue + " alphanumeric value");
             window.location.href = customPlanPage;
+        } else {
+            pulseEffect(sessionTrainingPlanContainer);
         }
     }
 

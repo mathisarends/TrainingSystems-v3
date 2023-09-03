@@ -89,9 +89,9 @@ Router.post("/resetPassword",  async (req, res) => {
 Router.post("/reset", async (req, res) => {
   const emailReceived = req.body.email;
 
+
   try {
     const user = await User.findOne({ email: emailReceived });
-    console.log(user);
 
     if(!user) {
       res.render("login/reset", { layout: false, errorNotification: "There is no user with that E-Mail" });
@@ -112,43 +112,8 @@ Router.post("/reset", async (req, res) => {
       from: "imreavy@gmail.com",
       to: user.email,
       subject: "Passwort zurücksetzen",
-      text: "Klicke auf den folgenden Link um dein Passwort zurückzusetzen: http://localhost:3000/login/resetPassword/" + generatedToken,
-      html: `<!DOCTYPE html>
-      <html>
-      <head>
-          <style>
-              /* Inline CSS-Stile für die E-Mail */
-              body {
-                  font-family: Arial, sans-serif;
-              }
-              .email-container {
-                  background-color: #F5F5F5;;
-                  padding: 20px;
-              }
-      
-              .button {
-                  background-color: #002952;
-                  color: white;
-                  padding: 10px 20px;
-                  text-decoration: none;
-                  border-radius: 5px;
-              }
-      
-              .link-container {
-                  margin-top: 20px;
-              }
-          </style>
-      </head>
-      <body>
-          <div class="email-container">
-              <h1>Passwort zurücksetzen</h1>
-              <p>Klicke auf den folgenden Link, um dein Passwort zurückzusetzen:</p>
-              <div class="link-container">
-                  <a href="http://localhost:3000/login/resetPassword/${generatedToken}" class="button">Passwort zurücksetzen</a>
-              </div>
-              
-          </div>
-      </body>`
+      text: `Klicke auf den folgenden Link um dein Passwort zurückzusetzen: ${baseUrl}/login/resetPassword/${generatedToken}`,
+      //hier könnte man mit html: auch eine html datei einklemmen
     }
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -161,8 +126,6 @@ Router.post("/reset", async (req, res) => {
       }
     })
 
-    /* console.log("Nutzer gefunden redirect zu login");
-    res.redirect("/login"); */
     } catch (err) {
       console.log("Es ist ein Fehler beim zurücksetzen des Passwortes aufgetreten!");
       console.error(err);

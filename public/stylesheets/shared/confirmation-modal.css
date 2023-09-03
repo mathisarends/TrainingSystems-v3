@@ -18,13 +18,20 @@
   right: auto;
   top: 10vh;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   background: inherit;
   justify-content: center;
   backdrop-filter: blur(1px); /* Hinzufügen von Unschärfe für Glasvermorphismus */
   align-items: center;
   font-size: 1.2em;
 }
+
+#installModal {
+  top: 35vh;
+  padding-inline: 10%;
+  backdrop-filter: blur(2ox); /* Hinzufügen von Unschärfe für Glasvermorphismus */
+}
+
   
   .modal-content {
     margin: 0;
