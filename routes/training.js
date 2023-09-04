@@ -1000,7 +1000,7 @@ function updateExerciseDetails(trainingDay, exercise, updatedData, i, j) {
   const exerciseNameValue = updatedData[`${fieldPrefix}exercise_name`];
 
   if (categoryValue !== "- Bitte Auswählen -" && exerciseNameValue !== "Placeholder") {
-    if (!exercise) {
+    if (!exercise) { //wenn es kein exerciseObject gibt dann erstellen wir eines
       exercise = {
         category: categoryValue || '',
         exercise: exerciseNameValue || '',
@@ -1025,15 +1025,22 @@ function updateExerciseDetails(trainingDay, exercise, updatedData, i, j) {
       exercise.notes = updatedData[`${fieldPrefix}workout_notes`] || exercise.notes;
     }
   } else { //wenn die Kategorie die placeholder kategorie ist: bedeutet alle werte die vorher da waren sollen resettet werden -> user entfernt die exercise quasi
-    exercise.category = categoryValue || exercise.category;
-    exercise.exercise = exerciseNameValue || exercise.exercise;
-    exercise.sets = "";
-    exercise.reps = "";
-    exercise.weight = "";
-    exercise.targetRPE = "";
-    exercise.actualRPE = "";
-    exercise.estMax = "";
-    exercise.notes = "";
+
+
+
+    if (exercise) { //hier nur etwas machen wenn es eine exercise gibt bzw. gab
+      exercise.category = categoryValue;
+      exercise.exercise = exerciseNameValue;
+      exercise.sets = "";
+      exercise.reps = "";
+      exercise.weight = "";
+      exercise.targetRPE = "";
+      exercise.actualRPE = "";
+      exercise.estMax = "";
+      exercise.notes = "";
+    }
+
+
   }
 }
 
