@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < exerciseCategorySelectors.length; i++) {
         let selectedCategory = exerciseCategorySelectors[i].value;
         if (selectedCategory === "- Bitte Auswählen -") {
-            console.log("jo ist");
             exerciseCategorySelectors[i].style.opacity = "0";
             
         }

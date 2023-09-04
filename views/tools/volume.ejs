@@ -1,9 +1,19 @@
 <link rel="stylesheet" href="/stylesheets/exercises.css">
 
 <main>
-  <form action="/tools/volume" method="POST" >
+  <form action="/tools/volume?_method=PATCH" method="POST">
     <h1 class="numbered-title" style="margin: 0; padding-top: 1.2em; padding-left: 0.65em;"><span
         aria-hidden="true">03</span>Volumenrechner</h1>
+
+    <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+      style="margin-top: 1em; padding-left: 1em;">
+      Daten erfolgreich gespeichert
+    </div>
+    <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+      style="margin-top: 1em; padding-left: 1em;">
+      Fehler beim speichern der Daten
+    </div>
+
     <table class="calculate-table volume-table">
       <thead>
         <tr class="table-header-row">
@@ -63,7 +73,7 @@
         </tr>
       </tbody>
     </table>
-  
+
     <div class="table-section">
       <table class="calculate-table volume-table explanation-table">
         <tbody>
@@ -272,7 +282,7 @@
         </tbody>
       </table>
     </div>
-  
+
     <div>
       <table class="calculate-table volume-table">
         <caption>Volumenempfehlung - Hypertrophiephase</caption>
@@ -324,7 +334,7 @@
         </tbody>
       </table>
     </div>
-  
+
     <div>
       <table class="calculate-table volume-table recommandation-table">
         <caption>Volumenempfehlung - Kraftphase</caption>
@@ -346,19 +356,23 @@
               <input type="number" name="squat-mrv-strength" id="squat-mrv-strength" readonly required />
             </td>
             <td data-cell="Median">
-              <input type="number" readonly name="squat-median-volume-strength" id="squat-median-volume-result-strength">
+              <input type="number" readonly name="squat-median-volume-strength"
+                id="squat-median-volume-result-strength">
             </td>
           </tr>
           <tr class="table-row">
             <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
             <td data-cell="MEV">
-              <input type="number" name="bench-mev-strength" id="bench-mev-strength" value="<%=  %>" readonly required />
+              <input type="number" name="bench-mev-strength" id="bench-mev-strength" value="<%=  %>" readonly
+                required />
             </td>
             <td data-cell="MRV">
-              <input type="number" name="bench-mrv-strength" id="bench-mrv-strength" value="<%=  %>" readonly required />
+              <input type="number" name="bench-mrv-strength" id="bench-mrv-strength" value="<%=  %>" readonly
+                required />
             </td>
             <td data-cell="Median">
-              <input type="number" readonly name="bench-median-volume-strength" id="bench-median-volume-result-strength">
+              <input type="number" readonly name="bench-median-volume-strength"
+                id="bench-median-volume-result-strength">
             </td>
           </tr>
           <tr class="table-row">
@@ -379,7 +393,7 @@
         </tbody>
       </table>
     </div>
-  
+
     <div>
       <table class="calculate-table volume-table">
         <caption>Volumenempfehlung - Peaking</caption>
@@ -437,8 +451,8 @@
     <div>
       <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">Save</button>
     </div>
-  
-  
+
+
   </form>
 </main>
 
@@ -447,4 +461,54 @@
 
 
 <script src="/javascripts/volume/calcVolume.js"></script>
-<script src="/javascripts/volume/showExtraInfo.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const formDataObject = {};
+      formData.forEach((value, key) => {
+        formDataObject[key] = value;
+      });
+
+      try {
+        const response = await fetch(`${window.location.pathname}`, {
+          method: "PATCH",
+          body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
+          headers: {
+            "Content-Type": "application/json", // Setze den Content-Type auf application/json
+          },
+        });
+
+        if (response.ok) {
+          console.log("Erfolgreich gepatched");
+          const sucessMessage = document.querySelector(".save-status-sucess");
+          sucessMessage.classList.remove("hidden");
+
+          setTimeout(() => {
+            sucessMessage.classList.add("hidden");
+          }, 700)
+
+        } else {
+          const failureMessage = document.querySelector(".save-status-failure");
+          failureMessage.classList.remove("hidden");
+
+          setTimeout(() => {
+            failureMessage.classList.add("hidden");
+          }, 7000);
+        }
+      } catch (error) {
+          const failureMessage = document.querySelector(".save-status-failure");
+          failureMessage.classList.remove("hidden");
+
+          setTimeout(() => {
+            failureMessage.classList.add("hidden");
+          }, 7000);
+      }
+
+    })
+  })
+</script>

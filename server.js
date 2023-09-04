@@ -3,7 +3,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const baseUrl = process.env.BASE_URL;
-console.log(baseUrl);
 
 const express = require("express");
 const session = require("express-session");

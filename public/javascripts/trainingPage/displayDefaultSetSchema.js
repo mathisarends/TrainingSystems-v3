@@ -44,10 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
       }
-
-    console.log(getDefaultSetsByExerciseCategory("Bench"));
-    console.log(getDefaultRepsByExerciseCategory("Deadlift"));
-
     const setsInputs = document.getElementsByClassName("sets");
     const repsInputs = document.getElementsByClassName("reps");
     const targetRPEInputs = document.getElementsByClassName("targetRPE");

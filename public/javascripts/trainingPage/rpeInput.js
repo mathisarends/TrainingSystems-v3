@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const targetRPEInputs = document.getElementsByClassName("targetRPE");
 const rpeInputs = document.getElementsByClassName("actualRPE");
-console.log(rpeInputs);
 
 //so that the user can only enter RPEs that make sense
 for (let i = 0; i < targetRPEInputs.length; i++) {

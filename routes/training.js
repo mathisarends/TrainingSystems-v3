@@ -1024,6 +1024,16 @@ function updateExerciseDetails(trainingDay, exercise, updatedData, i, j) {
       exercise.estMax = updatedData[`${fieldPrefix}estMax`] || exercise.estMax;
       exercise.notes = updatedData[`${fieldPrefix}workout_notes`] || exercise.notes;
     }
+  } else { //wenn die Kategorie die placeholder kategorie ist: bedeutet alle werte die vorher da waren sollen resettet werden -> user entfernt die exercise quasi
+    exercise.category = categoryValue || exercise.category;
+    exercise.exercise = exerciseNameValue || exercise.exercise;
+    exercise.sets = "";
+    exercise.reps = "";
+    exercise.weight = "";
+    exercise.targetRPE = "";
+    exercise.actualRPE = "";
+    exercise.estMax = "";
+    exercise.notes = "";
   }
 }
 

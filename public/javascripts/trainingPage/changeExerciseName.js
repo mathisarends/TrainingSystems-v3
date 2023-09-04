@@ -1,7 +1,6 @@
 
 //changes Exercise Selector in dependance of the exercise-category-selector
 const displayedSelectors = document.querySelectorAll('.exercise-name-selector:not([style*="display: none"])');
-console.log("Anzahl angezeigter Selectors: " + displayedSelectors.length);
 
 
 
