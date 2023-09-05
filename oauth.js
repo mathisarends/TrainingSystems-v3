@@ -1,6 +1,10 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+//für user registration: 
+const standartExerciseCatalog = require("./models/standartExerciseCatalog");
+const templateTrainingGenerator = require("./models/templateTrainingGenerator");
+
 const passport = require("passport");
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const User = require("./models/user");
@@ -12,10 +16,13 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/callback",
+    callbackURL: `${process.env.BASE_URL}/google/callback`,
     passReqToCallback: true
   },
   async function(request, accessToken, refreshToken, profile, done) {
+
+    let newUser;
+
     try {
       // Suchen nach einem Benutzer mit der Google ID
       const existingUser = await User.findOne({ googleId: profile.id });
@@ -25,25 +32,40 @@ passport.use(new GoogleStrategy({
         return done(null, existingUser);
       } else {
         // Benutzer nicht gefunden, erstelle einen neuen Benutzer
-        const newUser = new User({
+        newUser = new User({
           googleId: profile.id,
           name: profile.displayName,
-          email: profile.email
+          email: profile.email,
+          exercises: standartExerciseCatalog,
           // ... Weitere Felder
         });
 
         // Speichern des neuen Benutzers in der Datenbank
+        await newUser.save();
+
+        newUser.trainingPlanTemplate = [
+          templateTrainingGenerator.createTemplatePlanA(newUser._id),
+          templateTrainingGenerator.createTemplatePlanB(newUser._id)
+        ];
+
         await newUser.save();
         
         return done(null, newUser);
       }
     } catch (err) {
       console.error("Fehler bei Google-Authentifizierung:", err);
+
+      // Lösche den neu erstellten Benutzer, wenn ein Fehler auftritt
+      if (newUser) {
+        await User.deleteOne({ _id: newUser._id });
+      }
+
       return done(err, null);
     }
   }
 ));
 
+//bin mir nicht sicher ob ich die hier brauche todo: 
 passport.serializeUser(function(user, done) {
     done(null, user);
 })

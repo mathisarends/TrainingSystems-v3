@@ -372,8 +372,8 @@ for (let i = 0; i < templates.length; i++) {
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
       }
-
       const trainingPlan = user.trainingPlanTemplate[templateType];
+      console.log(trainingPlan);
       const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
       const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, weekIndex);
 
@@ -408,7 +408,6 @@ for (let i = 0; i < templates.length; i++) {
       const beforePage = `/training/template-${templateType === 0 ? "A" : "B"}${templateIndexes[beforeTemplateIndex]}`;
       const afterPage = `/training/template-${templateType === 0 ? "A" : "B"}${templateIndexes[afterTemplateIndex]}`;
 
-
       res.render("trainingPlans/template/trainingPlan", {
         trainingWeekData: trainingWeekData,
         firstTrainingWeekData: firstTrainingWeekData.length > 0 ? firstTrainingWeekData : trainingWeekData,
@@ -438,6 +437,7 @@ for (let i = 0; i < templates.length; i++) {
         lastTrainingDay: lastTrainingDay,
 
         templatePlanName: templateName,
+        workoutName: trainingTitle,
       });
 
     } catch (err) {
@@ -669,12 +669,9 @@ Router.post("/createTraining", checkAuthenticated, async (req, res) => {
       return res.status(404).send("Benutzer nicht gefunden");
     }
 
-    console.log(req.body);
-
     const trainingData = req.body;
     const trainingTitle = req.body.training_title;
     const trainingPhase = req.body.training_phase;
-    console.log(trainingPhase);
     const date = new Date();
     const userID = req.user._id;
 
@@ -835,15 +832,11 @@ async function handleSessionEditPatch(req, res, index) {
 
     const trainingSession = user.trainings[index];
 
-    console.log("wir sind in der richtigen rotue")
-
     const updatedData = req.body;
 
 
     const newTitle = req.body.training_title;
     const newTrainingPhase = req.body.training_phase;
-    console.log(newTitle);
-    console.log(newTrainingPhase);
 
     if (trainingSession.title !== newTitle) {
       trainingSession.title = newTitle;

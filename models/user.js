@@ -16,13 +16,13 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    googleId: {
+        type: String,
+        required: false,
+    },
     passwordHash: {
         type: String,
         required: false
-    },
-    profilePicture: {
-        type: String,
-        required: false,
     },
     bodyWeight: {
         type: Number
@@ -76,10 +76,6 @@ const userSchema = new mongoose.Schema({
     gender: {
         type: String,
         enum: ["männlich", "weiblich"]
-    },
-
-    lastVisitedTrainingMode: {
-        type: String
     },
 
     trainingPlanTemplate: [TrainingPlan.schema], // works so far

@@ -12,7 +12,7 @@ const exerciseSchema = new mongoose.Schema({
         },
         pauseTime: {
             type: Number,
-            default: 0,
+            default: 60,
         },
         defaultSets: {
             type: Number,

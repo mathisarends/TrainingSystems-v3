@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const response = await fetch(`${window.location.pathname}`, {
-        method: "POST",
+        method: "PATCH",
         body: JSON.stringify(formDataObject),
         headers: {
           "Content-Type": "application/json",

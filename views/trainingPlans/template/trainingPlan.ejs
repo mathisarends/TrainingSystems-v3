@@ -203,8 +203,10 @@
                             </div>
                         </div>
 
-                        <%- include("../../partials/trainingPage/volumeRecommandations") %>
-                            <%- include("../../partials/trainingPage/trainingNavigationBar", {beforePage: beforePage ,
+                        <%- include("../../partials/trainingPage/trainingNavigationBar", {beforePage: beforePage ,
                                 nextPage: afterPage , week: week}) %>
+
+                                <%- include("../../partials/trainingPage/volumeRecommandations") %>
+                                <%- include("../../partials/trainingPage/javascripts") %> 
 
 </form>

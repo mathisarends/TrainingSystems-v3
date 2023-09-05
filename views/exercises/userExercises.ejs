@@ -28,7 +28,7 @@
     
         <% const maxExercises=Math.max(...exerciseCategories.map(category=> categorizedExercises[category].length)); %>
     
-          <form action="/exercises" method="POST" id="post-form">
+          <form action="/exercises?_method=PATCH" method="POST" id="post-form">
             <div class="exercise-container">
 
               <input type="hidden" name="maxExercises" value="<%= maxExercises %>">
@@ -61,23 +61,23 @@
                                 <div class="select-container remove-margin">
                                   <!--TODO: unique names in der route verarbeiten-->
                                   <select name="categoryPauseTimeSelect_<%= categoryIndex %>" id="categoryPauseTimeSelector" class="categoryPauseTimeSelector">
-                                    <option value="60" <%=categoryPauseTimes[category]===60 ? "selected" : "" %>>60s
+                                    <option value="60" <%=categoryPauseTimes[category]===60 ? "selected" : "" %>>1 Minute
                                     </option>
-                                    <option value="90" <%=categoryPauseTimes[category]===90 ? "selected" : "" %>>90s
+                                    <option value="90" <%=categoryPauseTimes[category]===90 ? "selected" : "" %>>1 Minute 30s
                                     </option>
-                                    <option value="120" <%=categoryPauseTimes[category]===120 ? "selected" : "" %>>120s
+                                    <option value="120" <%=categoryPauseTimes[category]===120 ? "selected" : "" %>>2 Minuten
                                     </option>
-                                    <option value="150" <%=categoryPauseTimes[category]===150 ? "selected" : "" %>>150s
+                                    <option value="150" <%=categoryPauseTimes[category]===150 ? "selected" : "" %>>2 Minuten 30s
                                     </option>
-                                    <option value="180" <%=categoryPauseTimes[category]===180 ? "selected" : "" %>>180s
+                                    <option value="180" <%=categoryPauseTimes[category]===180 ? "selected" : "" %>>3 Minuten
                                     </option>
-                                    <option value="210" <%=categoryPauseTimes[category]===210 ? "selected" : "" %>>210s
+                                    <option value="210" <%=categoryPauseTimes[category]===210 ? "selected" : "" %>>3 Minuten 30s
                                     </option>
-                                    <option value="240" <%=categoryPauseTimes[category]===240 ? "selected" : "" %>>240s
+                                    <option value="240" <%=categoryPauseTimes[category]===240 ? "selected" : "" %>>4 Minuten
                                     </option>
-                                    <option value="270" <%=categoryPauseTimes[category]===270 ? "selected" : "" %>>270s
+                                    <option value="270" <%=categoryPauseTimes[category]===270 ? "selected" : "" %>>4 Minuten 30s
                                     </option>
-                                    <option value="300" <%=categoryPauseTimes[category]===300 ? "selected" : "" %>>300s
+                                    <option value="300" <%=categoryPauseTimes[category]===300 ? "selected" : "" %>>5 Minuten
                                     </option>
                                   </select>
                                 </div>

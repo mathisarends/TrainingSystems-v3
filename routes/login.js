@@ -112,7 +112,7 @@ Router.post("/reset", async (req, res) => {
       from: "imreavy@gmail.com",
       to: user.email,
       subject: "Passwort zurücksetzen",
-      text: `Klicke auf den folgenden Link um dein Passwort zurückzusetzen: ${baseUrl}/login/resetPassword/${generatedToken}`,
+      text: `Klicke auf den folgenden Link um dein Passwort zurückzusetzen: ${process.env.BASE_URL}/login/resetPassword/${generatedToken}`,
       //hier könnte man mit html: auch eine html datei einklemmen
     }
 

@@ -26,6 +26,8 @@ const exerciseRouter = require("./routes/exercises");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 
+const oauth = require("./oauth");
+
 const app = express();
 const PORT = 3000;
 
@@ -89,6 +91,17 @@ app.use("/login", loginRouter);
 app.use("/register", registerRouter);
 app.use("/tools", toolRouter);
 app.use("/exercises", exerciseRouter);
+
+app.get("/auth/google", 
+  passport.authenticate("google", { scope: ["email", "profile"]}),
+)
+
+app.get("/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/",
+    failureRedirect: "/login"
+  })
+)
 
 app.listen(process.env.PORT || PORT, () => console.log(`Listening on port ${PORT}`));
 

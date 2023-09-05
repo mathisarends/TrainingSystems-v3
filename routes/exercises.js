@@ -45,6 +45,7 @@ Router.post("/", checkAuthenticated, async (req, res) => {
     const exerciseCategoryReps = [];
     const exerciseCategoryRPE = [];
 
+    //Arrays mit allen metaDaten der jeweiligen Kategorien
     for (let i = 0; i < exerciseCategoriesLength; i++) {
       exerciseCategoryPauseTimes.push(
         exerciseData[`categoryPauseTimeSelect_${i}`],
@@ -85,7 +86,7 @@ Router.post("/", checkAuthenticated, async (req, res) => {
     res.status(200).json({});
 
   } catch (err) {
-    console.log("Es ist ein Fehler beim Posten der Exercises aufgetreten.");
+    console.log("Es ist ein Fehler beim Posten der Exercises aufgetreten. " + err);
   }
 });
 
@@ -103,62 +104,107 @@ Router.patch("/", checkAuthenticated, async (req, res) => {
       req.body.exerciseCategoriesLength
     );
 
-    // Get the existing exercises from the database.
-    const exercises = user.exercises
-    console.log(exercises.length);
-    console.log(exercises);
+    const exerciseCategoryPauseTimes = [];
+    const exerciseCategorySets = [];
+    const exerciseCategoryReps = [];
+    const exerciseCategoryRPE = [];
 
-    let exercisesArrayIndex = 0;
+    //Arrays mit allen metaDaten der jeweiligen Kategorien
     for (let i = 0; i < exerciseCategoriesLength; i++) {
-      for (let k = 0; k < maxAmountOfExercises; k++) {
-        
-        
-        exercisesArrayIndex++;
-      }
+      exerciseCategoryPauseTimes.push(
+        exerciseData[`categoryPauseTimeSelect_${i}`],
+      );
+      exerciseCategorySets.push(
+        exerciseData[`categoryDefaultSetSelect_${i}`],
+      );
+      exerciseCategoryReps.push(
+        exerciseData[`categoryDefaultRepSelect_${i}`],
+      );
+      exerciseCategoryRPE.push(
+        exerciseData[`categoryDefaultRPESelect_${i}`],
+      )
     }
 
+    const numberOfRequestedExercises = getNumberOfRequestedExercises(exerciseCategoriesLength, maxAmountOfExercises, exerciseData);
+    console.log(numberOfRequestedExercises + " ist das gleich 55?");
 
-    /* for (let i = 0; i < exerciseCategoriesLength; i++) {
-      for (let k = 0; k < maxAmountOfExercises; k++) {
-        const exerciseId = `exercise_${i}_${k}`;
-        if (exerciseData[exerciseId]) {
-          const exercise = exercises[i][k];
-          exercise.name = exerciseData[exerciseId];
+    if (numberOfRequestedExercises === user.exercises.length) { //Die Anzahl der übungen sind gleich deswegen reichen partielle Änderungen:
 
-          // Update the other properties of the exercise, if necessary.
-
-          await exercise.save();
+      let effectiveLoops = 0;
+      for (let i = 0; i < exerciseCategoriesLength; i++) {
+        for (let k = 0; k < maxAmountOfExercises; k++) {
+          if (exerciseData[`exercise_${i}_${k}`]) {
+  
+            if (exerciseData[`exercise_${i}_${k}`] != user.exercises[effectiveLoops].name) {
+              user.exercises[effectiveLoops].name = exerciseData[`exercise_${i}_${k}`];
+            }
+            if (exerciseCategoryPauseTimes[i] != user.exercises[effectiveLoops].category.pauseTime) {
+              user.exercises[effectiveLoops].category.pauseTime = exerciseCategoryPauseTimes[i];
+            } // übergebene pause time adners als bestehende
+            if (exerciseCategorySets[i] != user.exercises[effectiveLoops].category.defaultSets) {
+              user.exercises[effectiveLoops].category.defaultSets = exerciseCategorySets[i];
+            }
+            if (exerciseCategoryReps[i] != user.exercises[effectiveLoops].category.defaultReps) {
+              user.exercises[effectiveLoops].category.defaultReps = exerciseCategoryReps[i];
+            }
+            if (exerciseCategoryRPE[i] != user.exercises[effectiveLoops].category.defaultRPE) {
+              user.exercises[effectiveLoops].category.defaultRPE = exerciseCategoryRPE[i];
+            }
+  
+            effectiveLoops++;
+          } 
         }
       }
-    } */
+    } else { // es gibt mindestens eine neue Exercise und deswegen poste ich die einfach komplett nicht optimal aber...
+            // sonst wären sehr viele verschiebeoperationen möglich wieviel performanter das dann wirklich noch ist? 
+      const exercises = [];
+
+      for (let i = 0; i < exerciseCategoriesLength; i++) {
+        for (let k = 0; k < maxAmountOfExercises; k++) {
+          if (exerciseData[`exercise_${i}_${k}`]) {
+            exercises.push(
+              createUserExerciseObject(
+                exerciseData[`exercise_${i}_${k}`],
+                i,
+                exerciseCategoryPauseTimes,
+                exerciseCategorySets,
+                exerciseCategoryReps,
+                exerciseCategoryRPE,
+              )
+            );
+          } else {
+            continue;
+          }
+        }
+      }
+
+      user.exercises = exercises;
+    }
+
+    await user.save();
 
     res.status(200).json({});
 
   } catch (err) {
-    console.log("Es ist ein Fehler beim Patchen der Exercises aufgetreten.");
+    console.log("Es ist ein Fehler beim Patchen der Exercises aufgetreten." + err);
   }
 });
 
-Router.post("/reset", checkAuthenticated, async (req, res) => {
-    try {
-        const user = await User.findOne({ name: req.user.name });
-    
-        if (!user) {
-          return res.status(404).send("Benutzer nicht gefunden");
-        }
-    
-        user.exercises = standartExerciseCatalog;
-    
-        await user.save();
-        console.log("Exercises reset")
-        res.redirect("/exercises");
-    
-      } catch (err) {
-        console.log("Es ist ein Fehler beim zurücksetzen der Exercises aufgetreten: " + err);
-      }
-})
+function getNumberOfRequestedExercises(exerciseCategoriesLength, maxAmountOfExercises, exerciseData) {
 
-module.exports = Router;
+  let count = 0;
+
+  for (let i = 0; i < exerciseCategoriesLength; i++) {
+    for (let k = 0; k < maxAmountOfExercises; k++) {
+      if (exerciseData[`exercise_${i}_${k}`]) {
+        count++;
+      }
+    }
+  }
+
+  return count;
+}
+
 
 function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTimes, exerciseCategorySets, exerciseCategoryReps, exerciseCategoryRPE) {
   
@@ -204,6 +250,62 @@ function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTime
   
     return object;
   }
+
+  function getAssociatedCategoryByIndex(index) {
+    let category = "";
+    
+    if (index === 0) {
+      category = "- Bitte Auswählen -";
+    } else if (index === 1) {
+      category = "Squat";
+    } else if (index === 2) {
+      category = "Bench";
+    } else if (index === 3) {
+      category = "Deadlift";
+    } else if (index === 4) {
+      category = "Overheadpress";
+    } else if (index === 5) {
+      category = "Chest";
+    } else if (index === 6) {
+      category = "Back";
+    } else if (index === 7) {
+      category = "Shoulder";
+    } else if (index === 8) {
+      category = "Triceps";
+    } else if (index === 9) {
+      category = "Biceps";
+    } else if (index === 10) {
+      category = "Legs";
+    } else {
+      console.log("ES IST EIN FEHLER AUFGETRETEN:")
+    }
+    return category;
+  }
+
+
+
+
+Router.post("/reset", checkAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findOne({ name: req.user.name });
+    
+        if (!user) {
+          return res.status(404).send("Benutzer nicht gefunden");
+        }
+    
+        user.exercises = standartExerciseCatalog;
+    
+        await user.save();
+        console.log("Exercises reset")
+        res.redirect("/exercises");
+    
+      } catch (err) {
+        console.log("Es ist ein Fehler beim zurücksetzen der Exercises aufgetreten: " + err);
+      }
+})
+
+module.exports = Router;
+
 
   function prepareExercisesData(user) {
     const predefinedExercises = user.exercises;
