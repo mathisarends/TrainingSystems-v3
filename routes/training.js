@@ -529,7 +529,7 @@ Router.post("/reset-template-training", checkAuthenticated, async (req, res) => 
 //TODO: Hier müssen gleich anpassungen gemacht werden
 for (let i = 1; i <= 5; i++) { // 5 Training Slots GET
   Router.get(`/session-edit-${i}`, checkAuthenticated, (req, res) => {
-    handleSessionEdit(req, res, i - 1);
+    (req, res, i - 1);
   });
 }
 

@@ -56,7 +56,7 @@ Router.post(
 Router.get("/", async (req, res) => {
   try {
     if (req.user) {
-      const user = await User.findOne({ name: req.user.name });
+      const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
       }
@@ -64,14 +64,30 @@ Router.get("/", async (req, res) => {
         user: user,
       });
     } else {
-      authenticated = false;
-      res.render("index", { user: "" });
+      res.redirect("/welcome");
     }
   } catch (err) {
     console.log("Fehler beim Laden der Hauptseite");
     console.log(err);
   }
 });
+
+Router.get("/welcome", async (req, res) => {
+  res.render("indexNoAuthentication");
+})
+
+
+
+Router.get("/home", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.user.name });
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+  } catch (err) {
+    console.log("Fehler beim Laden der homePage", err);
+  }
+})
 
 module.exports = Router;
 

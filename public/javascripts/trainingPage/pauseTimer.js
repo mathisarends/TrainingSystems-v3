@@ -1,60 +1,32 @@
-function initializeTimerWorker() {
-  timerWorker = new Worker(
-    URL.createObjectURL(
-      new Blob(
-        [
-          `
-    let remainingTime = 0;
-    let timer;
-
-    function startTimer(duration) {
-      remainingTime = duration;
-      const interval = 1000; // 1 Sekunde
-      if (timer) clearInterval(timer);
-      timer = setInterval(function () {
-        if (remainingTime <= 0) {
-          clearInterval(timer);
-          self.postMessage({ command: 'complete' });
-        } else {
-          remainingTime -= interval;
-          self.postMessage({ command: 'currentTime', currentTime: remainingTime }); // Senden Sie die verbleibende Zeit in jeder Iteration
-        }
-      }, interval);
-    }
-
-    self.addEventListener('message', function (e) {
-      const data = e.data;
-      if (data.command === 'start') {
-        startTimer(data.duration);
-      }
-    });
-
-    self.addEventListener('message', function (e) {
-      const data = e.data;
-      if (data.command === 'stop') {
-        if (timer) {
-          clearInterval(timer);
-          timer = null;
-        }
-      }
-    });
-
-    startTimer(0); // Starten Sie den Timer sofort beim Laden des Web Workers, aber ohne Dauer
-  `,
-        ],
-        { type: "application/javascript" }
-      )
-    )
-  );
-
-  return timerWorker;
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  const timerWorker = initializeTimerWorker();
 
-  
+  if ('Notification' in window) {
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        console.log('Push-Benachrichtigungen sind erlaubt.');
+      } else {
+        console.warn('Push-Benachrichtigungen sind nicht erlaubt.');
+      }
+    });
+  }
 
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("/register-timer-service-worker", {
+        scope: "/training/",
+      })
+      .then((registration) => {
+        console.log("Service Worker registriert:", registration);
+
+        initializeApp(registration);
+      })
+      .catch((error) => {
+        console.log("Fehler bei der Registrierung des Service Workers:", error);
+      });
+  }
+});
+
+function initializeApp(registration) {
   const categoryPauseTimes = document.getElementsByClassName(
     "category-pause-time-input"
   );
@@ -73,6 +45,53 @@ document.addEventListener("DOMContentLoaded", () => {
     "Legs",
   ];
 
+  const navButtons = document.querySelectorAll(".dot-indicators button");
+  const workoutTables = document.querySelectorAll(".workout-table"); //all workout tables
+  const progressBars = document.getElementsByClassName(
+    "rest-pause-progress-bar"
+  );
+  const timerDisplays = document.getElementsByClassName("rest-pause-timer");
+
+  let currentDayIndex = findCurrentlyDisplayedWorkoutTable();
+  let currentWorkoutTable = workoutTables[currentDayIndex];
+  let currentProgressBar = progressBars[currentDayIndex];
+  let currentTimerDisplay = timerDisplays[currentDayIndex];
+  let lastCategory = "";
+
+  updateCurrentTable();
+
+  navButtons.forEach((navButton, index) => {
+    navButton.addEventListener("click", (e) => {
+      currentDayIndex = index;
+      updateCurrentTable(); // Event Listener für den neuen Table einrichten
+    });
+  });
+
+  const audioElement = document.getElementById("timerAudio");
+
+  // jede sekunde kommt eine solche nachricht sofern der timer läuft
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    const data = event.data;
+    if (data.command === "currentTime") {
+      const currentTime = data.currentTime / 1000;
+      const minutes = Math.floor(currentTime / 60);
+      const seconds = Math.floor(currentTime % 60);
+      const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
+        seconds
+      ).padStart(2, "0")}`;
+
+      currentTimerDisplay.textContent = formattedTime;
+
+      const progress =
+        (currentTime / getPauseTimeByExerciseCategory(lastCategory)) * 100;
+      currentProgressBar.value = progress;
+
+      if (currentTime <= 0) {
+        audioElement.play();
+      }
+    }
+  });
+
   function getPauseTimeByExerciseCategory(category) {
     for (let i = 0; i < exerciseCategorys.length; i++) {
       if (category === exerciseCategorys[i]) {
@@ -80,80 +99,38 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
+  function findCurrentlyDisplayedWorkoutTable() {
+    for (let index = 0; index < navButtons.length; index++) {
+      const button = navButtons[index];
+      if (button.getAttribute("aria-selected") === "true") {
+        return index;
+      }
+    }
+    return -1;
+  }
 
-  const workoutTables = document.querySelectorAll(".workout-table");
-  const restPauseTimers = document.getElementsByClassName("rest-pause-timer");
-  const restPauseProgressBars = document.getElementsByClassName(
-    "rest-pause-progress-bar"
-  );
+  function updateCurrentTable() {
+    currentWorkoutTable = workoutTables[currentDayIndex];
+    currentProgressBar = progressBars[currentDayIndex];
+    currentTimerDisplay = timerDisplays[currentDayIndex];
 
-    let timerActive = false;
-
-  workoutTables.forEach((workoutTable, index) => {
-    const weightInputs = workoutTable.querySelectorAll(".weight");
-    const exerciseCategorySelectors = workoutTable.querySelectorAll(
+    // weightInput for triggering timer and category selector in order to retrieve correct pauseTime;
+    const weightInputs = currentWorkoutTable.querySelectorAll(".weight");
+    const categorySelectors = currentWorkoutTable.querySelectorAll(
       ".exercise-category-selector"
     );
 
-    weightInputs.forEach((weightInput, weightIndex) => {
+    weightInputs.forEach((weightInput, index) => {
       weightInput.addEventListener("change", () => {
-        const category = exerciseCategorySelectors[weightIndex].value;
 
-        if (timerActive) {
-          timerWorker.postMessage({ command: 'stop '});
-        }
+        const category = categorySelectors[index].value; //zugehörig zum weight input die richtige category rausfidnen
+        lastCategory = category;
 
-        timerWorker.postMessage({
+        registration.active.postMessage({
           command: "start",
           duration: getPauseTimeByExerciseCategory(category) * 1000, // Timerdauer in Millisekunden
         });
-
-        startTimer(
-          restPauseTimers[index],
-          restPauseProgressBars[index],
-          category
-        );
-        timerActive = true;
-
       });
     });
-  });
-
-  function startTimer(timerElement, progressBar, category) {
-    const audioElement = document.getElementById("timerAudio");
-
-    const updateTimer = () => {
-      timerWorker.postMessage({ command: "currentTime" }); // Anfrage an den Timer Worker, um die verbleibende Zeit abzurufen
-    };
-
-    updateTimer(); // init
-
-    const updateInterval = setInterval(updateTimer, 1000); //every second
-
-    timerWorker.addEventListener("message", function (e) {
-      //listens for remaining time from timer worker
-      const data = e.data;
-      if (data.command === "currentTime") {
-        const currentTime = data.currentTime / 1000; // in secunds
-        const minutes = Math.floor(currentTime / 60);
-        const seconds = Math.floor(currentTime % 60);
-
-        const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
-          seconds
-        ).padStart(2, "0")}`;
-        timerElement.textContent = formattedTime;
-
-        const progress =
-          (currentTime / getPauseTimeByExerciseCategory(category)) * 100; // progress in percent
-        progressBar.value = progress;
-
-        if (currentTime <= 0) {
-          clearInterval(updateInterval); // if timeout then intervall reset
-          audioElement.play();
-          //audio - element abspielen:
-          timerActive = false;
-        }
-      }
-    });
   }
-});
+}

@@ -6,6 +6,7 @@ const baseUrl = process.env.BASE_URL;
 
 const express = require("express");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 const flash = require("express-flash");
 const path = require("path");
 const bodyParser = require('body-parser');
@@ -32,6 +33,7 @@ const app = express();
 const PORT = 3000;
 
 const mongoURI = process.env.MONGODB_URI;
+const sessionSecret= process.env.SESSION_SECRET;
 
 // MongoDB Verbindung
 async function connect() {
@@ -41,6 +43,24 @@ async function connect() {
       useUnifiedTopology: true
     });
     console.log("Connected to the Database");
+    
+    // Erstelle das MongoDBStore-Objekt nach erfolgreicher Verbindung
+    // create mongoDBStore-Object after sucessfull connection
+    const store = new MongoDBStore({
+      uri: mongoURI, // use same uri
+      collection: 'sessionStorage',
+    });
+    
+    // configure express-session with mongoDBStore
+    app.use(
+      session({
+        secret: sessionSecret,
+        resave: false,
+        saveUninitialized: false,
+        store: store, // use the mongoDB-store object created
+      })
+    );
+
   } catch (err) {
     console.error("Error connecting to the database: ", err);
     throw err;
@@ -102,6 +122,20 @@ app.get("/google/callback",
     failureRedirect: "/login"
   })
 )
+
+app.get("/register-service-worker", (req, res) => {
+  res.sendFile(path.join(__dirname, "service-worker.js"))
+})
+
+// dieser timer worker ist jetzt schonmal eingebunden und soll dafür genutzt werden dass der timer auch im hintergrund laufen kann.
+app.get("/register-timer-service-worker", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "javascripts", "timer-service-worker.js"), {
+    headers: {
+      'Content-Type': 'application/javascript' // Setzen Sie den MIME-Typ explizit auf JavaScript
+    }
+  });
+});
+
 
 app.listen(process.env.PORT || PORT, () => console.log(`Listening on port ${PORT}`));
 
