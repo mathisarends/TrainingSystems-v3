@@ -48,20 +48,7 @@ self.addEventListener('message', function(event) {
         });
       } else {
         remainingTime -= interval;
-
         //for push notification: 
-        const remainingTimeInSeconds = remainingTime / 1000;
-        const minutes = Math.floor(remainingTimeInSeconds / 60);
-        const seconds = Math.floor(remainingTimeInSeconds % 60);
-        const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
-          seconds
-        ).padStart(2, "0")}`;
-
-/*         self.registration.showNotification('Timer', {
-          title: "Timer",
-          body: `Verbleibende Zeit: ${formattedTime} Sekunden`,
-          tag: 'timer-notification', // Eindeutiger Tag für die Benachrichtigung
-        }); */
   
         
         // Senden Sie die verbleibende Zeit in jeder Iteration an das Frontend
