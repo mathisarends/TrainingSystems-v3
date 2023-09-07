@@ -37,15 +37,32 @@ self.addEventListener('message', function(event) {
         console.log("Timer abgelaufen");
         // Hier können Sie die Nachricht senden, wenn der Timer abgelaufen ist
         // Selbst wenn der Bildschirm gesperrt ist oder das Handy im Energiesparmodus ist
-        self.registration.showNotification('Timer abgelaufen', {
+        self.registration.showNotification('Timer', {
+          title: "Timer",
           body: 'Ihr Timer ist abgelaufen!',
+          tag: 'timer-notification', // Eindeutiger Tag für die Benachrichtigung
+          requireInteraction: false,
+          timeout: 30000, // Timeout nach 30 Sekunden
+          vibrate: [200, 100, 200] // Eine Vibration von 200 ms, eine Pause von 100 ms und dann wieder 200 ms Vibration
+     
         });
       } else {
         remainingTime -= interval;
 
-        self.registration.showNotification('Verbleibende Zeit', {
-          body: `Verbleibende Zeit: ${remainingTime / 1000} Sekunden`,
-        });
+        //for push notification: 
+        const remainingTimeInSeconds = remainingTime / 1000;
+        const minutes = Math.floor(remainingTimeInSeconds / 60);
+        const seconds = Math.floor(remainingTimeInSeconds % 60);
+        const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
+          seconds
+        ).padStart(2, "0")}`;
+
+/*         self.registration.showNotification('Timer', {
+          title: "Timer",
+          body: `Verbleibende Zeit: ${formattedTime} Sekunden`,
+          tag: 'timer-notification', // Eindeutiger Tag für die Benachrichtigung
+        }); */
+  
         
         // Senden Sie die verbleibende Zeit in jeder Iteration an das Frontend
         self.clients.matchAll().then((clients) => {
@@ -60,14 +77,4 @@ self.addEventListener('message', function(event) {
     }, interval);
   }
   
-/*   self.addEventListener('message', function(event) {
-    const data = event.data;
-    if (data.command === 'stop') {
-      console.log("stop command")
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
-    }
-  }); */
 
