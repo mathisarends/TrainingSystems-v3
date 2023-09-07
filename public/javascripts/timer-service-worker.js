@@ -41,8 +41,7 @@ self.addEventListener('message', function(event) {
           title: "Timer",
           body: 'Ihr Timer ist abgelaufen!',
           tag: 'timer-notification', // Eindeutiger Tag für die Benachrichtigung
-          requireInteraction: false,
-          timeout: 30000, // Timeout nach 30 Sekunden
+          requireInteraction: true,
           vibrate: [200, 100, 200] // Eine Vibration von 200 ms, eine Pause von 100 ms und dann wieder 200 ms Vibration
      
         });
