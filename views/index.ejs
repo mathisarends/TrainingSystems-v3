@@ -32,6 +32,9 @@
 <script>
 
   document.addEventListener("DOMContentLoaded", () => {
+
+
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/register-service-worker', {
         scope: "/" // Der Scope sollte auf die Root-URL Ihrer Anwendung zeigen

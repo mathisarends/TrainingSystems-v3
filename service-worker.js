@@ -1,69 +1,10 @@
 // service-worker.js
-const version = 22;
+const version = 3;
 
 const staticCache = `static-assets-${version}-new`; //html files etc.
 const dynamicCache = `dynamic-assets-${version}`; //for api 
 
 //der stylesheet pfad funktioniert der ejs leider noch nicht liegt wohl am path ja:
-
-
-// wenn es wochen oder pläne nicht gibt kann ich da nicht andere statuscodes wie 302 oder so verwenden um die fehler zu umgehen?
-const cacheListTraining = [
-  /*     "/training/custom-A1",
-    "/training/custom-A2",
-    "/training/custom-A3",
-    "/training/custom-A4",
-    "/training/custom-A5",
-    "/training/custom-A6",
-    "/training/custom-B1",
-    "/training/custom-B2",
-    "/training/custom-B3",
-    "/training/custom-B4",
-    "/training/custom-B5",
-    "/training/custom-B6",
-    "/training/custom-C1",
-    "/training/custom-C2",
-    "/training/custom-C3",
-    "/training/custom-C4",
-    "/training/custom-C5",
-    "/training/custom-C6", */
-
- /*    "training/custom-A1-edit",
-    "training/custom-A2-edit",
-    "training/custom-A3-edit",
-    "training/custom-A4-edit",
-    "training/custom-A5-edit",
-    "training/custom-A6-edit",
-    "training/custom-B1-edit",
-    "training/custom-B2-edit",
-    "training/custom-B3-edit",
-    "training/custom-B4-edit",
-    "training/custom-B5-edit",
-    "training/custom-B6-edit",
-    "training/custom-C1-edit",
-    "training/custom-C2-edit",
-    "training/custom-C3-edit",
-    "training/custom-C4-edit",
-    "training/custom-C5-edit",
-    "training/custom-C6-edit",
-
-    "training/template-A1",
-    "training/template-A2",
-    "training/template-A3",
-    "training/template-A4",
-    "training/template-B1",
-    "training/template-B2",
-    "training/template-B3",
-    "training/template-B4",
-    "training/reset-template-training",
-    
-    "training/session-edit-1",
-    "training/session-edit-2",
-    "training/session-edit-3",
-    "training/session-edit-4",
-    "training/session-edit-5",
- */
-]
 
 const cacheList = [ //everything that should be cached initally
 

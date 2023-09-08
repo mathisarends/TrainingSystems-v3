@@ -180,8 +180,6 @@ Router.post("/config", async (req, res) => {
     const sleep = req.body.sleep;
     const nutrition = req.body.nutrition;
     const stress = req.body.stress;
-  
-    console.log(sleep + "schlafqualität");
 
     user.gender = gender;
     user.bodyHeight = height;

@@ -16,7 +16,7 @@ const maxWeeks = 6;
 
 Router.get("/", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
     if (!user) {
       return redirectToReferer(req, res);
     }
@@ -32,7 +32,7 @@ Router.get("/", checkAuthenticated, async (req, res) => {
 
 Router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
     }
@@ -52,7 +52,7 @@ Router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
 
 Router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
       }
@@ -94,7 +94,7 @@ Router.delete("/delete-training-plan", checkAuthenticated, async (req, res) => {
   const indexToDelete = req.body.deleteIndex;
 
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
     }
@@ -116,11 +116,10 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
     const routePath = `/custom-${letter}${week}`;
     Router.patch(routePath, checkAuthenticated, async (req, res) => {
       try {
-        const user = await User.findOne({ name: req.user.name });
+        const user = await User.findById(req.user._id);
         if (!user) {
           return res.status(404).send("Benutzer nicht gefunden");
         }
-        console.log("In der Patch _route")
 
         const updatedData = req.body;
         const trainingPlan = user.trainingPlansCustomNew[i];
@@ -180,7 +179,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
     const routePath = `/custom-${letter}${week}`;
     Router.get(routePath, checkAuthenticated, async (req, res) => {
       try {
-        const user = await User.findOne({ name: req.user.name });
+        const user = await User.findById(req.user._id);
         if (!user) {
           return res.status(404).send("Benutzer nicht gefunden");
         }
@@ -268,7 +267,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
     const routePath = `/custom-${letter}${week}-edit`;
     Router.get(routePath, checkAuthenticated, async (req, res) => {
       try {
-        const user = await User.findOne({ name: req.user.name });
+        const user = await User.findById(req.user._id);
         if (!user) {
           return res.status(404).send("Benutzer nicht gefunden");
         }
@@ -314,7 +313,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
     const routePath = `/custom-${letter}${week}-edit`;
     Router.patch(routePath, checkAuthenticated, async (req, res) => {
       try {
-        const user = await User.findOne({ name: req.user.name });
+        const user = await User.findById(req.user._id);
         if (!user) {
           return res.status(404).send("Benutzer nicht gefunden");
         }
@@ -370,12 +369,11 @@ for (let i = 0; i < templates.length; i++) {
 
   Router.get(`/template-${templateName}`, checkAuthenticated, async (req, res) => {
     try {
-      const user = await User.findOne({ name: req.user.name });
+      const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
       }
       const trainingPlan = user.trainingPlanTemplate[templateType];
-      console.log(trainingPlan);
       const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
       const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, weekIndex);
 
@@ -452,7 +450,7 @@ for (let i = 0; i < templates.length; i++) {
   const templateName = templates[i];
   Router.patch(`/template-${templateName}`, checkAuthenticated, async (req, res) => {
     try {
-      const user = await User.findOne({ name: req.user.name });
+      const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
       }
@@ -500,7 +498,7 @@ for (let i = 0; i < templates.length; i++) {
 
 Router.post("/reset-template-training", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -558,7 +556,7 @@ for (let i = 1; i <= 5; i++) {
 // get für session-train-i
 async function handleTrainingSessionGET(req, res, index) {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -620,28 +618,21 @@ async function handleTrainingSessionGET(req, res, index) {
   }
 }
 
-function loadTrainingPreviewData(trainings) {
+function getLastEditedTrainingDates(trainings) {
   const trainingFormattedDates = [];
   for (let i = 0; i < trainings.length; i++) {
     trainingFormattedDates.push(formatDate(trainings[i].lastUpdated));
   }
 
-  const trainingPreviewInformation = [];
-  for (let i = 0; i < trainings.length; i++) {
-    trainingPreviewInformation.push(extractTrainingExerciseData(trainings[i], 0)); //immer die information des mostRecentTrainings anzeigen
-  }
 
-  return {
-    trainingFormattedDates,
-    trainingPreviewInformation,
-  };
+  return trainingFormattedDates;
 }
 
 
 
 Router.get("/createTraining", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
     }
@@ -665,7 +656,7 @@ Router.get("/createTraining", checkAuthenticated, async (req, res) => {
 
 Router.post("/createTraining", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if(!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -730,7 +721,7 @@ Router.delete("/delete-training", checkAuthenticated, async (req, res) => {
   console.log(indexToDelete);
 
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
     }
@@ -800,7 +791,7 @@ function categorizeExercises(exercises) {
 //GET für session-edit-i JUMP
 async function handleSessionEdit(req, res, sessionIndex) { //function for handling GET with a single Training session
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -826,7 +817,7 @@ async function handleSessionEdit(req, res, sessionIndex) { //function for handli
 
 async function handleSessionEditPatch(req, res, index) {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
     
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -858,7 +849,7 @@ async function handleSessionEditPatch(req, res, index) {
 
 async function handleTrainingSessionPOST(req, res, index) {
   try {
-      const user = await User.findOne({ name: req.user.name });
+      const user = await User.findById(req.user._id);
   
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
@@ -1139,16 +1130,13 @@ function renderTrainingPlansView(res, user, additionalData = {}) {
     lastVisitedTrainingMode: user.lastVisitedTrainingMode || "",
   };
 
-  const {
+  const { //retrieve all necessary data from user:
     trainingPlanTemplate,
     trainingPlansCustomNew,
     trainings,
   } = user;
 
-  const {
-    trainingFormattedDates,
-    trainingPreviewInformation,
-  } = loadTrainingPreviewData(trainings);
+  const trainingFormattedDates = getLastEditedTrainingDates(trainings);
 
   const formattedTrainingPlanDates = getLastEditedDatesOfType(
     trainingPlansCustomNew
@@ -1157,17 +1145,10 @@ function renderTrainingPlansView(res, user, additionalData = {}) {
   const formattedTemplateTrainingPlanDates = getLastEditedDatesOfType(
     trainingPlanTemplate
   );
-  const customNextTrainingdayInformation = getExerciseOfNextTrainingDayPerPlan(
-    trainingPlansCustomNew
-  );
 
   const customCurrentTrainingWeek = getMostRecentTrainingWeeks(trainingPlansCustomNew);
 
   const templateCurrentTrainingWeek = getMostRecentTrainingWeeks(trainingPlanTemplate);
-
-  const templateNextTrainingDayInformation = getExerciseOfNextTrainingDayPerPlan(
-    trainingPlanTemplate
-  );
 
   const mergedData = {
     ...defaultData,
@@ -1177,11 +1158,8 @@ function renderTrainingPlansView(res, user, additionalData = {}) {
     userTrainings: trainings,
 
     trainingFormattedDates,
-    trainingPreviewInformation,
     formattedTrainingPlanDates: formattedTrainingPlanDates || "",
     formattedTemplateTrainingPlanDates,
-    customNextTrainingdayInformation,
-    templateNextTrainingDayInformation,
 
     customCurrentTrainingWeek,
     templateCurrentTrainingWeek

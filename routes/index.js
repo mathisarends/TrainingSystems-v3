@@ -26,7 +26,7 @@ Router.post(
       imagePathForDB = "/" + imagePathForDB;
 
       //aktualisiere das User-Dokument in der Datenbank mit dem neuen Profilbild-Pfad
-      const user = await User.findOne({ name: req.user.name });
+      const user = await User.findById(req.user._id);
       const oldProfilePicturePath = user.profilePicture;
       user.profilePicture = imagePathForDB;
       await user.save();
@@ -80,7 +80,7 @@ Router.get("/welcome", async (req, res) => {
 
 Router.get("/home", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
     }

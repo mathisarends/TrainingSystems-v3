@@ -14,7 +14,7 @@ Router.get("/", (req, res) => {
 Router.get("/volume", checkAuthenticated, async (req, res) => {
   try {
     if (req.user) {
-      const user = await User.findOne({ name: req.user.name });
+      const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
       }
@@ -57,7 +57,7 @@ Router.get("/volume", checkAuthenticated, async (req, res) => {
 
 Router.post("/volume", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -81,7 +81,7 @@ Router.post("/volume", checkAuthenticated, async (req, res) => {
 
 Router.patch("/volume", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");

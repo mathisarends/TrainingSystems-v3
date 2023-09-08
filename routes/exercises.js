@@ -11,7 +11,7 @@ const {
 
 Router.get("/", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -27,7 +27,7 @@ Router.get("/", checkAuthenticated, async (req, res) => {
 
 Router.post("/", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -92,7 +92,7 @@ Router.post("/", checkAuthenticated, async (req, res) => {
 
 Router.patch("/", checkAuthenticated, async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
@@ -207,40 +207,11 @@ function getNumberOfRequestedExercises(exerciseCategoriesLength, maxAmountOfExer
 
 
 function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTimes, exerciseCategorySets, exerciseCategoryReps, exerciseCategoryRPE) {
-  
-    let associatedCategory;
-  
-    if (index === 0) {
-      associatedCategory = "- Bitte Auswählen -";
-    } else if (index === 1) {
-      associatedCategory = "Squat";
-    } else if (index === 2) {
-      associatedCategory = "Bench";
-    } else if (index === 3) {
-      associatedCategory = "Deadlift";
-    } else if (index === 4) {
-      associatedCategory = "Overheadpress";
-    } else if (index === 5) {
-      associatedCategory = "Chest";
-    } else if (index === 6) {
-      associatedCategory = "Back";
-    } else if (index === 7) {
-      associatedCategory = "Shoulder";
-    } else if (index === 8) {
-      associatedCategory = "Triceps";
-    } else if (index === 9) {
-      associatedCategory = "Biceps";
-    } else if (index === 10) {
-      associatedCategory = "Legs";
-    } else {
-      console.log("Fehler im for-loop-index");
-      return;
-    }
-    
+      
     const object = {
       name: exerciseName,
       category: {
-        name: associatedCategory, 
+        name: getAssociatedCategoryByIndex(index), 
         pauseTime: exerciseCategoryPauseTimes[index],
         defaultSets: exerciseCategorySets[index],
         defaultReps: exerciseCategoryReps[index],
@@ -287,7 +258,7 @@ function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTime
 
 Router.post("/reset", checkAuthenticated, async (req, res) => {
     try {
-        const user = await User.findOne({ name: req.user.name });
+        const user = await User.findById(req.user._id);
     
         if (!user) {
           return res.status(404).send("Benutzer nicht gefunden");

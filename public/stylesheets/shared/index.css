@@ -719,7 +719,51 @@ select {
 
 }
 
-@media (min-width: 45em) {
+@media (min-width: 35em) and (max-width: 54.999em) {
+    .primary-navigation a>span {
+        display: none;
+    }
+
+    .grid-container--home>*:first-child {
+        align-self: center;
+    }
+
+    .grid-container--home>*:last-child {
+        align-self: start;
+    }
+
+    .grid-container--home .large-button {
+        padding: 0 3.5em !important;
+    }
+
+    .grid-container--training {
+        grid-template-columns: minmax(0.25rem, 1fr) minmax(0, 80%) minmax(0.25rem, 1fr);
+        align-items: left;
+    }
+
+    .grid-container--training>*:first-child,
+    .grid-container--training .tab-list,
+    .grid-container--training .custom-view-container {
+        grid-column: 2;
+        justify-self: center;
+        align-self: center;
+    }
+
+/*     .grid-container--training {
+        padding: 2em 0em;
+    } */
+
+    .grid-container--training .numbered-title {
+        align-self: center;
+        justify-self: center;
+        
+    }
+
+
+    /*JUMP*/
+}
+
+@media (min-width: 55em) {
     .grid-container {
         text-align: left;
         align-items: left !important;
@@ -756,9 +800,9 @@ select {
         align-self: start;
     }
 
-    .grid-container--exercises form[action="/exercises?_method=PATCH"] {
+/*     .grid-container--exercises form[action="/exercises?_method=PATCH"] {
         border: 2px solid green;
-    }
+    } */
 
     .grid-container--exercises>*:first-child {
         padding-left: 0;
@@ -785,7 +829,7 @@ select {
 
 
     .grid-container--training {
-        grid-template-columns: minmax(3rem, 1fr) minmax(0, 50%) minmax(3rem, 1fr);
+        grid-template-columns: minmax(1rem, 1fr) minmax(0, 70%) minmax(1rem, 1fr);
         align-items: left;
     }
 
@@ -803,4 +847,10 @@ select {
 
 
 
+}
+
+@media (min-width: 1200px) {
+    .grid-container--training {
+        grid-template-columns: minmax(1rem, 1fr) minmax(0, 60%) minmax(1rem, 1fr);
+    }
 }

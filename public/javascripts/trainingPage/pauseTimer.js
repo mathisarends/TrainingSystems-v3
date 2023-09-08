@@ -79,17 +79,18 @@ function initializeApp(registration) {
     const data = event.data;
     if (data.command === "currentTime") {
       const currentTime = data.currentTime / 1000;
-      const minutes = Math.floor(currentTime / 60);
-      const seconds = Math.floor(currentTime % 60);
-      const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
-        seconds
-      ).padStart(2, "0")}`;
+      const formattedTime = data.formattedTime;
 
       currentTimerDisplay.textContent = formattedTime;
 
       const progress =
         (currentTime / getPauseTimeByExerciseCategory(lastCategory)) * 100;
-      currentProgressBar.value = progress;
+        
+        //fehler konsolenausgabe verhinder wenn die seite neu geladen wird:
+        if (!isNaN(progress) && isFinite(progress)) {
+          currentProgressBar.value = progress;
+        }
+
 
       if (currentTime <= 0) {
         audioElement.play();
@@ -134,37 +135,6 @@ function initializeApp(registration) {
           command: "start",
           duration: getPauseTimeByExerciseCategory(category) * 1000, // Timerdauer in Millisekunden
         });
-
-        // Beispiel im Frontend (Clientseite)
-/*         fetch("/start-background-sync", {
-          method: "POST",
-          body: JSON.stringify({
-            duration: getPauseTimeByExerciseCategory(category) * 1000,
-          }), // Beispiel: Dauer des Timers in Millisekunden
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              console.log("Response ist okay!");
-              console.log("Hintergrund-Synchronisation gestartet.");
-            } else {
-              console.error(
-                "Fehler beim Starten der Hintergrund-Synchronisation."
-              );
-            }
-          })
-          .catch((error) => {
-            console.error("Fehler beim Senden der Anfrage:", error);
-          });
- */
-/*           navigator.serviceWorker.controller.postMessage({
-            command: 'startBackgroundSync',
-            duration: getPauseTimeByExerciseCategory(category) * 1000, // Timer-Dauer in Millisekunden
-          }); */
-
-        // wie schicke ich hier eine anfrage an diesen pfad;
       });
     });
   }

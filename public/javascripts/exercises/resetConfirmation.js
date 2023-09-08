@@ -6,8 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const postForm = document.querySelector("form");
     const resetForm = document.getElementById("reset-form");
-    console.log(resetForm);
-
+    
     resetExercisesButton.addEventListener("click", e => {
       e.preventDefault();
       confirmationModal.style.display = "block";

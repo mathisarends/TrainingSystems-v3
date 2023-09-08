@@ -136,26 +136,11 @@ app.get("/register-timer-service-worker", (req, res) => {
   });
 });
 
-app.post('/start-background-sync', (req, res) => {
-  // Lesen Sie die gewünschte Timer-Dauer aus dem Anfragekörper
-  try {
-    const duration = req.body.duration;
-    console.log(duration);
-  
-    // Starten Sie die Hintergrund-Synchronisation
-  
-    // Senden Sie eine Erfolgsantwort an den Client zurück
-    res.status(200).send('Hintergrund-Synchronisation gestartet.');
-  } catch (err) {
-    console.error(err);
-  }
-
-});
-
-
 
 app.listen(process.env.PORT || PORT, () => console.log(`Listening on port ${PORT}`));
 
 function generateRandomSecret() {
   return crypto.randomBytes(32).toString("hex");
 }
+
+

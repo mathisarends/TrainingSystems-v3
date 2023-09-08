@@ -5,9 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const exerciseTables = Array.from(document.querySelectorAll("table:not(:first-of-type)"));
     const mainTables = exerciseTables.slice(0, 3);
     const accesoireTables = exerciseTables.slice(3);
-    console.log(exerciseTables);
-    console.log(mainTables);
-    console.log(accesoireTables);
 
     navButtons.forEach((navButton, index) => {
       navButton.addEventListener("click", e => {
