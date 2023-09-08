@@ -45,13 +45,19 @@ function startTimer(duration) {
       console.log("Timer abgelaufen");
       // Hier können Sie die Nachricht senden, wenn der Timer abgelaufen ist
       // Selbst wenn der Bildschirm gesperrt ist oder das Handy im Energiesparmodus ist
-      self.registration.showNotification('Timer abgelaufen', {
+      self.registration.showNotification('Timer', {
         body: 'Ihr Timer ist abgelaufen!',
+        tag: 'timer-notification',
       });
 
 
     } else {
       remainingTime -= interval;
+
+      self.registration.showNotification('Timer', {
+        body: `Verbleibende Zeit: ${remainingTime / 1000}s`,
+        tag: 'timer-notification',
+      })
       
       // Senden Sie die verbleibende Zeit in jeder Iteration an das Frontend
       self.clients.matchAll().then((clients) => {

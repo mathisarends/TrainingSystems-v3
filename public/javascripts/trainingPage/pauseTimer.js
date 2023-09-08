@@ -136,7 +136,7 @@ function initializeApp(registration) {
         });
 
         // Beispiel im Frontend (Clientseite)
-        fetch("/start-background-sync", {
+/*         fetch("/start-background-sync", {
           method: "POST",
           body: JSON.stringify({
             duration: getPauseTimeByExerciseCategory(category) * 1000,
@@ -158,7 +158,7 @@ function initializeApp(registration) {
           .catch((error) => {
             console.error("Fehler beim Senden der Anfrage:", error);
           });
-
+ */
 /*           navigator.serviceWorker.controller.postMessage({
             command: 'startBackgroundSync',
             duration: getPauseTimeByExerciseCategory(category) * 1000, // Timer-Dauer in Millisekunden
