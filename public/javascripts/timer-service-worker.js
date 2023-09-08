@@ -20,6 +20,14 @@ self.addEventListener('message', function(event) {
   }
 });
 
+self.addEventListener('message', function(event) {
+  const data = event.data;
+  if (data.command === 'keepAlive') {
+    // Keine Aktion erforderlich, dies dient nur dazu, den Service Worker aktiv zu halten
+    console.log("keepAlive")
+  }
+});
+
 let remainingTime = 0;
 let timer;
 
@@ -37,35 +45,13 @@ function startTimer(duration) {
       console.log("Timer abgelaufen");
       // Hier können Sie die Nachricht senden, wenn der Timer abgelaufen ist
       // Selbst wenn der Bildschirm gesperrt ist oder das Handy im Energiesparmodus ist
-      const notification = self.registration.showNotification('Timer abgelaufen', {
+      self.registration.showNotification('Timer abgelaufen', {
         body: 'Ihr Timer ist abgelaufen!',
       });
 
-      setTimeout(() => {
-        notification.close();
-      }, 15000)
+
     } else {
       remainingTime -= interval;
-
-      if (remainingTime % 15000 == 0) {
-
-        const timeStampSeconds = remainingTime / 1000;
-        const minutes = Math.floor(timeStampSeconds / 60);
-        const seconds = Math.floor(timeStampSeconds % 60);
-        const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
-          seconds
-        ).padStart(2, "0")}`;
-
-        const notification = self.registration.showNotification('Verbleibende Zeit', {
-          body: `Verbleibende Zeit: ${formattedTime} Sekunden`,
-        });
-
-        setTimeout(() => {
-          notification.close();
-        }, 1000);
-      }
-
-
       
       // Senden Sie die verbleibende Zeit in jeder Iteration an das Frontend
       self.clients.matchAll().then((clients) => {
@@ -80,14 +66,10 @@ function startTimer(duration) {
   }, interval);
 }
 
-/*   self.addEventListener('message', function(event) {
+self.addEventListener('message', function(event) {
   const data = event.data;
-  if (data.command === 'stop') {
-    console.log("stop command")
-    if (timer) {
-      clearInterval(timer);
-      timer = null;
-    }
+  if (data.command === 'startBackgroundSync') {
+    // Starten Sie die Timer-Logik für die Hintergrund-Synchronisation
+    startTimer(data.duration);
   }
-}); */
-
+});
