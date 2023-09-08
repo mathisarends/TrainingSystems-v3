@@ -28,6 +28,8 @@ Router.get("/", checkAuthenticated, async (req, res) => {
 });
 
 
+
+
 Router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });

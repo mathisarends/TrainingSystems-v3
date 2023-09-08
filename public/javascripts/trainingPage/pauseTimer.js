@@ -1,11 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-  if ('Notification' in window) {
-    Notification.requestPermission().then(function(permission) {
-      if (permission === 'granted') {
-        console.log('Push-Benachrichtigungen sind erlaubt.');
+  if ("Notification" in window) {
+    Notification.requestPermission().then(function (permission) {
+      if (permission === "granted") {
+        console.log("Push-Benachrichtigungen sind erlaubt.");
       } else {
-        console.warn('Push-Benachrichtigungen sind nicht erlaubt.');
+        console.warn("Push-Benachrichtigungen sind nicht erlaubt.");
       }
     });
   }
@@ -27,6 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initializeApp(registration) {
+
+    // Alle 10 Sekunden ein Signal an den Service Worker senden
+    setInterval(() => {
+      registration.active.postMessage({ command: 'keepAlive' });
+    }, 10000); // 10 Sekunden Intervall (Passen Sie das Intervall nach Bedarf an)
+
   const categoryPauseTimes = document.getElementsByClassName(
     "category-pause-time-input"
   );
@@ -122,7 +127,6 @@ function initializeApp(registration) {
 
     weightInputs.forEach((weightInput, index) => {
       weightInput.addEventListener("change", () => {
-
         const category = categorySelectors[index].value; //zugehörig zum weight input die richtige category rausfidnen
         lastCategory = category;
 
@@ -130,6 +134,37 @@ function initializeApp(registration) {
           command: "start",
           duration: getPauseTimeByExerciseCategory(category) * 1000, // Timerdauer in Millisekunden
         });
+
+        // Beispiel im Frontend (Clientseite)
+        fetch("/start-background-sync", {
+          method: "POST",
+          body: JSON.stringify({
+            duration: getPauseTimeByExerciseCategory(category) * 1000,
+          }), // Beispiel: Dauer des Timers in Millisekunden
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log("Response ist okay!");
+              console.log("Hintergrund-Synchronisation gestartet.");
+            } else {
+              console.error(
+                "Fehler beim Starten der Hintergrund-Synchronisation."
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Fehler beim Senden der Anfrage:", error);
+          });
+
+/*           navigator.serviceWorker.controller.postMessage({
+            command: 'startBackgroundSync',
+            duration: getPauseTimeByExerciseCategory(category) * 1000, // Timer-Dauer in Millisekunden
+          }); */
+
+        // wie schicke ich hier eine anfrage an diesen pfad;
       });
     });
   }
