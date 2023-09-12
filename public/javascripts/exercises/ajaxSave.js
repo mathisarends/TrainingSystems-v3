@@ -1,19 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   const postForm = document.getElementById("post-form");
-  const resetForm = document.getElementById("reset-form");
-
-  
-  //TODO: auch bei reset implementieren + in kombination mit dem modal zum funktionieren bringen
-/*   resetForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-
-    const formDataObject = {};
-    formData.forEach((value, key) => {
-        formDataObject[key] = value;
-      });
-  }) */
 
   // hier muss wirklich eine patch anfrage gemacht werden
   postForm.addEventListener("submit", async (event) => {
@@ -36,11 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (response.ok) {
-        console.log("okay");
         showMessage(".save-status-sucess", "Erfolgreich aktualisiert");
       } else {
         const errorData = await response.json();
-        showMessage(".save-status-failure", "Fehler beim Aktualisieren", false);
+        showMessage(".save-status-failure", "Fehler beim Aktualisieren");
       }
     } catch (err) {
       console.error("Fehler beim aktualisieren auf Client Seite: " + err);
@@ -48,9 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
-
-
-  function showMessage(element, message, success = true, duration = 5000) {
+  function showMessage(element, message, duration = 5000) {
     const messageElement = document.querySelector(element);
 
     messageElement.classList.remove("hidden");
@@ -61,10 +44,5 @@ document.addEventListener("DOMContentLoaded", () => {
       messageElement.textContent = "";
     }, duration);
 
-    if (success) {
-      console.log(message);
-    } else {
-      console.error(message);
-    }
   }
 });

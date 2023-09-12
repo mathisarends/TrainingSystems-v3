@@ -126,8 +126,6 @@ Router.patch("/", checkAuthenticated, async (req, res) => {
     }
 
     const numberOfRequestedExercises = getNumberOfRequestedExercises(exerciseCategoriesLength, maxAmountOfExercises, exerciseData);
-    console.log(numberOfRequestedExercises + " ist das gleich 55?");
-
     if (numberOfRequestedExercises === user.exercises.length) { //Die Anzahl der übungen sind gleich deswegen reichen partielle Änderungen:
 
       let effectiveLoops = 0;
@@ -267,11 +265,12 @@ Router.post("/reset", checkAuthenticated, async (req, res) => {
         user.exercises = standartExerciseCatalog;
     
         await user.save();
-        console.log("Exercises reset")
-        res.redirect("/exercises");
+        console.log("Exercises zurückgesetzt!");
+        res.status(200).json({});
     
       } catch (err) {
         console.log("Es ist ein Fehler beim zurücksetzen der Exercises aufgetreten: " + err);
+        res.status(500).json({});
       }
 })
 

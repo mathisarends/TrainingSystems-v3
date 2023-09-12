@@ -263,8 +263,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 //GET CUSTOM TRAININGPLANS EDIT PAGE (for changing training tile frequency etc)
 for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
-  for (let week = 1; week <= maxWeeks; week++) {
-    const routePath = `/custom-${letter}${week}-edit`;
+    const routePath = `/custom-${letter}-edit`;
     Router.get(routePath, checkAuthenticated, async (req, res) => {
       try {
         const user = await User.findById(req.user._id);
@@ -276,10 +275,6 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 
         if(!trainingPlan) { //Routes will hopefully will never be reached
           return res.status(404).send("Training nicht gefunden!");
-        }
-
-        if (week > trainingPlan.trainingWeeks.length) {
-          return res.status(400).send("Ungültige Woche");
         }
 
         const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
@@ -298,19 +293,18 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
           trainingPhase: trainingPhase,
           blockLength: blockLength,
     
-          templatePlanName: `${letter}${week}`, //for posting to the right path
+          templatePlanName: `${letter}`, //for posting to the right path
         });
       } catch (err) {
         console.log("Fehler beim Aufrufen der Trainingsseite: " + err);
       }
     })
-  }
 }
 
 for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
   for (let week = 1; week <= maxWeeks; week++) {
-    const routePath = `/custom-${letter}${week}-edit`;
+    const routePath = `/custom-${letter}-edit`;
     Router.patch(routePath, checkAuthenticated, async (req, res) => {
       try {
         const user = await User.findById(req.user._id);
@@ -528,8 +522,8 @@ Router.post("/reset-template-training", checkAuthenticated, async (req, res) => 
 
 //TODO: Hier müssen gleich anpassungen gemacht werden
 for (let i = 1; i <= 5; i++) { // 5 Training Slots GET
-  Router.get(`/session-edit-${i}`, checkAuthenticated, (req, res) => {
-    (req, res, i - 1);
+  Router.get(`/session-edit-${i}`, checkAuthenticated, async (req, res) => {
+    await handleSessionEdit(req, res, i - 1);
   });
 }
 

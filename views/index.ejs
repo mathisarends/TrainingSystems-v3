@@ -1,26 +1,28 @@
 <main id="main" class="grid-container grid-container--home">
 
 
-    <div class="flow" style="--flow-space: 0.25rem;">
-        <h1 class="headline-animation text-accent fs-500 ff-sans-cond uppercase letter-spacing-1">TYR Training Systems
-            <span class="d-block fs-900 ff-serif text-white">TYR</span>
-        </h1>
-        <!-- <button id="change-shit">change shit</button> -->
+  <div class="flow" style="--flow-space: 0.25rem;">
+    <h1 class="headline-animation text-accent fs-500 ff-sans-cond uppercase letter-spacing-1">TYR Training Systems
+      <span class="d-block fs-900 ff-serif text-white">TYR</span>
+    </h1>
+    <!-- <button id="change-shit">change shit</button> -->
+  </div>
+
+  <div>
+    <div class="index-view" style="margin-top: 3rem; display: block">
+      <% if (user) { %>
+        <a href="/training" class="large-button uppercase ff-serif fs-600 text-dark bg-white"
+          style="padding-left: 2em; padding-right: 2em;">START</a>
+        <% } else { %>
+          <a href="/login" class="large-button uppercase ff-serif fs-600 text-dark bg-white">LOGIN</a>
+          <% } %>
     </div>
 
-    <div>
-        <div class="index-view" style="margin-top: 3rem; display: block">
-            <% if (user) { %>
-                <a href="/training" class="large-button uppercase ff-serif fs-600 text-dark bg-white" style="padding-left: 2em; padding-right: 2em;">START</a>
-                <% } else { %>
-                    <a href="/login" class="large-button uppercase ff-serif fs-600 text-dark bg-white">LOGIN</a>
-                    <% } %>
-        </div>
-    
-        <div class="index-view" style="margin-top: 3rem; display: none;">
-                <button id="install-button" class="large-button uppercase ff-serif fs-600 text-dark bg-white" style="padding-left: 1.45em; padding-right: 1.45em;">Install</button>
-        </div>
+    <div class="index-view" style="margin-top: 3rem; display: none;">
+      <button id="install-button" class="large-button uppercase ff-serif fs-600 text-dark bg-white"
+        style="padding-left: 1.45em; padding-right: 1.45em;">Install</button>
     </div>
+  </div>
 
 
 </main>
@@ -33,6 +35,16 @@
 
   document.addEventListener("DOMContentLoaded", () => {
 
+    const largeButtons = document.querySelectorAll(".large-button");
+    //hier offline status anzeigen auf dem button
+
+    if (!navigator.onLine) {
+      console.log("offline");
+      largeButtons.forEach((button) => {
+        button.textContent = "OFFLINE";
+      })
+    }
+
 
 
     if ('serviceWorker' in navigator) {
@@ -41,12 +53,22 @@
       })
         .then((registration) => {
           console.log('Service Worker registriert:', registration);
+
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (registration.active) {
+              registration.active.postMessage("online");
+            } else {
+              console.error('Es gibt keinen aktiven Service Worker.');
+            }
+          })
+
         })
         .catch((error) => {
           console.log('Fehler bei der Registrierung des Service Workers:', error);
         });
     }
+
+    // diese logik vielleciht auf jede page brinden: und den bei den 2 service workern darauf reagieren:
+
   })
-
-
 </script>

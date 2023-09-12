@@ -2,14 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const targetRPEInputs = document.getElementsByClassName("targetRPE");
 const rpeInputs = document.getElementsByClassName("actualRPE");
+const setInputs = document.getElementsByClassName("sets");
 
 //so that the user can only enter RPEs that make sense
 for (let i = 0; i < targetRPEInputs.length; i++) {
     targetRPEInputs[i].addEventListener("change", () => {
       const rpeInput = targetRPEInputs[i];
       const targetRPE = parseInt(rpeInput.value);
-      if (targetRPE < 6) {
-        rpeInput.value = 6;
+      if (targetRPE < 5) {
+        rpeInput.value = 5;
       } else if (targetRPE > 10) {
         rpeInput.value = 10;
       }
@@ -24,36 +25,51 @@ for (let i = 0; i < targetRPEInputs.length; i++) {
 
       if (rpe === "") {
         rpeInputs[i].value = "";
+        return;
       }
   
       rpe = rpe.replace(/,/g, ".");
+
       let numbers = rpe.split(";").map(Number);
-  
+
       for (let k = 0; k < numbers.length; k++) {
-        if (isNaN(numbers[k])) {
-          rpeInputs[i].value = "";
-          console.log("Nicht numerischer wert");
-          return;
-        }
+        console.log(numbers[k])
+      }
+
+      if (numbers.length === 1 && !isNaN(rpe)) { //eine zahl direkt eingeben
+        validateRPE(numbers[0], rpeInputs[i]);
+        return;
       }
   
+      //wenn ein wert keine zahl ist: 
+      if (numbers.some(isNaN)) { 
+        rpeInputs[i].value = "";
+        return;
+      }
+
       const sum = numbers.reduce((acc, num) => acc + num + 0);
       const average = sum / numbers.length;
   
       const roundedAverage = Math.ceil(average / 0.5) * 0.5;
+      console.log(roundedAverage);
 
-      if (roundedAverage < 5) {
-        rpeInputs[i].value = 5;
-      } else if (roundedAverage > 10) {
-        rpeInputs[i].value = 10;
-      } else {
-        rpeInputs[i].value = roundedAverage;
-      }
+      validateRPE(roundedAverage, rpeInputs[i]);
+
     })
 
    
   }
 })
+
+function validateRPE(rpe, rpeInput) {
+  if (rpe < 5) {
+    rpeInput.value = 5;
+  } else if (rpe > 10) {
+    rpeInput.value = 10;
+  } else {
+    rpeInput.value = rpe;
+  }
+}
 
 
 

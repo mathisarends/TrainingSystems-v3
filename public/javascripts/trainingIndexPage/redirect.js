@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         if (lastSelectedLinkIndex !== null) {
             const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndex);
-            const customPlanPage = `/training/custom-${alphaValue}${customCurrentSelectedTrainingWeek}-edit`;
+            const customPlanPage = `/training/custom-${alphaValue}-edit`;
             window.location.href = customPlanPage;
         } else {
             pulseEffect(customTrainingPlanContainer);
@@ -211,6 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
     editSessionButton.addEventListener("click", (e) => {
         e.preventDefault();
         navigateToTrainingPage("session-edit");
+/*         if (lastSelectedTrainingIndex !== null) {
+            const alphaValue = String.fromCharCode(65 + lastSelectedTrainingIndex);
+            const customPlanEditPage = `/training/$`
+        } */
+        /* window.location.href = "https://www.google.com/"; */
     });
 
     createTrainingButton.addEventListener("click", (e) => {

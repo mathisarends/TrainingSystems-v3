@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/stylesheets/exercises.css">
 
 <main>
-  <form action="/tools/volume?_method=PATCH" method="POST">
+  <form action="/tools/volume?_method=PATCH" method="POST" style="padding-bottom: 2.5em;">
     <h1 class="numbered-title" style="margin: 0; padding-top: 1.2em; padding-left: 0.65em;"><span
         aria-hidden="true">03</span>Volumenrechner</h1>
 
@@ -17,10 +17,10 @@
     <table class="calculate-table volume-table">
       <thead>
         <tr class="table-header-row">
-          <th style="text-align: center;">Exercise</th>
+          <th>Exercise</th>
           <th style="text-align: center;">Weight</th>
           <th>Reps</th>
-          <th>1RM</th>
+          <th style="text-align: center;">1RM</th>
         </tr>
       </thead>
       <tbody>
@@ -102,6 +102,17 @@
           </tr>
           <tr class="table-row">
             <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
+                value="Alter" readonly></td>
+            <td data-cell="Selection" class="selection-td">
+              <input type="number" id="age-input-field" value="<%= age %>" name="age" required />
+            </td>
+            <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="age-result-field"
+                readonly /></td>
+            <td data-cell="Explanation" class="volume-calculator-explanation-td"><input type="text"
+                value="Hier dein Alter eintragen" readonly></td>
+          </tr>
+          <tr class="table-row">
+            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
                 value="Körpergewicht [kg]" readonly></td>
             <td data-cell="Selection" class="selection-td">
               <input type="number" name="bodyweight" id="bodyweight-input-field" value="<%= bodyweight %>" required />
@@ -157,17 +168,6 @@
               <input type="text" value="Beginner = &lt 4 Jahre, Fortgeschritte 4-8 Jahre, Sehr
                   Fortgeschritten 8-12 Jahre, Experte 12+ Jahre">
             </td>
-          </tr>
-          <tr class="table-row">
-            <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
-                value="Alter" readonly></td>
-            <td data-cell="Selection" class="selection-td">
-              <input type="number" id="age-input-field" value="<%= age %>" name="age" required />
-            </td>
-            <td data-cell="Adjustment" class="volume-adjustment-field"><input type="number" id="age-result-field"
-                readonly /></td>
-            <td data-cell="Explanation" class="volume-calculator-explanation-td"><input type="text"
-                value="Hier dein Alter eintragen" readonly></td>
           </tr>
           <tr class="table-row">
             <td data-cell="Category" class="category-name" style="padding-left: 1em;"><input type="text" class="left"
@@ -284,14 +284,18 @@
     </div>
 
     <div>
+      <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">Save</button>
+    </div>
+
+    <div class="volume-recommandation-container">
       <table class="calculate-table volume-table">
         <caption>Volumenempfehlung - Hypertrophiephase</caption>
         <thead>
           <tr class="table-header-row">
-            <th style="text-align: center;">Exercise</th>
+            <th>Exercise</th>
             <th style="text-align: center;">MEV</th>
             <th>MRV</th>
-            <th>Median</th>
+            <th style="text-align: center;">Median</th>
           </tr>
         </thead>
         <tbody>
@@ -335,15 +339,15 @@
       </table>
     </div>
 
-    <div>
+    <div class="volume-recommandation-container" style="display: none">
       <table class="calculate-table volume-table recommandation-table">
         <caption>Volumenempfehlung - Kraftphase</caption>
         <thead>
           <tr class="table-header-row">
-            <th style="text-align: center;">Exercise</th>
+            <th>Exercise</th>
             <th style="text-align: center;">MEV</th>
             <th>MRV</th>
-            <th>Median</th>
+            <th style="text-align: center;">Median</th>
           </tr>
         </thead>
         <tbody>
@@ -394,53 +398,53 @@
       </table>
     </div>
 
-    <div>
+    <div class="volume-recommandation-container" style="display: none;"> 
       <table class="calculate-table volume-table">
         <caption>Volumenempfehlung - Peaking</caption>
         <thead>
           <tr class="table-header-row">
-            <th style="text-align: center;">Exercise</th>
+            <th>Exercise</th>
             <th style="text-align: center;">MEV</th>
             <th>MRV</th>
-            <th>Median</th>
+            <th style="text-align: center;">Median</th>
           </tr>
         </thead>
         <tbody>
           <tr class="table-row">
             <td data-cell="Exercise" class="category-name"><input type="text" value="SQUAT" readonly></td>
-            <td data-cell="Exercise">
+            <td data-cell="MEV">
               <input type="number" name="squat-mev-peaking" id="squat-mev-peaking" readonly required />
             </td>
-            <td data-cell="Exercise">
+            <td data-cell="MRV">
               <input type="number" name="squat-mrv-peaking" id="squat-mrv-peaking" readonly required />
             </td>
-            <td data-cell="Exercise">
+            <td data-cell="MEDIAN">
               <input type="number" readonly name="squat-median-volume-peaking" id="squat-median-volume-result-peaking">
             </td>
           </tr>
           <tr class="table-row">
             <td data-cell="Exercise" class="category-name"><input type="text" value="BENCH" readonly></td>
-            <td data-cell="Exercise">
+            <td data-cell="MEV">
               <input type="number" name="bench-mev-peaking" id="bench-mev-peaking" value="<%=  %>" readonly required />
             </td>
-            <td data-cell="Exercise">
+            <td data-cell="MRV">
               <input type="number" name="bench-mrv-peaking" id="bench-mrv-peaking" value="<%=  %>" readonly required />
             </td>
-            <td data-cell="Exercise">
+            <td data-cell="MEDIAN">
               <input type="number" readonly name="bench-median-volume-peaking" id="bench-median-volume-result-peaking">
             </td>
           </tr>
           <tr class="table-row">
             <td data-cell="Exercise" class="category-name"><input type="text" value="DEADLIFT" readonly></td>
-            <td data-cell="Exercise">
+            <td data-cell="MEV">
               <input type="number" name="deadlift-mev-peaking" id="deadlift-mev-peaking" value="<%=  %>" readonly
                 required />
             </td>
-            <td data-cell="Exercise">
+            <td data-cell="MRV">
               <input type="number" name="deadlift-mrv-peaking" id="deadlift-mrv-peaking" value="<%=  %>" readonly
                 required />
             </td>
-            <td data-cell="Exercise">
+            <td data-cell="MEDIAN">
               <input type="number" readonly name="deadlift-median-volume-peaking"
                 id="deadlift-median-volume-result-peaking">
             </td>
@@ -448,10 +452,12 @@
         </tbody>
       </table>
     </div>
-    <div>
-      <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">Save</button>
-    </div>
 
+    <div class="dot-indicators flex" style="justify-content: center; margin-top: 1.5rem;">
+      <button aria-selected="true" id="hypertrophie-phase"><span class="sr-only">Slide Title</span></button>
+      <button aria-selected="false" id="strength-phase"><span class="sr-only">Slide Title</span></button>
+      <button aria-selected="false" id="peaking-phase"><span class="sr-only">Slide Title</span></button>
+  </div>
 
   </form>
 </main>
@@ -461,9 +467,17 @@
 
 
 <script src="/javascripts/volume/calcVolume.js"></script>
+<script src="/javascripts/volume/switchViews.js"></script>
+<script src="/javascripts/volume/offlineChanges.js"></script>
+
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+
     const form = document.querySelector("form");
+
+    if (navigator.onLine) {
+      
+    }
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -490,7 +504,7 @@
 
           setTimeout(() => {
             sucessMessage.classList.add("hidden");
-          }, 700)
+          }, 7000)
 
         } else {
           const failureMessage = document.querySelector(".save-status-failure");
@@ -501,11 +515,18 @@
           }, 7000);
         }
       } catch (error) {
+
           const failureMessage = document.querySelector(".save-status-failure");
+
+          if (!navigator.onLine) {
+            failureMessage.textContent = "Kein Internet. Deine Daten werden später synchronisiert!";
+          }
+
           failureMessage.classList.remove("hidden");
 
           setTimeout(() => {
             failureMessage.classList.add("hidden");
+            failureMessage.textContent = "Fehler beim Speichern der Daten"
           }, 7000);
       }
 

@@ -1,10 +1,14 @@
 <main id="main" class="grid-container grid-container--training flow">
     <h1 class="numbered-title"><span aria-hidden="true">01</span>CUSTOM</h1>
-    
-    <div class="tab-list underline-indicators flex" role="tablist" aria-label="destination list" style="justify-content: space-between;">
-        <button id="custom-tab" aria-selected="false" role="tab" aria-controls="custom-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Custom</button>
-        <button id="session-tab" aria-selected="false" role="tab" aria-controls="session-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Session</button>
-        <button id="template-tab" aria-selected="false" role="tab" aria-controls="template-tab" class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
+
+    <div class="tab-list underline-indicators flex" role="tablist" aria-label="destination list"
+        style="justify-content: space-between;">
+        <button id="custom-tab" aria-selected="false" role="tab" aria-controls="custom-tab"
+            class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Custom</button>
+        <button id="session-tab" aria-selected="false" role="tab" aria-controls="session-tab"
+            class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Session</button>
+        <button id="template-tab" aria-selected="false" role="tab" aria-controls="template-tab"
+            class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
     </div>
 
     <!--Custom Trainings-->
@@ -33,7 +37,8 @@
                                     <div style="display: none" class="hidden-index">
                                         <%= i %>
                                     </div>
-                                    <input type="text" class="customNextTrainingWeek" value="<%= customCurrentTrainingWeek[i] %>" style="display: none">
+                                    <input type="text" class="customNextTrainingWeek"
+                                        value="<%= customCurrentTrainingWeek[i] %>" style="display: none">
                                     <div class="uppercase">
                                         <%= userCustomTrainings[i].title || "Custom A" %>
                                     </div>
@@ -47,22 +52,26 @@
 
 
                         <div class="training-button-container">
-                            <button class="main-page-button training-plan-button uppercase" id="start-custom-training-button">Trainieren</button>
+                            <button class="main-page-button training-plan-button uppercase"
+                                id="start-custom-training-button">Trainieren</button>
 
-                            <button class="main-page-button edit-training-plan-button uppercase" id="edit-custom-training-button">Bearbeiten</button>
-                           
+                            <button class="main-page-button edit-training-plan-button uppercase"
+                                id="edit-custom-training-button">Bearbeiten</button>
+
                             <% for (let i=0; i < userCustomTrainings.length; i++) { %>
                                 <form action="/training/delete-training-plan?_method=DELETE" method="POST"
                                     class="delete-custom-form" style="display: none">
                                     <input type="hidden" value="<%= i %>" name="deleteIndex">
-                                    <input type="hidden" class="deleteTitle" value="<%= userCustomTrainings[i].title %>">
+                                    <input type="hidden" class="deleteTitle"
+                                        value="<%= userCustomTrainings[i].title %>">
                                     <button class="main-page-button uppercase" type="submit">Löschen</button>
                                 </form>
                                 <% } %>
 
                         </div>
-                        
-                        <button class="main-page-button training-page-button uppercase letter-spacing-1" id="createCustomTrainingPlanBTN">
+
+                        <button class="main-page-button training-page-button uppercase letter-spacing-1"
+                            id="createCustomTrainingPlanBTN">
                             Erstellen</button>
     </section>
 
@@ -73,54 +82,56 @@
             <div class="ff-sans-cond letter-spacing-3 fs-500" style="text-align: center;">
                 <%= errorCreatingNewCustomTraining %>
             </div>
-        <% } %>
-        <% if (userTrainings.length===0) { %>
-            <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500">
-                Es sieht so aus als hättest du keine gespeicherten Trainings.
-                Starte eines mit dem Button unten!
-            </div>
             <% } %>
-        
-        <div class="training-plan-container flex">
-            <% for (let i = 0; i < userTrainings.length; i++) { %>
-
-                <div class="custom-training-container">
-                    <% const plan = userTrainings[i] %>
-                    <div style="display: none" class="hidden-index">
-                        <%= i %>
+                <% if (userTrainings.length===0) { %>
+                    <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500">
+                        Es sieht so aus als hättest du keine gespeicherten Trainings.
+                        Starte eines mit dem Button unten!
                     </div>
-                    <div class="uppercase">
-                        <%= plan.title %>
-                    </div>
-                    <div class="ff-sans-cond fs-400 letter-spacing-4">
-                        <%= trainingFormattedDates[i] %>
-                    </div>
-                </div>
+                    <% } %>
 
-                
-            <% } %>
-        </div>
+                        <div class="training-plan-container flex">
+                            <% for (let i=0; i < userTrainings.length; i++) { %>
 
-        <div class="training-button-container">
-            <button class="main-page-button training-plan-button uppercase" id="start-session">
-                Trainieren
-            </button>
-            <button class="main-page-button training-plan-button uppercase" id="edit-session">
-                Bearbeiten
-            </button>   
-            <% for (let i = 0; i < userTrainings.length; i++) { %>
-                <form action="/training/delete-training?_method=DELETE" method="POST"
-                class="delete-form-training" style="display: none">
-                    <input type="hidden" value="<%= i %>" name="deleteIndex">
-                    <input type="hidden" class="deleteTitle" value="<%= userTrainings[i].title %>">
-                    <button class="main-page-button trainin-plan-button uppercase" type="submit">Löschen</button>
-                </form>
-            <% } %>
-        </div>
+                                <div class="custom-training-container">
+                                    <% const plan=userTrainings[i] %>
+                                        <div style="display: none" class="hidden-index">
+                                            <%= i %>
+                                        </div>
+                                        <div class="uppercase">
+                                            <%= plan.title %>
+                                        </div>
+                                        <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                            <%= trainingFormattedDates[i] %>
+                                        </div>
+                                </div>
 
-        <button class="main-page-button training-page-button uppercase letter-spacing-1" id="create-training-btn">
-            Erstellen
-        </button>
+
+                                <% } %>
+                        </div>
+
+                        <div class="training-button-container">
+                            <button class="main-page-button training-plan-button uppercase" id="start-session">
+                                Trainieren
+                            </button>
+                            <button class="main-page-button training-plan-button uppercase" id="edit-session">
+                                Bearbeiten
+                            </button>
+                            <% for (let i=0; i < userTrainings.length; i++) { %>
+                                <form action="/training/delete-training?_method=DELETE" method="POST"
+                                    class="delete-form-training" style="display: none">
+                                    <input type="hidden" value="<%= i %>" name="deleteIndex">
+                                    <input type="hidden" class="deleteTitle" value="<%= userTrainings[i].title %>">
+                                    <button class="main-page-button trainin-plan-button uppercase"
+                                        type="submit">Löschen</button>
+                                </form>
+                                <% } %>
+                        </div>
+
+                        <button class="main-page-button training-page-button uppercase letter-spacing-1"
+                            id="create-training-btn">
+                            Erstellen
+                        </button>
 
     </section>
 
@@ -128,21 +139,22 @@
     <section class="custom-view-container template-view-container flow" hidden>
 
         <div class="training-plan-container flex" style="--gap: 1rem">
-            <% for (let i = 0; i < user.trainingPlanTemplate.length; i++) { %>
+            <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
                 <div class="custom-training-container">
                     <div style="display: none" class="hidden-index">
                         <%= i %>
                     </div>
-                    <input type="text" class="templateNextTrainingWeek" value="<%= templateCurrentTrainingWeek[i] %>" style="display: none">
+                    <input type="text" class="templateNextTrainingWeek" value="<%= templateCurrentTrainingWeek[i] %>"
+                        style="display: none">
                     <div class="uppercase">
                         <% const templateLetters="ABCDEFGHIJKLMNOPQRSTUVWXYZ" ; %>
                             <%= userTemplateTrainings[i].title || ("Template " + templateLetters[i]); %>
                     </div>
-                    <div class="ff-sans-cond fs-400 letter-spacing-4">
-                        <%= formattedTemplateTrainingPlanDates[i] %>
+                    <div class=" ff-sans-cond fs-400 letter-spacing-4">
+                                <%= formattedTemplateTrainingPlanDates[i] %>
                     </div>
                 </div>
-            <% } %>
+                <% } %>
         </div>
 
         <div class="training-button-container">
@@ -152,15 +164,16 @@
             <button class="main-page-button edit-training-plan-button uppercase" id="edit-template-training-button">
                 Bearbeiten
             </button>
-            <% for (let i = 0; i < user.trainingPlanTemplate.length; i++) { %>
-                <form action="/training/reset-template-training" method="POST" class="reset-template-training-form" style="display: none;">
+            <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
+                <form action="/training/reset-template-training" method="POST" class="reset-template-training-form"
+                    style="display: none;">
                     <input type="hidden" value="<%= i %>" name="resetIndex">
                     <button class="main-page-button uppercase" type="submit">Löschen</button>
 
                 </form>
-            <% } %>
+                <% } %>
         </div>
-        
+
     </section>
 
     <div id="confirmationModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">

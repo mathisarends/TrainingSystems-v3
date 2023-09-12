@@ -144,26 +144,11 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage(".save-status-sucess", "Erfolgreich aktualisiert");
       } else {
         
-        try {
-          const errorData = await response.json();
-          showMessage(".save-status-failure", "Fehler beim Aktualisieren");
-        } catch (error) {
-          // Die Antwort ist kein JSON, behandeln Sie sie entsprechend.
-          console.error("Fehler beim Aktualisieren ", error);
-          document
-            .querySelectorAll(".table-section")
-            [indexVisibleSection].querySelector(
-              ".save-status-failure"
-            ).style.display = "block";
-        }
+        showMessage(".save-status-failure", "Fehler beim aktualisieren");
       }
     } catch (error) {
       console.error("Fehler beim Aktualisieren ", error);
-      document
-        .querySelectorAll(".table-section")
-        [indexVisibleSection].querySelector(
-          ".save-status-failure"
-        ).style.display = "block";
+      showMessage(".save-status-failure", "Keine Internetverbindung deine Daten werden später aktualisiert!");
     }
   });
 

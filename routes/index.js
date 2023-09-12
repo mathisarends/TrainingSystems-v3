@@ -76,6 +76,12 @@ Router.get("/welcome", async (req, res) => {
   res.render("indexNoAuthentication");
 })
 
+Router.get("/offline", async (req, res) => {
+  res.render("offline", {
+    layout: false,
+  });
+})
+
 
 
 Router.get("/home", async (req, res) => {

@@ -22,23 +22,26 @@
         <h3 class="text-white ff-serif fs-7 00 letter-spacing-1 uppercase">Bearbeiten</h3>
 
         <label for="training_title" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Titel</label>
-        <input type="text" id="training-title" class="create-training-plan-input" name="training_title" value="<%= workoutName %>" required>
+        <input type="text" id="training-title" class="create-training-plan-input" name="training_title"
+            value="<%= workoutName %>" required>
 
-        <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainingsphase</label>
+        <label for="training-mode-selector"
+            class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainingsphase</label>
         <select name="training_phase" class="generic-selector" required>
             <option value="" disabled selected hidden></option>
-            <option <%= trainingPhase === "hypertrophie" ? "selected" : "" %> value="hypertrophie">Hypertrophie</option>
-            <option <%= trainingPhase === "kraft" ? "selected" : "" %> value="kraft">Kraft</option>
-            <option <%= trainingPhase === "peaking" ? "selected" : "" %> value="peaking">Peaking</option>
+            <option <%=trainingPhase==="hypertrophie" ? "selected" : "" %> value="hypertrophie">Hypertrophie</option>
+            <option <%=trainingPhase==="kraft" ? "selected" : "" %> value="kraft">Kraft</option>
+            <option <%=trainingPhase==="peaking" ? "selected" : "" %> value="peaking">Peaking</option>
         </select>
 
-        <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainings / Woche</label>
+        <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainings /
+            Woche</label>
         <select name="training_frequency" class="generic-selector" required>
             <option value="" disabled selected hidden></option>
-            <option <%= trainingFrequency === 3 ? "selected" : "" %> value="3">3</option>
-            <option <%= trainingFrequency === 4 ? "selected" : "" %> value="4">4</option>
-            <option <%= trainingFrequency === 5 ? "selected" : "" %> value="5">5</option>
-            <option <%= trainingFrequency === 6 ? "selected" : "" %> value="6">6</option>
+            <option <%=trainingFrequency===3 ? "selected" : "" %> value="3">3</option>
+            <option <%=trainingFrequency===4 ? "selected" : "" %> value="4">4</option>
+            <option <%=trainingFrequency===5 ? "selected" : "" %> value="5">5</option>
+            <option <%=trainingFrequency===6 ? "selected" : "" %> value="6">6</option>
         </select>
 
 
@@ -62,14 +65,35 @@
 
     </form>
 
-<script>
-    const cancelButton = document.getElementById("cancel-button");
+    <script>
 
-    cancelButton.addEventListener("click", e => {
-        e.preventDefault();
-        window.location.href = "/training";
-    })
+/*         document.addEventListener("DOMContentLoaded", () => {
 
-</script>
+            //Registriere den serviceWorker auch hier: 
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker
+                .register("/register-timer-service-worker", {
+                    scope: "/training/",
+                })
+                .then((registration) => {
+                    console.log("Service Worker registriert:", registration);
+
+                    initializeApp(registration);
+                })
+                .catch((error) => {
+                    console.log("Fehler bei der Registrierung des Service Workers:", error);
+                });
+            }
+
+            const cancelButton = document.getElementById("cancel-button");
+
+            cancelButton.addEventListener("click", e => {
+                e.preventDefault();
+                window.location.href = "/training";
+            })
+        }) */
+
+
+    </script>
 
 </html>

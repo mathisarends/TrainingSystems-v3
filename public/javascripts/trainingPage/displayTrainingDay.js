@@ -25,8 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
 
-    console.log(selectedButton);
-
     if (selectedButton) {
         selectedButton.click();
     } else {

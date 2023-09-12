@@ -195,20 +195,4 @@
       <script src="/javascripts/exercises/showSection.js"></script>
       <script src="/javascripts/exercises/showRightTabFromStart.js"></script>
       <script src="/javascripts/exercises/ajaxSave.js"></script>
-
-      <script>
-        document.addEventListener("DOMContentLoaded", () => {
-
-
-        window.addEventListener("beforeunload", (event) => {
-          event.preventDefault();
-          const unsavedChanges = true;
-
-          if (unsavedChanges) {
-            event.returnValue = "Sie haben ungespeicherte Änderungen. Wollen Sie die Seite wirklich verlassen?";
-  
-          }
-        })
-
-        })
-      </script>
+      <script src="/javascripts/exercises/beforeUnload.js"></script>

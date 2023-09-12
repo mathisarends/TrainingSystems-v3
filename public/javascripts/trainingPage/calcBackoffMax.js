@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("test")
     //calculates the 1RM for a main-Exercise and if possible the backoff weight for the next one
     const tableRows = document.querySelectorAll(".table-row.mainExercise");
 
