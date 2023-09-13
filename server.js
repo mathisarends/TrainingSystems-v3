@@ -127,15 +127,6 @@ app.get("/register-service-worker", (req, res) => {
   res.sendFile(path.join(__dirname, "service-worker.js"))
 })
 
-// dieser timer worker ist jetzt schonmal eingebunden und soll dafür genutzt werden dass der timer auch im hintergrund laufen kann.
-app.get("/register-timer-service-worker", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "javascripts", "timer-service-worker.js"), {
-    headers: {
-      'Content-Type': 'application/javascript' // Setzen Sie den MIME-Typ explizit auf JavaScript
-    }
-  });
-});
-
 
 app.listen(process.env.PORT || PORT, () => console.log(`Listening on port ${PORT}`));
 

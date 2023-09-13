@@ -91,6 +91,8 @@ const assets = [
 
   "/javascripts/scratch/pauseTimer.js",
 
+  "/register-service-worker",
+
   //diese dynamic files hier auch einfügen:
 
   //TODO: weiterhin:
@@ -199,7 +201,9 @@ self.addEventListener("fetch", async (event) => {
       event.respondWith(fetchAndCache(event));
     }
   } else if (!online) {
+      console.log("anfragen die nicht online sind gehen hier durch");
     if (event.request.method === "PATCH") {
+      console.log("Handle offline patch!!");
       handleOfflineChange(event.request, "offlinePatches");
     } else if (event.request.method === "POST") {
       handleOfflineChange(event.request, "offlinePosts");
