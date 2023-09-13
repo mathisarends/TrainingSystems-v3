@@ -71,7 +71,6 @@
                                             </select>
                                         </td>
                                         <td data-cell="Exercise">
-                                            <% console.log(exerciseData.exercise) %>
                                                 <% for (const category in categorizedExercises) { %>
 
                                                     <select name="exercise_name_<%= i %>" class="exercise-name-selector"
@@ -228,7 +227,27 @@
 </form>
 
 <%- include("../../partials/trainingPage/volumeRecommandations") %>
-<%- include("../../partials/trainingPage/javascripts") %> 
+
+<script src="/javascripts/trainingPage/calcVolumeMedians.js"></script>
+<script src="/javascripts/trainingPage/displayCalculatedVolumes.js"></script>
+<script src="/javascripts/trainingPage/removePlaceholder.js"></script>
+
+<script src="/javascripts/trainingPage/showTimer.js"></script>
+<script src="/javascripts/trainingPage/calculateSetsTonnage.js"></script>
+<script src="/javascripts/trainingPage/displayDefaultSetSchema.js"></script>
+
+<script src="/javascripts/trainingPage/weightInput.js"></script>
+<script src="/javascripts/trainingPage/rpeInput.js"></script>
+<script src="/javascripts/trainingPage/changeExerciseName.js"></script>
+
+<script src="/javascripts/trainingPage/calcBackoffMax.js"></script>
+
+<!--AutoSave macht auch Probleme-->
+<script src="/javascripts/trainingPage/ajaxAutoSave.js"></script>
+
+<!-- <script src="/javascripts/trainingPage/displayOfflineData.js"></script> -->
+
+<script src="/javascripts/scratch/pauseTimer.js"></script>
 
 <script>
     const trainingHistoryContainer = document.getElementsByClassName("training-history")[0];

@@ -476,7 +476,6 @@ for (let i = 0; i < templates.length; i++) {
         trainingPlan.title = reqTrainingTitle;
       }
       const reqTrainingPhase = updatedData["volumePhase"];
-      console.log(reqTrainingPhase);
       if (reqTrainingPhase !== trainingPlan.trainingPhase) {
         trainingPlan.trainingPhase = reqTrainingPhase;
       }

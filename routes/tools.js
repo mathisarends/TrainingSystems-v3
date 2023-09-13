@@ -90,6 +90,7 @@ Router.patch("/volume", checkAuthenticated, async (req, res) => {
     patchUserData(user, req.body);
 
     await user.save();
+    console.log("Daten gepatched");
 
     res.status(200).json({});
   } catch (err) {

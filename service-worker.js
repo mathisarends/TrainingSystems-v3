@@ -1,5 +1,5 @@
 // service-worker.js
-const version = 14;
+const version = 15;
 
 const staticCache = `static-assets-${version}-new`; //html files etc.
 const dynamicCache = `dynamic-assets-${version}`;
@@ -74,30 +74,18 @@ const assets = [
   "/javascripts/trainingPage/displayCalculatedVolumes.js",
   "/javascripts/trainingPage/displayDefaultSetSchema.js",
   "/javascripts/trainingPage/displayTrainingDay.js",
-  "/javascripts/trainingPage/navigateWeeks.js",
   "/javascripts/trainingPage/notePrompts.js",
   "/javascripts/trainingPage/pauseTimer.js",
   "/javascripts/trainingPage/removePlaceholder.js",
   "/javascripts/trainingPage/rpeInput.js",
   "/javascripts/trainingPage/showTimer.js",
-  "/javascripts/trainingPage/showTrainingDays.js",
   "/javascripts/trainingPage/weightInput.js",
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
   "/javascripts/volume/offlineChanges.js",
   "/javascripts/header.js",
 
-  "/welcome",
-  "/login",
-  "/login/reset",
-  "/exercises",
-  "/tools/volume",
-  "/register",
-  "/offline",
-
-  "/training",
-  "/training/create-training-plan",
-  "/training/createTraining",
+  "/javascripts/scratch/pauseTimer.js",
 
   //diese dynamic files hier auch einfügen:
 
@@ -206,6 +194,7 @@ self.addEventListener("fetch", async (event) => {
     }
   } else if (!online) {
     if (event.request.method === "PATCH") {
+      console.log("OFFLINE PATCH")
       handleOfflineChange(event.request, "offlinePatches");
     } else if (event.request.method === "POST") {
       console.log("POST Request wie soll ich damit umgehen?");
@@ -247,6 +236,8 @@ self.addEventListener("message", async (event) => {
 
         self.registration.showNotification("TTS", {
           body: "Offline Daten synchronisiert",
+          tag: "connection",
+          vibrate: [200, 100, 200],
         });
       }
     } catch (err) {
@@ -259,9 +250,7 @@ self.addEventListener("message", (event) => {
   if (event.data === "offline") {
     online = false;
     console.log("online status:", online);
-    self.registration.showNotification("TTS", {
-      body: "Keine Internetverbindung. Daten werden bei erneuter Verbindung gespeichert.",
-    });
+
   }
 });
 
@@ -336,6 +325,7 @@ const openDB = (callback) => {
           keyPath: "url",
         });
       }
+
     };
 
     req.onsuccess = (ev) => {
@@ -502,6 +492,10 @@ async function handleOfflineChange(request, objectStore) {
 
     addRequest.onsuccess = (event) => {
       console.log("Daten erfolgreich in der IndexDB gespeichert");
+      self.registration.showNotification("TTS", {
+        body: "Keine Internetverbindung. Daten werden bei erneuter Verbindung gespeichert.",
+        tag: "connection",
+      });
     };
     addRequest.onerror = (event) => {
       console.error(
@@ -643,6 +637,7 @@ function startTimer(duration) {
       self.registration.showNotification("TTS", {
         body: "Your timer has expired!",
         tag: "timer-notification",
+        vibrate: [200, 100, 200],
       });
     } else {
       remainingTime -= interval;

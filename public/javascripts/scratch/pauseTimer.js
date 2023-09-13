@@ -1,57 +1,98 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("tets")
+    console.log("pauseTimer session eingebunden");
     
-    const moreInfoButton = document.getElementsByClassName("more-info-button")[0];
-    const pauseTimer = document.getElementsByClassName("rest-pause-timer")[0]; 
-
-    let timerInterval;
-    let timerRunning = false;
-    
-    moreInfoButton.addEventListener("click", e => {
-        e.preventDefault();
-        if (pauseTimer.style.display === "none") {
-            pauseTimer.style.display = "block";
-        } else {
-            clearInterval(timerInterval);
-            pauseTimer.style.display = "none"; 
-            pauseTimer.textContent = "00:00";
-            timerRunning = false;
-        }
-    })
-    
-     
-
-    const weightInputs = document.getElementsByClassName("weight");
-
-    for (let i = 0; i < weightInputs.length; i++) {
-        weightInputs[i].addEventListener("change", () => {
-
-            if (timerRunning) {
-                clearInterval(timerInterval); // Timer stoppen
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then(registration => {
+            if (registration.active) {
+              initializeSessionTimer(registration);
             }
-
-            startTimer(pauseTimer);
         })
     }
-
-    function startTimer(timerElement) {
-        let seconds = 0;
-        let minutes = 0;
-
-        // Timer starten
-        timerInterval = setInterval(() => {
-            seconds++;
-            if (seconds >= 60) {
-                seconds = 0;
-                minutes++;
-            }
-
-            const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-            timerElement.textContent = formattedTime;
-
-            timerRunning = true; // Timer läuft
-        }, 1000);
-    }
-
 })
+
+function initializeSessionTimer(registration) {
+      // Alle 10 Sekunden ein Signal an den Service Worker senden
+  setInterval(() => {
+    registration.active.postMessage({ command: 'keepAlive' });
+  }, 10000); // 10 Sekunden Intervall (Passen Sie das Intervall nach Bedarf an)
+
+  const categoryPauseTimes = document.getElementsByClassName(
+    "category-pause-time-input"
+  );
+  
+  const exerciseCategorys = [
+    "- Bitte Auswählen -",
+    "Squat",
+    "Bench",
+    "Deadlift",
+    "Overheadpress",
+    "Chest",
+    "Back",
+    "Shoulder",
+    "Triceps",
+    "Biceps",
+    "Legs",
+  ];
+
+
+  const weightInputs = document.getElementsByClassName("weight");
+  console.log(weightInputs);
+  const categorySelectors = document.querySelectorAll(
+    ".exercise-category-selector"
+  );
+
+  const progressBars = document.querySelector(".rest-pause-progress-bar");
+  const timerDisplay = document.querySelector(".rest-pause-timer");
+
+  let lastCategory = "";
+
+  const audioElement = document.getElementById("timerAudio");
+
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    const data = event.data;
+    if (data.command === "currentTime") {
+      const currentTime = data.currentTime / 1000;
+      const formattedTime = data.formattedTime;
+  
+      timerDisplay.textContent = formattedTime;
+  
+      const progress =
+        (currentTime / getPauseTimeByExerciseCategory(lastCategory)) * 100;
+        
+        //fehler konsolenausgabe verhinder wenn die seite neu geladen wird:
+        if (!isNaN(progress) && isFinite(progress)) {
+            progressBars.value = progress;
+        }
+  
+  
+      if (currentTime <= 0) {
+        audioElement.play();
+      }
+    }
+  });
+
+  function getPauseTimeByExerciseCategory(category) {
+    for (let i = 0; i < exerciseCategorys.length; i++) {
+      if (category === exerciseCategorys[i]) {
+        return categoryPauseTimes[i].value;
+      }
+    }
+  }
+
+  for (let i = 0; i < weightInputs.length; i++) {
+    weightInputs[i].addEventListener("change", () => {
+      console.log("weight input changed");
+
+      const category = categorySelectors[i].value;
+      lastCategory = category;
+
+      registration.active.postMessage({
+        command: "start",
+        duration: getPauseTimeByExerciseCategory(category) * 1000,
+      })
+    })
+  }
+
+
+}
