@@ -39,7 +39,7 @@
                                     </div>
                                     <input type="text" class="customNextTrainingWeek"
                                         value="<%= customCurrentTrainingWeek[i] %>" style="display: none">
-                                    <div class="uppercase">
+                                    <div class="training-plan-title uppercase">
                                         <%= userCustomTrainings[i].title || "Custom A" %>
                                     </div>
                                     <div class="ff-sans-cond fs-400 letter-spacing-4">
@@ -98,7 +98,7 @@
                                         <div style="display: none" class="hidden-index">
                                             <%= i %>
                                         </div>
-                                        <div class="uppercase">
+                                        <div class="session-title uppercase">
                                             <%= plan.title %>
                                         </div>
                                         <div class="ff-sans-cond fs-400 letter-spacing-4">
@@ -192,3 +192,4 @@
 <script src="/javascripts/trainingIndexPage/redirect.js"></script>
 <script src="/javascripts/trainingIndexPage/deleteTrainingConfirmation.js"></script>
 <script src="/javascripts/trainingIndexPage/showRightTabFromStart.js"></script>
+<script src="/javascripts/trainingIndexPage/showOfflineEditedTrainingNames.js"></script>

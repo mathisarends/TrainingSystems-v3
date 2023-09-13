@@ -37,7 +37,6 @@ function initializeSessionTimer(registration) {
 
 
   const weightInputs = document.getElementsByClassName("weight");
-  console.log(weightInputs);
   const categorySelectors = document.querySelectorAll(
     ".exercise-category-selector"
   );
@@ -82,7 +81,6 @@ function initializeSessionTimer(registration) {
 
   for (let i = 0; i < weightInputs.length; i++) {
     weightInputs[i].addEventListener("change", () => {
-      console.log("weight input changed");
 
       const category = categorySelectors[i].value;
       lastCategory = category;

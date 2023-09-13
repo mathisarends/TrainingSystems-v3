@@ -1,5 +1,5 @@
 // service-worker.js
-const version = 15;
+const version = 18;
 
 const staticCache = `static-assets-${version}-new`; //html files etc.
 const dynamicCache = `dynamic-assets-${version}`;
@@ -47,6 +47,7 @@ const assets = [
 
   //js files
   "/javascripts/displayOfflineData.js",
+  "/javascrupts/onlineStatus.js",
 
   "/javascripts/exercises/ajaxSave.js",
   "/javascripts/exercises/resetConfirmation.js",
@@ -64,6 +65,7 @@ const assets = [
   "/javascripts/trainingIndexPage/redirect.js",
   "/javascripts/trainingIndexPage/showRightTabFromStart.js",
   "/javascripts/trainingIndexPage/trainingPlanCategorySelector.js",
+  "/javascripts/trainingIndexPage/showOfflineEditedTrainingNames.js",
 
   "/javascripts/trainingPage/ajaxAutoSave.js",
   "/javascripts/trainingPage/calcBackoffMax.js",
@@ -80,6 +82,8 @@ const assets = [
   "/javascripts/trainingPage/rpeInput.js",
   "/javascripts/trainingPage/showTimer.js",
   "/javascripts/trainingPage/weightInput.js",
+  "/javascripts/trainingPage/changeTitleAjax.js",
+
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
   "/javascripts/volume/offlineChanges.js",
@@ -194,11 +198,11 @@ self.addEventListener("fetch", async (event) => {
     }
   } else if (!online) {
     if (event.request.method === "PATCH") {
-      console.log("OFFLINE PATCH")
       handleOfflineChange(event.request, "offlinePatches");
     } else if (event.request.method === "POST") {
-      console.log("POST Request wie soll ich damit umgehen?");
       handleOfflineChange(event.request, "offlinePosts");
+    } else if (event.request.method === "DELETE") {
+      console.log("DELETE REQUEST wie soll ich damit umgehen?");
     } else {
       event.respondWith(cacheOnly(event));
     }
@@ -277,6 +281,64 @@ self.addEventListener("message", (event) => {
   }
 });
 
+self.addEventListener("message", (event) => {
+  const message = event.data;
+
+  if (message.command === "getTrainingEditPatches") {
+
+    //aktion soll nur stattfidnen wenn die seite auch offline ist:
+    if (!online) {
+      returnTrainingTitlesEdited()
+      .then((editedEntries) => {
+        event.source.postMessage({
+          command: "offlineTrainingEdits",
+          data: editedEntries
+        })
+      })
+      .catch ((error) => {
+        console.log("keine editedEntries zum zurückschicken")
+      })
+    }
+  }
+})
+
+// this method returns training meta data patches (trainingTitle etc. if they are edited);
+function returnTrainingTitlesEdited() {
+  //is any trainingTitle edited?
+
+  if (!DB){
+    return Promise.reject("Datenbank nicht verfügbar");
+  }
+  return new Promise((resolve, reject) => {
+    const patchTransaction = DB.transaction("offlinePatches", "readonly");
+    const patchStore = patchTransaction.objectStore("offlinePatches");
+
+    const request = patchStore.getAll();
+
+    request.onsuccess = (event) => {
+      const result = request.result;
+
+      const editedEntries = result.filter((entry) => entry.url.includes("edit"));
+
+      if (editedEntries.length === 0) {
+        console.log("keine passenden einträge gefunden reject");
+        reject();
+      } else {
+        console.log("passende einträge gefunden!")
+        resolve(editedEntries);
+      }
+
+    }
+
+    request.onerror = (event) => {
+      reject("Fehler beim Abrufen der Einträge aus dem offlinePatches Store");
+    }
+
+  })
+}
+
+
+// das ding hier soll unbedingt auch noch die posts berücksichtigen (exercises reset:);
 function isOfflineDataAvailable(url) {
   if (!DB) {
     return Promise.reject("Datenbank nicht verfügbar");
@@ -324,6 +386,12 @@ const openDB = (callback) => {
         db.createObjectStore("offlinePosts", {
           keyPath: "url",
         });
+      }
+
+      if (!db.objectStoreNames.contains("offlineDeletes")) {
+        db.createObjectStore("offlineDeletes", {
+          keyPath: "url",
+        })
       }
 
     };

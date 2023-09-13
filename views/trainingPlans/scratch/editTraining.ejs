@@ -21,6 +21,15 @@
     <form action="/training/session-edit-<%= sessionIndex + 1 %>?_method=PATCH" method="POST">
         <h3 class="text-white ff-serif fs-7 00 letter-spacing-1 uppercase">Bearbeiten</h3>
 
+        <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+            style="margin-top: 1em; text-align: center;">
+            Daten erfolgreich gespeichert
+        </div>
+        <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+            style="margin-top: 1em; padding-left: 1em;">
+            Fehler beim speichern der Daten
+        </div>
+
         <label for="training_title" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Titel</label>
         <input type="text" id="training-title" class="create-training-plan-input" name="training_title"
             value="<%= trainingTitle %>" required>
@@ -33,14 +42,18 @@
             <option <%=trainingPhase==="kraft" ? "selected" : "" %> value="kraft">Kraft</option>
             <option <%=trainingPhase==="peaking" ? "selected" : "" %> value="peaking">Peaking</option>
         </select>
-        <button type="submit" class="form-button-2 uppercase">Create</button>
+        <button type="submit" class="form-button-2 uppercase">SAVE</button>
         <button class="form-button uppercase fs-500" id="cancel-button" style="border: none;">Back</button>
 
 
     </form>
 </body>
 
-<script>
+<%- include("../../partials/onlineStatus") %>
+    <script src="/javascripts/displayOfflineData.js"></script>
+    <script src="/javascripts/trainingPage/changeTitleAjax.js"></script>
+
+    <!-- <script>
     const cancelButton = document.getElementById("cancel-button");
 
     cancelButton.addEventListener("click", e => {
@@ -48,5 +61,6 @@
         window.location.href = "/training";
     })
 </script>
+ -->
 
 </html>

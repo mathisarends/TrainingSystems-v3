@@ -1,8 +1,6 @@
-<script>
-
     document.addEventListener("DOMContentLoaded", () => {
 
-        console.log("online status eingebudnen")
+        console.log("neuer online status eingebunden");
         
         // ist nur bei der initialen registrierung des service workers relevant was okay ist
         if ("serviceWorker" in navigator) {
@@ -44,5 +42,3 @@
 
         })
     })
-
-</script>

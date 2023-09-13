@@ -342,7 +342,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
         await user.save();
 
 
-        res.redirect("/training");
+        res.status(200).json({});
 
         
       } catch (err) {
@@ -833,7 +833,7 @@ async function handleSessionEditPatch(req, res, index) {
 
 
     await user.save();
-    res.redirect("/training");
+    res.status(200).json({});
 
   } catch (err) {
     console.log("Es ist ein Fehler beim Patchen der Session vorgefallen! " + err);
