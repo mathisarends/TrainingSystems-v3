@@ -47,7 +47,7 @@ const assets = [
 
   //js files
   "/javascripts/displayOfflineData.js",
-  "/javascrupts/onlineStatus.js",
+  "/javascripts/onlineStatus.js",
 
   "/javascripts/exercises/ajaxSave.js",
   "/javascripts/exercises/resetConfirmation.js",
@@ -137,7 +137,9 @@ self.addEventListener("install", (ev) => {
       .open(staticCache)
       .then((cache) => {
         cache.addAll(assets).then(
-          () => {},
+          () => {
+            console.log(`${staticCache} has been updated`);
+          },
           (err) => {
             console.warn(`failed to update ${staticCache}`);
           }
