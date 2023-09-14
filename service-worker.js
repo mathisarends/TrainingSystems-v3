@@ -201,32 +201,6 @@ self.addEventListener("fetch", async (event) => {
     console.log("wie oft wirst du eigentlich aufgerufen?");
     event.respondWith(staleWhileRevalidate(event));
   }
-
-/*   if (isOnline()) {
-    if (isCSS || isJS || isManfifest || isImage || isAudio || isFont) {
-      event.respondWith(staleNoRevalidate(event));
-    } else if (
-      event.request.method === "PATCH" ||
-      event.request.method === "POST"
-    ) {
-      event.respondWith(networkOnly(event));
-    } else {
-      event.respondWith(fetchAndCache(event));
-    }
-  } else if (!isOnline()) {
-      console.log("anfragen die nicht online sind gehen hier durch");
-    if (event.request.method === "PATCH") {
-      console.log("Handle offline patch!!");
-      handleOfflineChange(event.request, "offlinePatches");
-    } else if (event.request.method === "POST") {
-      handleOfflineChange(event.request, "offlinePosts");
-    } else if (event.request.method === "DELETE") {
-      console.log("DELETE REQUEST wie soll ich damit umgehen?");
-    } else {
-      console.log("chacheOnly findet anwednung;")
-      event.respondWith(cacheOnly(event));
-    }
-  } */
 });
 
 self.addEventListener("message", async (event) => {
@@ -261,7 +235,6 @@ self.addEventListener("message", async (event) => {
         self.registration.showNotification("TTS", {
           body: "Offline Daten synchronisiert",
           tag: "connection",
-          vibrate: [200, 100, 200],
         });
       }
     } catch (err) {
@@ -553,45 +526,55 @@ async function executeSavedRequests() {
 
 // writes request in indexDB
 async function handleOfflineChange(request, objectStore) {
+
   if (DB) {
-    const formDataObject = await request.json();
-    const method = request.method;
-    const headers = {};
-    request.headers.forEach((value, key) => {
-      headers[key] = value;
-    });
-
-    const transaction = DB.transaction(objectStore, "readwrite");
-    const store = transaction.objectStore(objectStore);
-
-    const existingRecord = await store.get(request.url);
-
-    if (existingRecord) {
-      store.delete(request.url);
-      console.log("Bestehender Datensatz gelöscht");
-    }
-
-    const addRequest = store.add({
-      url: request.url,
-      method: method,
-      headers: headers,
-      body: formDataObject,
-    });
-
-    addRequest.onsuccess = (event) => {
-      console.log("Daten erfolgreich in der IndexDB gespeichert");
-      self.registration.showNotification("TTS", {
-        body: "Keine Internetverbindung. Daten werden bei erneuter Verbindung gespeichert.",
-        tag: "connection",
-      });
-    };
-    addRequest.onerror = (event) => {
-      console.error(
-        "Fehler beim Speichern der Daten in der IndexedDB",
-        event.target.error
-      );
-    };
+    addToIndexDB(request, objectStore);
+  } else {
+    console.log("diese verzweigung testen!");
+    openDB(async () => {
+      addToIndexDB(request, objectStore);
+    })
   }
+}
+
+async function addToIndexDB(request, objectStore) {
+  const formDataObject = await request.json();
+  const method = request.method;
+  const headers = {};
+  request.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+
+  const transaction = DB.transaction(objectStore, "readwrite");
+  const store = transaction.objectStore(objectStore);
+
+  const existingRecord = await store.get(request.url);
+
+  if (existingRecord) {
+    store.delete(request.url);
+    console.log("Bestehender Datensatz gelöscht");
+  }
+
+  const addRequest = store.add({
+    url: request.url,
+    method: method,
+    headers: headers,
+    body: formDataObject,
+  });
+
+  addRequest.onsuccess = (event) => {
+    console.log("Daten erfolgreich in der IndexDB gespeichert");
+    self.registration.showNotification("TTS", {
+      body: "Keine Internetverbindung. Daten werden bei erneuter Verbindung gespeichert.",
+      tag: "connection",
+    });
+  };
+  addRequest.onerror = (event) => {
+    console.error(
+      "Fehler beim Speichern der Daten in der IndexedDB",
+      event.target.error
+    );
+  };
 }
 
 /*CACHING strategies -- bisher alle für den dynamic cache gedacht. da alle statischen ressourcen ja initial geladen werden müssten: */
