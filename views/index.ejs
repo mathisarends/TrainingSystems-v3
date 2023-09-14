@@ -38,14 +38,6 @@
     const largeButtons = document.querySelectorAll(".large-button");
     //hier offline status anzeigen auf dem button
 
-    if (!navigator.onLine) {
-      console.log("offline");
-      largeButtons.forEach((button) => {
-        button.textContent = "OFFLINE";
-      })
-    }
-
-
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/register-service-worker', {

@@ -1,5 +1,5 @@
 // service-worker.js
-const version = 18;
+const version = 20;
 
 const staticCache = `static-assets-${version}-new`; //html files etc.
 const dynamicCache = `dynamic-assets-${version}`;
@@ -92,6 +92,8 @@ const assets = [
   "/javascripts/scratch/pauseTimer.js",
 
   "/register-service-worker",
+  "/welcome",
+  "/offline",
 
   //diese dynamic files hier auch einfügen:
 
@@ -189,7 +191,18 @@ self.addEventListener("fetch", async (event) => {
   //das mit dem online status ist schwerer als gedacht hier muss man schon sagen:
   //versuch bevor eine solche anfrage geschickt wird einmal die oben genannte methode aufrufen und
   //damit den online status ermitteln:
-  if (online) {
+
+
+  if (isCSS | isJS || isManfifest || isImage || isAudio || isFont) {
+    event.respondWith(staleNoRevalidate(event)); //static ressources
+  } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
+    event.respondWith(changeThroughNetworkOfflineFallback(event));
+  } else { //for pages etc.
+    console.log("wie oft wirst du eigentlich aufgerufen?");
+    event.respondWith(staleWhileRevalidate(event));
+  }
+
+/*   if (isOnline()) {
     if (isCSS || isJS || isManfifest || isImage || isAudio || isFont) {
       event.respondWith(staleNoRevalidate(event));
     } else if (
@@ -200,7 +213,7 @@ self.addEventListener("fetch", async (event) => {
     } else {
       event.respondWith(fetchAndCache(event));
     }
-  } else if (!online) {
+  } else if (!isOnline()) {
       console.log("anfragen die nicht online sind gehen hier durch");
     if (event.request.method === "PATCH") {
       console.log("Handle offline patch!!");
@@ -210,9 +223,10 @@ self.addEventListener("fetch", async (event) => {
     } else if (event.request.method === "DELETE") {
       console.log("DELETE REQUEST wie soll ich damit umgehen?");
     } else {
+      console.log("chacheOnly findet anwednung;")
       event.respondWith(cacheOnly(event));
     }
-  }
+  } */
 });
 
 self.addEventListener("message", async (event) => {
@@ -292,7 +306,7 @@ self.addEventListener("message", (event) => {
 
   if (message.command === "getTrainingEditPatches") {
 
-    //aktion soll nur stattfidnen wenn die seite auch offline ist:
+    //aktion soll nur stattfidnen wenn die seite auch offline ist:f
     if (!online) {
       returnTrainingTitlesEdited()
       .then((editedEntries) => {
@@ -581,6 +595,65 @@ async function handleOfflineChange(request, objectStore) {
 }
 
 /*CACHING strategies -- bisher alle für den dynamic cache gedacht. da alle statischen ressourcen ja initial geladen werden müssten: */
+
+//new Strategies
+function initialCacheFirst(ev) {
+  caches.match(ev.request).then(cacheRes => {
+    return cacheRes || fetch(ev.request).then(fetchRes => {
+      return caches.open(staticCache).then(cache => {
+        cache.put(ev.request.url, fetchRes.clone());
+        return fetchRes;
+      })
+    })
+  }).catch(() => caches.match("/offline"));
+}
+
+function staleWhileRevalidate(ev) {
+  //check cache and fallback on fetch for response
+  //always attempt to fetch a new copy and update the cache
+  return caches.match(ev.request).then((cacheResponse) => {
+    let fetchResponse = fetch(ev.request).then((response) => {
+      return caches.open(staticCache).then((cache) => {
+        cache.put(ev.request, response.clone());
+        return response;
+      });
+    });
+
+    return cacheResponse || fetchResponse;
+  });
+}
+
+async function changeThroughNetworkOfflineFallback(ev) {
+
+  const requestClone = ev.request.clone(); //für stream already read fehler:
+
+  try {
+    const response = await fetch(ev.request);
+
+    return response;
+  } catch (err) {
+
+    let objectStore;
+
+    if (ev.request.method === "PATCH") {
+      objectStore = "offlinePatches";
+    } else if (ev.request.method === "POST") {
+      objectStore = "offlinePosts";
+    } else {
+      objectStore = "offlineDeletes";
+    }
+
+    await handleOfflineChange(requestClone, objectStore)
+  }
+}
+
+
+function networkOnly(ev) {
+  return fetch(ev.request);
+}
+
+
+
 function cacheOnly(ev) {
   return caches.match(ev.request) || caches.match("/offline"); //funktioniert auch nicht genau:
 }
@@ -588,13 +661,8 @@ function cacheOnly(ev) {
 function cacheFirst(ev) {
   //return from cache or fetch if not in cache
   return caches.match(ev.request).then((cacheResponse) => {
-    l;
     return cacheResponse || fetch(ev.request);
   });
-}
-
-function networkOnly(ev) {
-  return fetch(ev.request);
 }
 
 function fetchAndCache(ev) {
@@ -623,20 +691,6 @@ function networkFirst(ev) {
   });
 }
 
-function staleWhileRevalidate(ev) {
-  //check cache and fallback on fetch for response
-  //always attempt to fetch a new copy and update the cache
-  return caches.match(ev.request).then((cacheResponse) => {
-    let fetchResponse = fetch(ev.request).then((response) => {
-      return caches.open(dynamicCache).then((cache) => {
-        cache.put(ev.request, response.clone());
-        return response;
-      });
-    });
-
-    return cacheResponse || fetchResponse;
-  });
-}
 
 function staleNoRevalidate(ev) {
   return caches.match(ev.request).then((cacheResponse) => {
@@ -647,9 +701,6 @@ function staleNoRevalidate(ev) {
     } else {
       // Wenn sie nicht im Cache ist, eine neue Anfrage an das Netzwerk senden
       return fetch(ev.request).then((response) => {
-        if (!response || response.status !== 200) {
-          return response;
-        }
 
         // Die Response im Cache speichern, damit sie bei zukünftigen Anfragen verfügbar ist
         return caches.open(dynamicCache).then((cache) => {

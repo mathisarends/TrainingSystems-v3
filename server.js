@@ -127,6 +127,10 @@ app.get("/register-service-worker", (req, res) => {
   res.sendFile(path.join(__dirname, "service-worker.js"))
 })
 
+app.get("/offline", (req, res) => {
+  res.render("offline.ejs");
+})
+
 
 app.listen(process.env.PORT || PORT, () => console.log(`Listening on port ${PORT}`));
 

@@ -73,6 +73,7 @@ Router.get("/", async (req, res) => {
 });
 
 Router.get("/welcome", async (req, res) => {
+
   res.render("indexNoAuthentication");
 })
 
