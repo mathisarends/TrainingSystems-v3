@@ -1,44 +1,48 @@
-    document.addEventListener("DOMContentLoaded", () => {
+// Ereignislistener, um den anfänglichen Online-Status zu ermitteln
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("neuer neuer online status eingebunden");
 
-        console.log("neuer online status eingebunden");
-        
-        // ist nur bei der initialen registrierung des service workers relevant was okay ist
-        if ("serviceWorker" in navigator) {
-            if (navigator.serviceWorker.controller) {
+  function sendOnlineStatusToServiceWorker(onlineOrOfflineString) {
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage(onlineOrOfflineString);
+    }
+  }
 
-                // hier wird zwar die anfrage an den service worker gestellt abre nicht unbedingt immer an den richtigen.
-                // 
+  // Initialen Online-Status ermitteln
+  const initialOnlineStatus = navigator.onLine ? "online" : "offline";
 
-                navigator.serviceWorker.controller.postMessage({ type: "requestOnlineStatus" });
+  // Den anfänglichen Online-Status an den Service Worker senden
 
-                navigator.serviceWorker.addEventListener("message", (event) => {
-                    const data = event.data;
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: "requestOnlineStatus",
+      url: window.location.href,
+    });
 
-                    if (data.type === "requestedOnlineStatus") {
-                        const isOnline = data.isOnline;
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      const data = event.data;
 
-                        // schickt die nachricht wieder zurück - etwas umständlich:
-                        if (isOnline) {
-                            navigator.serviceWorker.controller.postMessage("online");
-                        } else if (!isOnline) {
-                            navigator.serviceWorker.controller.postMessage("offline");
-                        }
-                    }
-                })
-            }
+      if (data.type === "requestedOnlineStatus") {
+        const isOnline = data.isOnline;
+
+        console.log("online status im browser empfangen:", isOnline);
+
+        // schickt die nachricht wieder zurück - etwas umständlich:
+        if (isOnline) {
+          navigator.serviceWorker.controller.postMessage("online");
+        } else if (!isOnline) {
+          navigator.serviceWorker.controller.postMessage("offline");
         }
+      }
+    });
+  }
 
+  // Weitere Ereignislistener für Online- und Offline-Änderungen hinzufügen
+  window.addEventListener("online", () => {
+    sendOnlineStatusToServiceWorker("online"); // Online
+  });
 
-        window.addEventListener("online", () => {
-            if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage("online");
-            }
-        })
-
-        window.addEventListener("offline", () => {
-            if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage("offline");
-            }
-
-        })
-    })
+  window.addEventListener("offline", () => {
+    sendOnlineStatusToServiceWorker("offline"); // Offline
+  });
+});

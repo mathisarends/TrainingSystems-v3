@@ -6,7 +6,7 @@ const dynamicCache = `dynamic-assets-${version}`;
 const imageCache = `imageCache-${version}`;
 
 let DB = null;
-let online = isOnline(); //Verfolgen des online status - TODO: funktioniert nicht ganz
+let online = isOnline();
 
 const imageAssets = [
   "/manifest/manifest.webmanifest",
@@ -91,10 +91,6 @@ const assets = [
 
   "/javascripts/scratch/pauseTimer.js",
 
-  "/register-service-worker",
-  "/welcome",
-  "/offline",
-
   //diese dynamic files hier auch einfügen:
 
   //TODO: weiterhin:
@@ -127,7 +123,7 @@ self.addEventListener("activate", (ev) => {
         });
       })
       .then((DB) => {
-        return clients.claim();
+        /* return clients.claim(); */
       })
   );
 });
@@ -135,6 +131,13 @@ self.addEventListener("activate", (ev) => {
 //adds the cacheList && imageList
 self.addEventListener("install", (ev) => {
   console.log(`Version ${version} installed`);
+
+  //intialen onlineStatus rausfinden
+  isOnline().then((onlineStatus) => {
+    online = onlineStatus;
+    console.log("online Status beim ersten laden der seite", online);
+
+  })
 
   ev.waitUntil(
     caches
@@ -197,16 +200,34 @@ self.addEventListener("fetch", async (event) => {
     event.respondWith(staleNoRevalidate(event)); //static ressources
   } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
     event.respondWith(changeThroughNetworkOfflineFallback(event));
-  } else { //for pages etc.
-    console.log("wie oft wirst du eigentlich aufgerufen?");
+  } else if (isPage) { //for pages etc.
+    event.respondWith(fetchFirstThenCache(event));
+  } else {
     event.respondWith(staleWhileRevalidate(event));
   }
 });
 
+async function isOnline() {
+  try {
+    if (!self.navigator.onLine) {
+      //false is always reliable that no network. true might lie
+      return false;
+    }
+
+    const request = new URL(self.location.origin); // avoid CORS errors with a request to your own origin
+    request.searchParams.set("rand", Date.now().toString()); // random value to prevent cached responses
+    const response = await fetch(request.toString(), { method: "HEAD", cache: "no-store" }); //falls die ressource gecached ist kann das ergebnis verfälscht werden:
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 self.addEventListener("message", async (event) => {
   if (event.data.type === "requestOnlineStatus") {
     try {
-      const onlineStatus = await isOnline();
+
+      const onlineStatus = await isOnline(event.data.url);
 
       self.clients.matchAll().then((clients) => {
         clients.forEach((client) => {
@@ -231,6 +252,8 @@ self.addEventListener("message", async (event) => {
       const requestsPending = await isOfflineRequestPending();
       if (requestsPending) {
         executeSavedRequests();
+
+        console.log("Offline Daten synchronisiert:")
 
         self.registration.showNotification("TTS", {
           body: "Offline Daten synchronisiert",
@@ -296,12 +319,13 @@ self.addEventListener("message", (event) => {
 })
 
 // this method returns training meta data patches (trainingTitle etc. if they are edited);
-function returnTrainingTitlesEdited() {
+async function returnTrainingTitlesEdited() {
   //is any trainingTitle edited?
 
   if (!DB){
-    return Promise.reject("Datenbank nicht verfügbar");
+    await openDB();
   }
+
   return new Promise((resolve, reject) => {
     const patchTransaction = DB.transaction("offlinePatches", "readonly");
     const patchStore = patchTransaction.objectStore("offlinePatches");
@@ -332,9 +356,9 @@ function returnTrainingTitlesEdited() {
 
 
 // das ding hier soll unbedingt auch noch die posts berücksichtigen (exercises reset:);
-function isOfflineDataAvailable(url) {
+async function isOfflineDataAvailable(url) {
   if (!DB) {
-    return Promise.reject("Datenbank nicht verfügbar");
+    await openDB();
   }
   return new Promise((resolve, reject) => {
     const patchTransaction = DB.transaction("offlinePatches", "readonly");
@@ -401,9 +425,9 @@ const openDB = (callback) => {
 };
 
 /*SUPPORTING FUNCTIONS*/
-function isOfflineRequestPending() {
+async function isOfflineRequestPending() {
   if (!DB) {
-    return Promise.reject("Datenbank nicht verfügbar");
+    await openDB();
   }
 
   return new Promise((resolve, reject) => {
@@ -439,21 +463,6 @@ function isOfflineRequestPending() {
   });
 }
 
-async function isOnline() {
-  try {
-    if (!self.navigator.onLine) {
-      //false is always reliable that no network. true might lie
-      return false;
-    }
-
-    const request = new URL(self.location.origin); // avoid CORS errors with a request to your own origin
-    request.searchParams.set("rand", Date.now().toString()); // random value to prevent cached responses
-    const response = await fetch(request.toString(), { method: "HEAD" });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
 
 async function sendSavedRequestToServer(requestData) {
   let objectStoreName = "";
@@ -472,7 +481,7 @@ async function sendSavedRequestToServer(requestData) {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Fehler bei der Anfrage an den Server!");
+          throw new Error(`Fehler bei der Anfrage an den Server! Statuscode: ${response.status}`);
         }
         return response.json();
       })
@@ -604,6 +613,30 @@ function staleWhileRevalidate(ev) {
 
     return cacheResponse || fetchResponse;
   });
+}
+
+function fetchFirstThenCache(ev) {
+  return fetch(ev.request)
+    .then((networkResponse) => {
+      if (networkResponse.ok) {
+        // Wenn die Netzwerkanfrage erfolgreich ist, speichern Sie sie im Cache und geben Sie die Antwort zurück
+        return caches.open(staticCache)
+          .then((cache) => {
+            cache.put(ev.request, networkResponse.clone());
+            return networkResponse;
+          });
+      } else {
+        // Wenn die Netzwerkanfrage fehlschlägt, versuchen Sie, die Antwort aus dem Cache abzurufen
+        return caches.match(ev.request)
+          .then((cacheResponse) => {
+            return cacheResponse || networkResponse; // Rückgabe aus Cache oder Netzwerk
+          });
+      }
+    })
+    .catch(() => {
+      // Bei einem Fetch-Fehler versuchen Sie, die Antwort aus dem Cache abzurufen
+      return caches.match(ev.request);
+    });
 }
 
 async function changeThroughNetworkOfflineFallback(ev) {

@@ -34,33 +34,37 @@
 <script>
 
   document.addEventListener("DOMContentLoaded", () => {
+  const largeButtons = document.querySelectorAll(".large-button");
 
-    const largeButtons = document.querySelectorAll(".large-button");
-    //hier offline status anzeigen auf dem button
-
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/register-service-worker', {
-        scope: "/" // Der Scope sollte auf die Root-URL Ihrer Anwendung zeigen
-      })
-        .then((registration) => {
-          console.log('Service Worker registriert:', registration);
-
-          navigator.serviceWorker.addEventListener("controllerchange", () => {
-            if (registration.active) {
-              registration.active.postMessage("online");
-            } else {
-              console.error('Es gibt keinen aktiven Service Worker.');
-            }
+  // Prüfen, ob bereits ein Service Worker aktiv ist
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistration()
+      .then((registration) => {
+        if (registration && registration.active) {
+          console.log("Ein Service Worker ist bereits aktiv.");
+        } else {
+          // Kein aktiver Service Worker vorhanden, registriere einen neuen
+          navigator.serviceWorker.register("/register-service-worker", {
+            scope: "/" // Der Scope sollte auf die Root-URL Ihrer Anwendung zeigen
           })
+            .then((registration) => {
+              console.log("Service Worker registriert:", registration);
 
-        })
-        .catch((error) => {
-          console.log('Fehler bei der Registrierung des Service Workers:', error);
-        });
-    }
+/*               navigator.serviceWorker.addEventListener("controllerchange", () => {
+                if (registration.active) {
+                  registration.active.postMessage("online");
+                } else {
+                  console.error("Es gibt keinen aktiven Service Worker.");
+                }
+              }); */
+            })
+            .catch((error) => {
+              console.log("Fehler bei der Registrierung des Service Workers:", error);
+            });
+        }
+      });
 
-    // diese logik vielleciht auf jede page brinden: und den bei den 2 service workern darauf reagieren:
+  }
+});
 
-  })
 </script>
