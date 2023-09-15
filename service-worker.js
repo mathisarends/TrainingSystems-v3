@@ -1,5 +1,5 @@
 // service-worker.js
-const version = 20;
+const version = 22;
 
 const staticCache = `static-assets-${version}-new`; //html files etc.
 const dynamicCache = `dynamic-assets-${version}`;
@@ -7,6 +7,8 @@ const imageCache = `imageCache-${version}`;
 
 let DB = null;
 let online = isOnline();
+let defaultNetworkMode = true; //offline-online modus zum daten sparen:
+//wird aus dem frontend heraus gesteuert!
 
 const imageAssets = [
   "/manifest/manifest.webmanifest",
@@ -48,6 +50,7 @@ const assets = [
   //js files
   "/javascripts/displayOfflineData.js",
   "/javascripts/onlineStatus.js",
+  "/javascripts/handleOfflineModal.js",
 
   "/javascripts/exercises/ajaxSave.js",
   "/javascripts/exercises/resetConfirmation.js",
@@ -90,6 +93,8 @@ const assets = [
   "/javascripts/header.js",
 
   "/javascripts/scratch/pauseTimer.js",
+  "/offline",
+  "/",
 
   //diese dynamic files hier auch einfügen:
 
@@ -136,8 +141,7 @@ self.addEventListener("install", (ev) => {
   isOnline().then((onlineStatus) => {
     online = onlineStatus;
     console.log("online Status beim ersten laden der seite", online);
-
-  })
+  });
 
   ev.waitUntil(
     caches
@@ -195,17 +199,41 @@ self.addEventListener("fetch", async (event) => {
   //versuch bevor eine solche anfrage geschickt wird einmal die oben genannte methode aufrufen und
   //damit den online status ermitteln:
 
-
   if (isCSS | isJS || isManfifest || isImage || isAudio || isFont) {
     event.respondWith(staleNoRevalidate(event)); //static ressources
-  } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
+  } else if (event.request.method === "PATCH" || event.request.method === "POST") {
     event.respondWith(changeThroughNetworkOfflineFallback(event));
-  } else if (isPage) { //for pages etc.
+  } else if (event.request.method === "DELETE") {
+    console.log("delete request");
+
+    //beide problemfälle abfangen
+  } else if (
+    isPage &&
+    (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))
+  ) {
+    event.respondWith(fetchOnly(event));
+  } else if (isPage) {
+    //for pages etc.
     event.respondWith(fetchFirstThenCache(event));
   } else {
     event.respondWith(staleWhileRevalidate(event));
   }
 });
+
+//only for logout -> hier ein fallback einfügen der bitte dann auch nicht gecached wird:
+function fetchOnly(ev) {
+  return fetch(ev.request)
+    .then(fetchResponse => {
+      if (fetchResponse) {
+        return fetchResponse;
+      } else {
+        return caches.match("/offline");
+      }
+    })
+    .catch(() => {
+      return caches.match("/offline");
+    })
+}
 
 async function isOnline() {
   try {
@@ -216,7 +244,10 @@ async function isOnline() {
 
     const request = new URL(self.location.origin); // avoid CORS errors with a request to your own origin
     request.searchParams.set("rand", Date.now().toString()); // random value to prevent cached responses
-    const response = await fetch(request.toString(), { method: "HEAD", cache: "no-store" }); //falls die ressource gecached ist kann das ergebnis verfälscht werden:
+    const response = await fetch(request.toString(), {
+      method: "HEAD",
+      cache: "no-store",
+    }); //falls die ressource gecached ist kann das ergebnis verfälscht werden:
     return response.ok;
   } catch {
     return false;
@@ -226,8 +257,9 @@ async function isOnline() {
 self.addEventListener("message", async (event) => {
   if (event.data.type === "requestOnlineStatus") {
     try {
-
       const onlineStatus = await isOnline(event.data.url);
+
+      const serviceWorkerOnlineStatus = self.navigator.onLine ? true : false; //vllt verwenden vllt auch nicht? ^^:
 
       self.clients.matchAll().then((clients) => {
         clients.forEach((client) => {
@@ -253,11 +285,14 @@ self.addEventListener("message", async (event) => {
       if (requestsPending) {
         executeSavedRequests();
 
-        console.log("Offline Daten synchronisiert:")
+        console.log("Offline Daten synchronisiert:");
 
-        self.registration.showNotification("TTS", {
-          body: "Offline Daten synchronisiert",
-          tag: "connection",
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({
+              type: "offlineSync",
+            });
+          });
         });
       }
     } catch (err) {
@@ -270,7 +305,6 @@ self.addEventListener("message", (event) => {
   if (event.data === "offline") {
     online = false;
     console.log("online status:", online);
-
   }
 });
 
@@ -301,28 +335,27 @@ self.addEventListener("message", (event) => {
   const message = event.data;
 
   if (message.command === "getTrainingEditPatches") {
-
     //aktion soll nur stattfidnen wenn die seite auch offline ist:f
     if (!online) {
       returnTrainingTitlesEdited()
-      .then((editedEntries) => {
-        event.source.postMessage({
-          command: "offlineTrainingEdits",
-          data: editedEntries
+        .then((editedEntries) => {
+          event.source.postMessage({
+            command: "offlineTrainingEdits",
+            data: editedEntries,
+          });
         })
-      })
-      .catch ((error) => {
-        console.log("keine editedEntries zum zurückschicken")
-      })
+        .catch((error) => {
+          console.log("keine editedEntries zum zurückschicken");
+        });
     }
   }
-})
+});
 
 // this method returns training meta data patches (trainingTitle etc. if they are edited);
 async function returnTrainingTitlesEdited() {
   //is any trainingTitle edited?
 
-  if (!DB){
+  if (!DB) {
     await openDB();
   }
 
@@ -335,25 +368,24 @@ async function returnTrainingTitlesEdited() {
     request.onsuccess = (event) => {
       const result = request.result;
 
-      const editedEntries = result.filter((entry) => entry.url.includes("edit"));
+      const editedEntries = result.filter((entry) =>
+        entry.url.includes("edit")
+      );
 
       if (editedEntries.length === 0) {
         console.log("keine passenden einträge gefunden reject");
         reject();
       } else {
-        console.log("passende einträge gefunden!")
+        console.log("passende einträge gefunden!");
         resolve(editedEntries);
       }
-
-    }
+    };
 
     request.onerror = (event) => {
       reject("Fehler beim Abrufen der Einträge aus dem offlinePatches Store");
-    }
-
-  })
+    };
+  });
 }
-
 
 // das ding hier soll unbedingt auch noch die posts berücksichtigen (exercises reset:);
 async function isOfflineDataAvailable(url) {
@@ -408,9 +440,8 @@ const openDB = (callback) => {
       if (!db.objectStoreNames.contains("offlineDeletes")) {
         db.createObjectStore("offlineDeletes", {
           keyPath: "url",
-        })
+        });
       }
-
     };
 
     req.onsuccess = (ev) => {
@@ -463,7 +494,6 @@ async function isOfflineRequestPending() {
   });
 }
 
-
 async function sendSavedRequestToServer(requestData) {
   let objectStoreName = "";
 
@@ -481,7 +511,9 @@ async function sendSavedRequestToServer(requestData) {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error(`Fehler bei der Anfrage an den Server! Statuscode: ${response.status}`);
+          throw new Error(
+            `Fehler bei der Anfrage an den Server! Statuscode: ${response.status}`
+          );
         }
         return response.json();
       })
@@ -535,14 +567,13 @@ async function executeSavedRequests() {
 
 // writes request in indexDB
 async function handleOfflineChange(request, objectStore) {
-
   if (DB) {
     addToIndexDB(request, objectStore);
   } else {
     console.log("diese verzweigung testen!");
     openDB(async () => {
       addToIndexDB(request, objectStore);
-    })
+    });
   }
 }
 
@@ -573,10 +604,6 @@ async function addToIndexDB(request, objectStore) {
 
   addRequest.onsuccess = (event) => {
     console.log("Daten erfolgreich in der IndexDB gespeichert");
-    self.registration.showNotification("TTS", {
-      body: "Keine Internetverbindung. Daten werden bei erneuter Verbindung gespeichert.",
-      tag: "connection",
-    });
   };
   addRequest.onerror = (event) => {
     console.error(
@@ -589,16 +616,6 @@ async function addToIndexDB(request, objectStore) {
 /*CACHING strategies -- bisher alle für den dynamic cache gedacht. da alle statischen ressourcen ja initial geladen werden müssten: */
 
 //new Strategies
-function initialCacheFirst(ev) {
-  caches.match(ev.request).then(cacheRes => {
-    return cacheRes || fetch(ev.request).then(fetchRes => {
-      return caches.open(staticCache).then(cache => {
-        cache.put(ev.request.url, fetchRes.clone());
-        return fetchRes;
-      })
-    })
-  }).catch(() => caches.match("/offline"));
-}
 
 function staleWhileRevalidate(ev) {
   //check cache and fallback on fetch for response
@@ -615,32 +632,60 @@ function staleWhileRevalidate(ev) {
   });
 }
 
+// for static static files (css, js, image, manifest)
+function staleNoRevalidate(ev) {
+  return caches.match(ev.request).then((cacheResponse) => {
+    // Überprüfen, ob die Response im Cache vorhanden ist
+    if (cacheResponse) {
+      // Wenn sie im Cache vorhanden ist, geben Sie sie zurück
+      return cacheResponse;
+    } else {
+      // Wenn sie nicht im Cache ist, eine neue Anfrage an das Netzwerk senden
+      return fetch(ev.request).then((response) => {
+        // Die Response im Cache speichern, damit sie bei zukünftigen Anfragen verfügbar ist
+        return caches.open(dynamicCache).then((cache) => {
+          cache.put(ev.request, response.clone());
+          return response;
+        });
+      });
+    }
+  });
+}
+
 function fetchFirstThenCache(ev) {
   return fetch(ev.request)
     .then((networkResponse) => {
       if (networkResponse.ok) {
         // Wenn die Netzwerkanfrage erfolgreich ist, speichern Sie sie im Cache und geben Sie die Antwort zurück
-        return caches.open(staticCache)
-          .then((cache) => {
-            cache.put(ev.request, networkResponse.clone());
-            return networkResponse;
-          });
+        return caches.open(staticCache).then((cache) => {
+          cache.put(ev.request, networkResponse.clone());
+          return networkResponse;
+        });
       } else {
         // Wenn die Netzwerkanfrage fehlschlägt, versuchen Sie, die Antwort aus dem Cache abzurufen
-        return caches.match(ev.request)
-          .then((cacheResponse) => {
-            return cacheResponse || networkResponse; // Rückgabe aus Cache oder Netzwerk
-          });
+        return caches.match(ev.request).then((cacheResponse) => {
+          if (cacheResponse) {
+            return cacheResponse;
+          } else {
+            return caches.match("/offline");
+          }
+        });
       }
     })
-    .catch(() => {
+    .catch((err) => {
       // Bei einem Fetch-Fehler versuchen Sie, die Antwort aus dem Cache abzurufen
-      return caches.match(ev.request);
+
+      return caches.match(ev.request).then((cacheResponse) => {
+        if (cacheResponse) {
+          return cacheResponse;
+        } else {
+          return caches.match("/offline");
+        }
+      });
     });
 }
 
 async function changeThroughNetworkOfflineFallback(ev) {
-
   const requestClone = ev.request.clone(); //für stream already read fehler:
 
   try {
@@ -648,7 +693,6 @@ async function changeThroughNetworkOfflineFallback(ev) {
 
     return response;
   } catch (err) {
-
     let objectStore;
 
     if (ev.request.method === "PATCH") {
@@ -659,16 +703,13 @@ async function changeThroughNetworkOfflineFallback(ev) {
       objectStore = "offlineDeletes";
     }
 
-    await handleOfflineChange(requestClone, objectStore)
+    await handleOfflineChange(requestClone, objectStore);
   }
 }
-
 
 function networkOnly(ev) {
   return fetch(ev.request);
 }
-
-
 
 function cacheOnly(ev) {
   return caches.match(ev.request) || caches.match("/offline"); //funktioniert auch nicht genau:
@@ -703,27 +744,6 @@ function networkFirst(ev) {
       return fetchResponse;
     } else {
       return caches.match(ev.request);
-    }
-  });
-}
-
-
-function staleNoRevalidate(ev) {
-  return caches.match(ev.request).then((cacheResponse) => {
-    // Überprüfen, ob die Response im Cache vorhanden ist
-    if (cacheResponse) {
-      // Wenn sie im Cache vorhanden ist, geben Sie sie zurück
-      return cacheResponse;
-    } else {
-      // Wenn sie nicht im Cache ist, eine neue Anfrage an das Netzwerk senden
-      return fetch(ev.request).then((response) => {
-
-        // Die Response im Cache speichern, damit sie bei zukünftigen Anfragen verfügbar ist
-        return caches.open(dynamicCache).then((cache) => {
-          cache.put(ev.request, response.clone());
-          return response;
-        });
-      });
     }
   });
 }

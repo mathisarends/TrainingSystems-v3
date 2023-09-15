@@ -24,9 +24,39 @@
     </div>
   </div>
 
-
 </main>
 
+<footer>
+  <div class="navigate-week-button-container" id="wifi-bar">
+
+    <div id="online-svg" style="display: none">
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-wifi">
+        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+    <div id="offline-svg" style="display: none;">
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-wifi-off">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+
+  </div>
+</footer>
 
 
 <script src="/javascripts/homePage/pwaBanner.js"></script>
@@ -34,37 +64,63 @@
 <script>
 
   document.addEventListener("DOMContentLoaded", () => {
-  const largeButtons = document.querySelectorAll(".large-button");
 
-  // Prüfen, ob bereits ein Service Worker aktiv ist
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistration()
-      .then((registration) => {
-        if (registration && registration.active) {
-          console.log("Ein Service Worker ist bereits aktiv.");
-        } else {
-          // Kein aktiver Service Worker vorhanden, registriere einen neuen
-          navigator.serviceWorker.register("/register-service-worker", {
-            scope: "/" // Der Scope sollte auf die Root-URL Ihrer Anwendung zeigen
-          })
-            .then((registration) => {
-              console.log("Service Worker registriert:", registration);
 
-/*               navigator.serviceWorker.addEventListener("controllerchange", () => {
-                if (registration.active) {
-                  registration.active.postMessage("online");
-                } else {
-                  console.error("Es gibt keinen aktiven Service Worker.");
-                }
-              }); */
+    // Prüfen, ob bereits ein Service Worker aktiv ist
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistration()
+        .then((registration) => {
+          if (registration && registration.active) {
+            console.log("Ein Service Worker ist bereits aktiv.");
+          } else {
+            // Kein aktiver Service Worker vorhanden, registriere einen neuen
+            navigator.serviceWorker.register("/register-service-worker", {
+              scope: "/" // Der Scope sollte auf die Root-URL Ihrer Anwendung zeigen
             })
-            .catch((error) => {
-              console.log("Fehler bei der Registrierung des Service Workers:", error);
-            });
-        }
-      });
+              .then((registration) => {
+                console.log("Service Worker registriert:", registration);
+              })
+              .catch((error) => {
+                console.log("Fehler bei der Registrierung des Service Workers:", error);
+              });
+          }
+        });
 
-  }
-});
+      const onlineSVG = document.getElementById("online-svg");
+      const offlineSVG = document.getElementById("offline-svg");
+
+
+      const isOnlineModeOn = localStorage.getItem("wifi");
+      console.log("online mode on", isOnlineModeOn);
+
+      if (isOnlineModeOn === "true") {
+        onlineSVG.style.display = "block";
+        offlineSVG.style.display = "none";
+      } else if (isOnlineModeOn === "false") {
+        onlineSVG.style.display = "none";
+        offlineSVG.style.display = "block"
+      } else { //inital das hier wenn kein wert gesetzt ist:
+        onlineSVG.style.display = "block";
+        offlineSVG.style.display = "none";
+      }
+
+
+      onlineSVG.addEventListener("click", () => {
+        localStorage.setItem("wifi", false);
+        onlineSVG.style.display = "none";
+        offlineSVG.style.display = "block";
+      })
+
+      offlineSVG.addEventListener("click", () => {
+        localStorage.setItem("wifi", true);
+        onlineSVG.style.display = "block";
+        offlineSVG.style.display = "none";
+      })
+
+    } else {
+      //ansonsten diese bar ausblenden
+      document.getElementById("wifi-bar").style.display = "none";
+    }
+  });
 
 </script>

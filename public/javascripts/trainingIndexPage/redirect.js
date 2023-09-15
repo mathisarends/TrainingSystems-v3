@@ -1,5 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    const deleteCustomTrainingPlanForms = document.querySelectorAll(".delete-custom-form");
+    console.log(deleteCustomTrainingPlanForms);
+
+    //ajax save klappt schonmal
+    deleteCustomTrainingPlanForms.forEach((form, index) => {
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            console.log("default verhindert");
+
+            const formData = new FormData(event.target);
+            const formDataObject = {};
+            formData.forEach((value, key) => {
+              formDataObject[key] = value;
+            });
+
+            console.log(formDataObject);
+
+            try {
+                const response = await fetch("/training/delete-training-plan", {
+                    method: "DELETE",
+                    body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
+                    headers: {
+                      "Content-Type": "application/json", // Setze den Content-Type auf application/json
+                    },
+                })
+
+                if (response.ok) {
+                    console.log("response ist okay");
+                } else {
+                    console.log("response ist nicht okay");
+                }
+
+            } catch (error) {
+                console.error("Fehler beim aktualisieren...");
+            }
+        })
+    })
 
     /*Modal vor dem Löschen: ------------------------- */
     const confirmationModal = document.getElementById("confirmationModal");
@@ -18,7 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
             confirmationModal.style.display = "block";
     
             confirmResetButton.addEventListener("click", () => {
-                form.submit();
+                /* form.submit(); */
+                form.dispatchEvent(new Event("submit"));
                 confirmationModal.style.display = "none";
             });
         });

@@ -78,9 +78,7 @@ Router.get("/welcome", async (req, res) => {
 })
 
 Router.get("/offline", async (req, res) => {
-  res.render("offline", {
-    layout: false,
-  });
+  res.render("offline");
 })
 
 

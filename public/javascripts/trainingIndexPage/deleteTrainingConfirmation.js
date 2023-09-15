@@ -1,3 +1,5 @@
+// das hier macht gar nihts mehr alles in redirect
+
 document.addEventListener("DOMContentLoaded", () => {
     const confirmationModal = document.getElementById("confirmationModal");
     const confirmResetButton = document.getElementById("confirmResetButton");
@@ -23,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
     cancelResetButton.addEventListener("click", () => {
         confirmationModal.style.display = "none";
     });
+
+    console.log(deleteForms);
 
     
 })

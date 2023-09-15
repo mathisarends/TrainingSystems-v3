@@ -102,7 +102,8 @@ Router.delete("/delete-training-plan", checkAuthenticated, async (req, res) => {
     user.trainingPlansCustomNew.splice(indexToDelete, 1);
     await user.save();
 
-    res.redirect("/training");
+    /* res.redirect("/training"); */
+    res.status(200).json({});
 
   } catch (err) {
     console.log("Fehler beim löschen des Trainingsplans: " + err);

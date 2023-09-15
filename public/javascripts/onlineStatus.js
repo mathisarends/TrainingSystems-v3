@@ -25,8 +25,6 @@ window.addEventListener("DOMContentLoaded", () => {
       if (data.type === "requestedOnlineStatus") {
         const isOnline = data.isOnline;
 
-        console.log("online status im browser empfangen:", isOnline);
-
         // schickt die nachricht wieder zurück - etwas umständlich:
         if (isOnline) {
           navigator.serviceWorker.controller.postMessage("online");
