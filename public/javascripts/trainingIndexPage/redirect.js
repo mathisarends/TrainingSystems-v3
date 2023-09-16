@@ -1,10 +1,37 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const deleteCustomTrainingPlanForms = document.querySelectorAll(".delete-custom-form");
-    console.log(deleteCustomTrainingPlanForms);
+    const deleteCustomPlansPart = document.querySelectorAll(".delete-custom-form");
+    const deleteSessionPart = document.querySelectorAll(".delete-form-training");
+    const deleteTemplatePart = document.querySelectorAll(".reset-template-training-form");
+
+    const upperLimitForCustomTrainingPlans = deleteCustomPlansPart.length;
+    console.log(upperLimitForCustomTrainingPlans + " upperLimit customs");
+    const upperLimitForSession = parseInt(upperLimitForCustomTrainingPlans) + deleteSessionPart.length;
+    console.log(upperLimitForSession + " upper limit for session");
+
+      // Kombinieren Sie die NodeLists in einem Array
+    const allDeleteForms = [...deleteCustomPlansPart, ...deleteSessionPart, ...deleteTemplatePart];
+
+    //regardless of type: - for index
+    const trainingPreviews = document.querySelectorAll(".training-plan-container:first-child");
+    console.log(trainingPreviews.length + " all training previews");
+
 
     //ajax save klappt schonmal
-    deleteCustomTrainingPlanForms.forEach((form, index) => {
+    allDeleteForms.forEach((form, index) => {
+
+        let fetchUrl;
+        if (index < upperLimitForCustomTrainingPlans) {
+            console.log("custom löschen")
+            fetchUrl = "/training/delete-training-plan";
+        } else if (index < upperLimitForSession) {
+            console.log("session löschen");
+            fetchUrl = "/training/delete-training";
+        } else {
+            console.log("template resetten");
+            fetchUrl = "/training/reset-template-training";
+        }
+
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
@@ -16,11 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
               formDataObject[key] = value;
             });
 
+            formDataObject.url = fetchUrl;
+
             console.log(formDataObject);
 
             try {
-                const response = await fetch("/training/delete-training-plan", {
-                    method: "DELETE",
+                const response = await fetch(fetchUrl, {
+                    method: "DELETE", 
                     body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
                     headers: {
                       "Content-Type": "application/json", // Setze den Content-Type auf application/json

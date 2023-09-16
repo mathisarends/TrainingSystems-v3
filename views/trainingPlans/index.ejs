@@ -29,6 +29,14 @@
                     </div>
                     <% } %>
 
+                    <!--Für den offline mode: wird erst bei bedarf angezeigt:-->
+                    <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500" style="display: none">
+                        <p>
+                            Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
+                            Erstelle einfach einen mit dem Button unten.
+                        </p>
+                    </div>
+
 
                         <div class="training-plan-container flex" style="--gap: 1rem;">
                             <% for (let i=0; i < userCustomTrainings.length; i++) { %>
@@ -39,7 +47,7 @@
                                     </div>
                                     <input type="text" class="customNextTrainingWeek"
                                         value="<%= customCurrentTrainingWeek[i] %>" style="display: none">
-                                    <div class="training-plan-title uppercase">
+                                        <div class="training-plan-title uppercase">
                                         <%= userCustomTrainings[i].title || "Custom A" %>
                                     </div>
                                     <div class="ff-sans-cond fs-400 letter-spacing-4">
@@ -62,6 +70,7 @@
                                 <form action="/training/delete-training-plan?_method=DELETE" method="POST"
                                     class="delete-custom-form" style="display: none">
                                     <input type="hidden" value="<%= i %>" name="deleteIndex">
+                                    <input type="hidden" value="custom-training" name="trainingPlanType">
                                     <input type="hidden" class="deleteTitle"
                                         value="<%= userCustomTrainings[i].title %>">
                                     <button class="main-page-button uppercase" type="submit">Löschen</button>
@@ -89,6 +98,11 @@
                         Starte eines mit dem Button unten!
                     </div>
                     <% } %>
+
+                    <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500" style="display: none">
+                        Es sieht so aus als hättest du keine gespeicherten Trainings.
+                        Starte eines mit dem Button unten!
+                    </div>
 
                         <div class="training-plan-container flex">
                             <% for (let i=0; i < userTrainings.length; i++) { %>
@@ -121,6 +135,7 @@
                                 <form action="/training/delete-training?_method=DELETE" method="POST"
                                     class="delete-form-training" style="display: none">
                                     <input type="hidden" value="<%= i %>" name="deleteIndex">
+                                    <input type="hidden" value="session-training" name="trainingPlanType">
                                     <input type="hidden" class="deleteTitle" value="<%= userTrainings[i].title %>">
                                     <button class="main-page-button trainin-plan-button uppercase"
                                         type="submit">Löschen</button>
@@ -165,9 +180,10 @@
                 Bearbeiten
             </button>
             <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
-                <form action="/training/reset-template-training" method="POST" class="reset-template-training-form"
+                <form action="/training/reset-template-training?_method=DELETE" method="POST" class="reset-template-training-form"
                     style="display: none;">
                     <input type="hidden" value="<%= i %>" name="resetIndex">
+                    <input type="hidden" value="template-training" name="trainingPlanType">
                     <button class="main-page-button uppercase" type="submit">Löschen</button>
 
                 </form>

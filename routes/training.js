@@ -490,7 +490,7 @@ for (let i = 0; i < templates.length; i++) {
   })
 }
 
-Router.post("/reset-template-training", checkAuthenticated, async (req, res) => {
+Router.delete("/reset-template-training", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -507,8 +507,7 @@ Router.post("/reset-template-training", checkAuthenticated, async (req, res) => 
 
     await user.save();
 
-    const referer = req.headers.referer || "/";
-    res.redirect(referer);
+    res.status(200).json({});
 
 
 
@@ -725,7 +724,7 @@ Router.delete("/delete-training", checkAuthenticated, async (req, res) => {
 
     console.log("Trainingsplan gelöscht");
 
-    res.redirect("/training");
+    res.status(200).json({});
 
   } catch (err) {
     console.log("Ein Fehler beim löschen des Trainings ist aufgetreten: " + err);

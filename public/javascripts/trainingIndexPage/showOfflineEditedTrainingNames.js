@@ -3,14 +3,58 @@ document.addEventListener("DOMContentLoaded", () => {
   const trainingPlanTitles = document.querySelectorAll(".training-plan-title");
   const sessionTitles = document.querySelectorAll(".session-title");
 
+  const trainingPlanContainers = document.querySelectorAll(".training-plan-container");
+  const noTrainingAvailableContainers = document.querySelectorAll(".no-training-available");
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then((registration) => {
       if (registration.active) {
         registration.active.postMessage({
-          command: "getTrainingEditPatches",
+          command: "getOfflineEditedTrainingTitles",
         });
+
+        //dont show deleted Trainings
+        registration.active.postMessage({
+          //hier die deletes anfragen:
+          command: "getOFflineDeletedTrainings",
+        })
       }
     });
+
+    // das hier unbedingt refactoren vllt auch die ganze redirect page:
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      const message = event.data;
+      if (message.command === "sendDeletedTrainings") {
+        const deletedTrainings = message.data;
+        console.log(deletedTrainings);
+
+        if (deletedTrainings) {
+          for (const deletedTraining of deletedTrainings) {
+            if (deletedTraining.body.trainingPlanType === "custom-training") {
+              const allCustomTrainings = trainingPlanContainers[0].querySelectorAll(".custom-training-container");
+              allCustomTrainings[deletedTraining.body.deleteIndex].style.display = "none";
+
+              // hier eigentlich prüfen auf display block
+              if (trainingPlanContainers[0].querySelectorAll('.custom-training-container[style="display:block"]').length === 0) {
+                noTrainingAvailableContainers[0].style.display = "block";
+              }
+
+            } else if (deletedTraining.body.trainingPlanType === "session-training") {
+              const allCustomTrainings = trainingPlanContainers[1].querySelectorAll(".custom-training-container");
+              allCustomTrainings[deletedTraining.body.deleteIndex].style.display = "none";
+
+              if (trainingPlanContainers[1].querySelectorAll('.custom-training-container[style="display:block"]').length === 0) {
+                noTrainingAvailableContainers[1].style.display = "block";
+              }
+
+            } else if (deletedTraining.body.trainingPlanType === "template-training") {
+              // hier eigentlich nichts weiter machen: //vllt das hier gar nicht zulassen oder überlegen was man da machen kann.
+              // alte daten würden ja noch angezeigt werden ^^:
+            }
+          }
+        }
+      }
+    })
 
     navigator.serviceWorker.addEventListener("message", (event) => {
       const message = event.data;

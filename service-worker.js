@@ -6,7 +6,6 @@ const dynamicCache = `dynamic-assets-${version}`;
 const imageCache = `imageCache-${version}`;
 
 let DB = null;
-let online = isOnline();
 let defaultNetworkMode = true; //offline-online modus zum daten sparen:
 //wird aus dem frontend heraus gesteuert!
 
@@ -92,6 +91,7 @@ const assets = [
 
   "/javascripts/scratch/pauseTimer.js",
   "/offline",
+  "/",
 
   //diese dynamic files hier auch einfügen:
 
@@ -150,7 +150,7 @@ self.addEventListener("install", (ev) => {
           },
           (err) => {
             console.warn(`failed to update ${staticCache}`);
-            console.error(err)
+            console.error(err);
           }
         );
       })
@@ -190,16 +190,19 @@ self.addEventListener("fetch", async (event) => {
 
   const isPage = event.request.mode === "navigate"; // Prüfen, ob es sich um eine Seite handelt
 
-
   // TODO: Probleme gibt es jetzt beim login da dies ja auch eine post anfrage darstellte FIXEN: und refacotr
   if (isCSS | isJS || isManfifest || isImage || isAudio || isFont) {
     event.respondWith(staleNoRevalidate(event)); //static ressources
+  } else if (
+    event.request.method === "POST" &&
+    event.request.url.includes("/login")
+  ) {
+    event.respondWith(changeThroughNetworkOfflineFallback(event));
   } else if (
     event.request.method === "PATCH" ||
     event.request.method === "POST" ||
     event.request.method === "DELETE"
   ) {
-
     if (defaultNetworkMode) {
       event.respondWith(changeThroughNetworkOfflineFallback(event));
     } else {
@@ -215,7 +218,6 @@ self.addEventListener("fetch", async (event) => {
 
       event.respondWith(handleOfflineChange(event.request, objectStore));
     }
-
   } else if (
     isPage &&
     (url.pathname.includes("/logout") ||
@@ -231,7 +233,6 @@ self.addEventListener("fetch", async (event) => {
     } else {
       event.respondWith(fetchFirstThenCache(event)); //änderungen sind ja eh in der indexDB
     }
-
   } else {
     console.log("wann wird dieser else else zweig überhaupt getriggert?");
     //hier muss eigentlich auch eine trennung der modi stattfinden?
@@ -270,9 +271,8 @@ self.addEventListener("message", async (event) => {
         const requestPending = await isOfflineRequestPending();
         if (requestPending) {
           event.source.postMessage({
-            type: "showSyncButton"
-          })
-          
+            type: "showSyncButton",
+          });
         }
       } catch (err) {
         console.error(
@@ -287,22 +287,24 @@ self.addEventListener("message", async (event) => {
 self.addEventListener("message", async (event) => {
   if (event.data === "syncOfflineData") {
     if (isOnline()) {
-
       try {
         const requestPending = await isOfflineRequestPending();
         executeSavedRequests();
         if (requestPending) {
-          event.source.postMessage({ //löst im frontend ein bestätigungsmodal aus - das jetzt auch nur noch auf der hauptseite zu sein braucht: TODO:
-            type: "offlineSync", 
-          })
+          event.source.postMessage({
+            //löst im frontend ein bestätigungsmodal aus - das jetzt auch nur noch auf der hauptseite zu sein braucht: TODO:
+            type: "offlineSync",
+          });
         }
       } catch (err) {
-        console.error("Fehler beim automatischen aktualisieren der offline daten:", err);
+        console.error(
+          "Fehler beim automatischen aktualisieren der offline daten:",
+          err
+        );
       }
-
     }
   }
-})
+});
 
 self.addEventListener("message", async (event) => {
   if (event.data === "switchToOfflineMode") {
@@ -337,9 +339,8 @@ self.addEventListener("message", (event) => {
 self.addEventListener("message", (event) => {
   const message = event.data;
 
-  if (message.command === "getTrainingEditPatches") {
+  if (message.command === "getOfflineEditedTrainingTitles") {
     //aktion soll nur stattfidnen wenn die seite auch offline ist:f
-    if (!online) {
       returnTrainingTitlesEdited()
         .then((editedEntries) => {
           event.source.postMessage({
@@ -350,9 +351,58 @@ self.addEventListener("message", (event) => {
         .catch((error) => {
           console.log("keine editedEntries zum zurückschicken");
         });
-    }
   }
 });
+
+self.addEventListener("message", (event) => {
+  const message = event.data;
+  if (message.command === "getOFflineDeletedTrainings") {
+
+    console.log("ich wurde angesprochen ja")
+
+    returnDeletedTrainings()
+      .then((deletedTrainings) => {
+        event.source.postMessage({
+          command: "sendDeletedTrainings",
+          data: deletedTrainings,
+        })
+      })
+      .catch((error) => {
+        console.log("keine deletedTrainings zum zurückschicken");
+      });
+  }
+})
+
+async function returnDeletedTrainings() {
+  if (!DB) {
+    await openDB();
+  }
+
+  return new Promise((resolve, reject) => {
+    const deleteTransaction = DB.transaction("offlineDeletes", "readonly");
+    const delteStore = deleteTransaction.objectStore("offlineDeletes");
+
+    const request = delteStore.getAll();
+
+    request.onsuccess = (event) => {
+      const result = request.result;
+
+      if (result.length === 0) {
+        console.log("keine gelöschten pläne vorhanden => reject");
+        reject();
+      } else {
+        resolve(result);
+      }
+    }
+
+    request.onerror = (event) => {
+      reject("Fehler beim Abrufen der Einträge aus dem DeleteStore");
+    }
+
+  })
+}
+
+
 
 // this method returns training meta data patches (trainingTitle etc. if they are edited);
 async function returnTrainingTitlesEdited() {
@@ -467,23 +517,32 @@ async function isOfflineRequestPending() {
   return new Promise((resolve, reject) => {
     const patchTransaction = DB.transaction("offlinePatches", "readonly");
     const postTransaction = DB.transaction("offlinePosts", "readonly");
+    const deleteTransaction = DB.transaction("offlineDeletes", "readonly"); // Hinzugefügt
     const patchStore = patchTransaction.objectStore("offlinePatches");
     const postStore = postTransaction.objectStore("offlinePosts");
+    const deleteStore = deleteTransaction.objectStore("offlineDeletes"); // Hinzugefügt
 
     const patchCountRequest = patchStore.count();
     const postCountRequest = postStore.count();
+    const deleteCountRequest = deleteStore.count(); // Hinzugefügt
 
     // Auf die Ergebnisse der count-Anfragen warten
     patchCountRequest.onsuccess = () => {
       postCountRequest.onsuccess = () => {
-        const totalRequests =
-          patchCountRequest.result + postCountRequest.result;
+        deleteCountRequest.onsuccess = () => { // Hinzugefügt
+          const totalRequests =
+            patchCountRequest.result + postCountRequest.result + deleteCountRequest.result; // Hinzugefügt
 
-        if (totalRequests > 0) {
-          resolve(true); // Gespeicherte Anfragen vorhanden
-        } else {
-          resolve(false); // Keine gespeicherten Anfragen vorhanden
-        }
+          if (totalRequests > 0) {
+            resolve(true); // Gespeicherte Anfragen vorhanden
+          } else {
+            resolve(false); // Keine gespeicherten Anfragen vorhanden
+          }
+        };
+
+        deleteCountRequest.onerror = () => { // Hinzugefügt
+          reject("Fehler beim Zählen der offlineDeletes"); // Hinzugefügt
+        };
       };
 
       postCountRequest.onerror = () => {
@@ -504,6 +563,8 @@ async function sendSavedRequestToServer(requestData) {
     objectStoreName = "offlinePatches";
   } else if (requestData.method === "POST") {
     objectStoreName = "offlinePosts";
+  } else if (requestData.method === "DELETE") {
+    objectStoreName = "offlineDeletes";
   }
 
   if (objectStoreName) {
@@ -564,6 +625,23 @@ async function executeSavedRequests() {
         };
         sendSavedRequestToServer(requestData);
       }
+
+      //handleOfflineDeletes
+      const deletesTransaction = DB.transaction("offlineDeletes", "readonly");
+      const deletesStore = deletesTransaction.objectStore("offlineDeletes");
+
+      const allDeletes = deletesStore.getAll();
+      allDeletes.onsuccess = function () {
+        for (const del of allDeletes.result) {
+          const requestData = {
+            method: del.method,
+            url: del.url,
+            headers: del.headers,
+            body: JSON.stringify(del.body),
+          };
+          sendSavedRequestToServer(requestData);
+        }
+      };
     };
   };
 }
