@@ -87,17 +87,11 @@ const assets = [
 
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
-  "/javascripts/volume/offlineChanges.js",
 
   "/javascripts/scratch/pauseTimer.js",
   "/offline",
   "/",
 
-  //diese dynamic files hier auch einfügen:
-
-  //TODO: weiterhin:
-  // die post anfragen offline und online synchroniseren:
-  // alles auch auf die trainingsPages ausweiten:
 ];
 
 //aktiviert den serviceworker erstellt die Datenbank und löscht alte cache-versionen
@@ -133,12 +127,6 @@ self.addEventListener("activate", (ev) => {
 //adds the cacheList && imageList
 self.addEventListener("install", (ev) => {
   console.log(`Version ${version} installed`);
-
-  //intialen onlineStatus rausfinden
-  isOnline().then((onlineStatus) => {
-    online = onlineStatus;
-    console.log("online Status beim ersten laden der seite", online);
-  });
 
   ev.waitUntil(
     caches
@@ -188,17 +176,16 @@ self.addEventListener("fetch", async (event) => {
   const isFont =
     url.hostname.includes("gstatic") || url.pathname.endsWith("woff2");
 
-  const isPage = event.request.mode === "navigate"; // Prüfen, ob es sich um eine Seite handelt
+  const isPage = event.request.mode === "navigate"; // Prüfen, ob es sich um eine Seite handelt GET
 
-  // TODO: Probleme gibt es jetzt beim login da dies ja auch eine post anfrage darstellte FIXEN: und refacotr
   if (isCSS | isJS || isManfifest || isImage || isAudio || isFont) {
     event.respondWith(staleNoRevalidate(event)); //static ressources
-  } else if (
+  } else if ( //beim login immmer über das netzwerk
     event.request.method === "POST" &&
     event.request.url.includes("/login")
   ) {
     event.respondWith(changeThroughNetworkOfflineFallback(event));
-  } else if (
+  } else if ( //bei sonstigen patch/post/delete requests entscheided der ausgewählte modus darüber (netzwerk oder lokal zwischenspeichern)
     event.request.method === "PATCH" ||
     event.request.method === "POST" ||
     event.request.method === "DELETE"
@@ -218,7 +205,7 @@ self.addEventListener("fetch", async (event) => {
 
       event.respondWith(handleOfflineChange(event.request, objectStore));
     }
-  } else if (
+  } else if ( //bestimmte pages sollen auch immer nur über das netzwerk accessed werden wegen authentication und zugriff auf google api
     isPage &&
     (url.pathname.includes("/logout") ||
       url.pathname.includes("/login") ||
@@ -231,11 +218,12 @@ self.addEventListener("fetch", async (event) => {
     if (defaultNetworkMode) {
       event.respondWith(fetchFirstThenCache(event));
     } else {
-      event.respondWith(fetchFirstThenCache(event)); //änderungen sind ja eh in der indexDB
+      event.respondWith(staleNoRevalidate(event)); //änderungen der seiten sind ja entsprechend in der indexDB datenbank gespeichert:
     }
   } else {
     console.log("wann wird dieser else else zweig überhaupt getriggert?");
     //hier muss eigentlich auch eine trennung der modi stattfinden?
+    console.log(event.request.url);
     event.respondWith(staleWhileRevalidate(event));
   }
 });
@@ -252,7 +240,7 @@ async function isOnline() {
     const response = await fetch(request.toString(), {
       method: "HEAD",
       cache: "no-store",
-    }); //falls die ressource gecached ist kann das ergebnis verfälscht werden:
+    }); //falls die ressource gecached ist kann das ergebnis verfälscht werden deswegen searchparams und no-store cache stratgie
     return response.ok;
   } catch {
     return false;
@@ -262,14 +250,13 @@ async function isOnline() {
 self.addEventListener("message", async (event) => {
   if (event.data === "switchToDefaultMode") {
     defaultNetworkMode = true;
-    console.log("default network mode", defaultNetworkMode);
 
     if (isOnline()) {
       //try to sync data:
 
       try {
         const requestPending = await isOfflineRequestPending();
-        if (requestPending) {
+        if (requestPending && isOnline()) { //todo: das hier nochmal prüfen
           event.source.postMessage({
             type: "showSyncButton",
           });
@@ -289,7 +276,7 @@ self.addEventListener("message", async (event) => {
     if (isOnline()) {
       try {
         const requestPending = await isOfflineRequestPending();
-        executeSavedRequests();
+        await executeSavedRequests();
         if (requestPending) {
           event.source.postMessage({
             //löst im frontend ein bestätigungsmodal aus - das jetzt auch nur noch auf der hauptseite zu sein braucht: TODO:
@@ -301,6 +288,11 @@ self.addEventListener("message", async (event) => {
           "Fehler beim automatischen aktualisieren der offline daten:",
           err
         );
+
+        // zeigt ein failureModal an
+        event.source.postMessage({
+          type: "offlineSyncFailure",
+        })
       }
     }
   }
@@ -319,8 +311,7 @@ self.addEventListener("message", (event) => {
   if (message.command === "getOfflineData") {
     const url = message.data;
 
-    // nur ausführen wenn nicht online:
-    if (!defaultNetworkMode) {
+    // immer ausführen wenn es denn welche gibt:
       isOfflineDataAvailable(url)
         .then((offlineData) => {
           // Senden Sie die offline Daten an den Client
@@ -332,9 +323,23 @@ self.addEventListener("message", (event) => {
         .catch((error) => {
           /* console.error("Fehler beim abrufen der offline data:") */
         });
-    }
   }
 });
+
+// client kann den netzwerkstatus anfragen: -benutz um zugriff auf bestimmte seiten zu verhindern (create-training) wenn offline mode oder offline
+self.addEventListener("message", async (event) => {
+  const message = event.data;
+
+  const onlineStatus = await isOnline(); // true wenn online fallse wenn nicht:
+
+  if (message.command === "networkModeRequest") {
+    event.source.postMessage({
+      command: "networkModeResponse",
+      networkMode: defaultNetworkMode, // true oder false:
+      onlineStatus: onlineStatus,
+    })
+  }
+})
 
 self.addEventListener("message", (event) => {
   const message = event.data;
@@ -568,82 +573,104 @@ async function sendSavedRequestToServer(requestData) {
   }
 
   if (objectStoreName) {
-    fetch(requestData.url, {
-      method: requestData.method,
-      headers: requestData.headers,
-      body: requestData.body,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(
-            `Fehler bei der Anfrage an den Server! Statuscode: ${response.status}`
-          );
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const transaction = DB.transaction(objectStoreName, "readwrite");
-        const store = transaction.objectStore(objectStoreName);
-
-        store.delete(requestData.url);
-      })
-      .catch((error) => {
-        console.error("Fehler beim Senden der Anfrage an den Server:", error);
+    try {
+      const response = await fetch(requestData.url, {
+        method: requestData.method,
+        headers: requestData.headers,
+        body: requestData.body,
       });
+
+      if (!response.ok) {
+        throw new Error(`Fehler bei der Anfrage an den Server! Statuscode: ${response.status}`);
+      }
+
+      const transaction = DB.transaction(objectStoreName, "readwrite");
+      const store = transaction.objectStore(objectStoreName);
+
+      store.delete(requestData.url);
+      console.log("Daten wurden aus der indexDB gelöscht!");
+    } catch (error) {
+      console.error("Fehler beim Senden der Anfrage an den Server:", error);
+      //wenn ein fehler auftritt an den aufrufer weiterleiten
+      throw error;
+    }
   }
 }
 
 async function executeSavedRequests() {
-  // handleOfflinePatches
-  const patchesTransaction = DB.transaction("offlinePatches", "readonly");
-  const patchesStore = patchesTransaction.objectStore("offlinePatches");
+  return new Promise(async (resolve, reject) => {
+    // handleOfflinePatches
+    const patchesTransaction = DB.transaction("offlinePatches", "readonly");
+    const patchesStore = patchesTransaction.objectStore("offlinePatches");
 
-  const allPatches = patchesStore.getAll();
-  allPatches.onsuccess = function () {
-    for (const patch of allPatches.result) {
-      const requestData = {
-        method: patch.method,
-        url: patch.url,
-        headers: patch.headers,
-        body: JSON.stringify(patch.body),
-      };
-      sendSavedRequestToServer(requestData);
-    }
-
-    // handle Offline Posts
-    const postsTransaction = DB.transaction("offlinePosts", "readonly");
-    const postsStore = postsTransaction.objectStore("offlinePosts");
-
-    const allPosts = postsStore.getAll();
-    allPosts.onsuccess = function () {
-      for (const post of allPosts.result) {
+    const allPatches = patchesStore.getAll();
+    allPatches.onsuccess = async function () {
+      for (const patch of allPatches.result) {
         const requestData = {
-          method: post.method,
-          url: post.url,
-          headers: post.headers,
-          body: JSON.stringify(post.body),
+          method: patch.method,
+          url: patch.url,
+          headers: patch.headers,
+          body: JSON.stringify(patch.body),
         };
-        sendSavedRequestToServer(requestData);
+        try {
+          await sendSavedRequestToServer(requestData);
+        } catch (error) {
+          // Wenn ein Fehler auftritt, leiten Sie ihn weiter
+          reject(error);
+          return;
+        }
       }
 
-      //handleOfflineDeletes
-      const deletesTransaction = DB.transaction("offlineDeletes", "readonly");
-      const deletesStore = deletesTransaction.objectStore("offlineDeletes");
+      // handle Offline Posts
+      const postsTransaction = DB.transaction("offlinePosts", "readonly");
+      const postsStore = postsTransaction.objectStore("offlinePosts");
 
-      const allDeletes = deletesStore.getAll();
-      allDeletes.onsuccess = function () {
-        for (const del of allDeletes.result) {
+      const allPosts = postsStore.getAll();
+      allPosts.onsuccess = async function () {
+        for (const post of allPosts.result) {
           const requestData = {
-            method: del.method,
-            url: del.url,
-            headers: del.headers,
-            body: JSON.stringify(del.body),
+            method: post.method,
+            url: post.url,
+            headers: post.headers,
+            body: JSON.stringify(post.body),
           };
-          sendSavedRequestToServer(requestData);
+          try {
+            await sendSavedRequestToServer(requestData);
+          } catch (error) {
+            // Wenn ein Fehler auftritt, leiten Sie ihn weiter
+            reject(error);
+            return;
+          }
         }
+
+        // handleOfflineDeletes
+        const deletesTransaction = DB.transaction("offlineDeletes", "readonly");
+        const deletesStore = deletesTransaction.objectStore("offlineDeletes");
+
+        const allDeletes = deletesStore.getAll();
+        allDeletes.onsuccess = async function () {
+          for (const del of allDeletes.result) {
+            const requestData = {
+              method: del.method,
+              url: del.url,
+              headers: del.headers,
+              body: JSON.stringify(del.body),
+            };
+            try {
+              await sendSavedRequestToServer(requestData);
+            } catch (error) {
+              // Wenn ein Fehler auftritt, leiten Sie ihn weiter
+              reject(error);
+              return;
+            }
+          }
+
+          // Alle gespeicherten Anfragen wurden erfolgreich verarbeitet
+          resolve();
+        };
       };
     };
-  };
+  });
 }
 
 // writes request in indexDB

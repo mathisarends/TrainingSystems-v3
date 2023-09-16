@@ -208,6 +208,58 @@
       onlineSVG.style.display = "block";
     })
 
+        //ack button - sets modal display property to none
+
+
+        const ackButton = document.getElementById("ackBTN");
+        const offlineModal = document.getElementById("offlineModal");
+
+        ackButton.addEventListener("click", e => {
+            e.preventDefault();
+
+            hideModal();
+        })
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.addEventListener("message", event => {
+                const data = event.data;
+
+                if (data.type === "offlineSync") {
+                    showModal();
+                    setTimeout(hideModal, 4000);
+                }
+            })
+
+            navigator.serviceWorker.addEventListener("message", (event) => {
+              const data = event.data;
+
+              if (data.type === "offlineSyncFailure") {
+                offlineModal.querySelector("input").value = "Fehler beim Synchronisieren";
+                showModal();
+                setTimeout(hideModal, 4000);
+
+                //TODO: das hier allgemein in ein javascript modul verwandeln:
+                // vllt beim modal ein retry einbauen?? dann kann man das internet anmachjen und den button klicken wäre nice gel:
+                //trotzdem die ansicht der buttons wechseln falls wieder in den offline mode gewechselt werden will:
+                syncSVG.style.display = "none";
+                onlineSVG.style.display = "block";
+
+              }
+            })
+        }
+
+
+        // Funktion zum Einblenden des Modals
+      function showModal() {
+        offlineModal.style.display = "block";
+      }
+
+      // Funktion zum Ausblenden des Modals
+      function hideModal() {
+        offlineModal.style.display = "none";
+        offlineModal.querySelector("input").value = "Offline Daten synchronsiert";
+      }
+
   }
 
 </script>

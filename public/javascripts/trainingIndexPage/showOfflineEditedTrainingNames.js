@@ -34,18 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
               const allCustomTrainings = trainingPlanContainers[0].querySelectorAll(".custom-training-container");
               allCustomTrainings[deletedTraining.body.deleteIndex].style.display = "none";
 
-              // hier eigentlich prüfen auf display block
-              if (trainingPlanContainers[0].querySelectorAll('.custom-training-container[style="display:block"]').length === 0) {
-                noTrainingAvailableContainers[0].style.display = "block";
-              }
 
             } else if (deletedTraining.body.trainingPlanType === "session-training") {
-              const allCustomTrainings = trainingPlanContainers[1].querySelectorAll(".custom-training-container");
-              allCustomTrainings[deletedTraining.body.deleteIndex].style.display = "none";
-
-              if (trainingPlanContainers[1].querySelectorAll('.custom-training-container[style="display:block"]').length === 0) {
-                noTrainingAvailableContainers[1].style.display = "block";
-              }
+              const allCustomSessions = trainingPlanContainers[1].querySelectorAll(".custom-training-container");
+              allCustomSessions[deletedTraining.body.deleteIndex].style.display = "none";
 
             } else if (deletedTraining.body.trainingPlanType === "template-training") {
               // hier eigentlich nichts weiter machen: //vllt das hier gar nicht zulassen oder überlegen was man da machen kann.

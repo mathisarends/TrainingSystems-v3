@@ -58,11 +58,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     console.log("response ist okay");
+                    location.reload();
                 } else {
                     console.log("response ist nicht okay");
                 }
 
             } catch (error) {
+                location.reload();
                 console.error("Fehler beim aktualisieren...");
             }
         })
@@ -146,7 +148,48 @@ document.addEventListener("DOMContentLoaded", () => {
     
     createCustomTrainingPlanBTN.addEventListener("click", (e) => {
         e.preventDefault();
-        window.location.href = `${window.location.origin}/training/create-training-plan`;
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                if (registration.active) {
+                    registration.active.postMessage({
+                        command: "networkModeRequest",
+                    })
+                }
+            })
+
+            navigator.serviceWorker.addEventListener("message", event => {
+                const message = event.data;
+
+                if (message.command === "networkModeResponse") {
+                    const networkModeStatus = message.networkMode;
+                    const onlineStatus = message.onlineStatus;
+
+
+                    if (!networkModeStatus || !onlineStatus) {
+
+                        const notAccesibleModal = document.getElementById("notAccesibleModal");
+                        const notAccesibleModalACK = document.getElementById("notAccesibleModalACK");
+                        notAccesibleModal.style.display = "block";
+
+                        notAccesibleModalACK.addEventListener("click", e => {
+                            e.preventDefault();
+                            notAccesibleModal.style.display = "none";
+                        })
+
+
+                        
+                    } else {
+                         window.location.href = `${window.location.origin}/training/create-training-plan`;
+                    }
+                }
+            })
+        } else {
+            console.log("einfach rübernavigieren wenn es keinen service worker gibt");
+                    /* window.location.href = `${window.location.origin}/training/create-training-plan`; */
+        }
+
+
     });
 
     editCustomTrainingBTN.addEventListener("click", (e) => {

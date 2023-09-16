@@ -29,15 +29,6 @@
                     </div>
                     <% } %>
 
-                    <!--Für den offline mode: wird erst bei bedarf angezeigt:-->
-                    <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500" style="display: none">
-                        <p>
-                            Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
-                            Erstelle einfach einen mit dem Button unten.
-                        </p>
-                    </div>
-
-
                         <div class="training-plan-container flex" style="--gap: 1rem;">
                             <% for (let i=0; i < userCustomTrainings.length; i++) { %>
 
@@ -98,11 +89,6 @@
                         Starte eines mit dem Button unten!
                     </div>
                     <% } %>
-
-                    <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500" style="display: none">
-                        Es sieht so aus als hättest du keine gespeicherten Trainings.
-                        Starte eines mit dem Button unten!
-                    </div>
 
                         <div class="training-plan-container flex">
                             <% for (let i=0; i < userTrainings.length; i++) { %>
@@ -201,6 +187,18 @@
             </div>
         </div>
     </div>
+
+    <div id="notAccesibleModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
+        <div class="modal-content flow" style="--flow-space: 0.5em;">
+            <input type="text" readonly value="Offline Mode Restriced">
+            <div class="modal-buttons">
+                <button class="modal-button text-accent" id="notAccesibleModalACK">VERSTANDEN</button>
+            </div>
+        </div>
+    </div>
+
+
+
 </main>
 
 
