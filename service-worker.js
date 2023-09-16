@@ -49,7 +49,6 @@ const assets = [
 
   //js files
   "/javascripts/displayOfflineData.js",
-  "/javascripts/onlineStatus.js",
   "/javascripts/handleOfflineModal.js",
 
   "/javascripts/exercises/ajaxSave.js",
@@ -90,11 +89,9 @@ const assets = [
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
   "/javascripts/volume/offlineChanges.js",
-  "/javascripts/header.js",
 
   "/javascripts/scratch/pauseTimer.js",
   "/offline",
-  "/",
 
   //diese dynamic files hier auch einfügen:
 
@@ -153,6 +150,7 @@ self.addEventListener("install", (ev) => {
           },
           (err) => {
             console.warn(`failed to update ${staticCache}`);
+            console.error(err)
           }
         );
       })
@@ -189,51 +187,57 @@ self.addEventListener("fetch", async (event) => {
 
   const isFont =
     url.hostname.includes("gstatic") || url.pathname.endsWith("woff2");
-  const selfUrl = new URL(self.location);
-  const isExternal =
-    event.request.mode === "cors" || selfUrl.host !== url.hostname;
 
   const isPage = event.request.mode === "navigate"; // Prüfen, ob es sich um eine Seite handelt
 
-  //das mit dem online status ist schwerer als gedacht hier muss man schon sagen:
-  //versuch bevor eine solche anfrage geschickt wird einmal die oben genannte methode aufrufen und
-  //damit den online status ermitteln:
 
+  // TODO: Probleme gibt es jetzt beim login da dies ja auch eine post anfrage darstellte FIXEN: und refacotr
   if (isCSS | isJS || isManfifest || isImage || isAudio || isFont) {
     event.respondWith(staleNoRevalidate(event)); //static ressources
-  } else if (event.request.method === "PATCH" || event.request.method === "POST") {
-    event.respondWith(changeThroughNetworkOfflineFallback(event));
-  } else if (event.request.method === "DELETE") {
-    console.log("delete request");
+  } else if (
+    event.request.method === "PATCH" ||
+    event.request.method === "POST" ||
+    event.request.method === "DELETE"
+  ) {
 
-    //beide problemfälle abfangen
+    if (defaultNetworkMode) {
+      event.respondWith(changeThroughNetworkOfflineFallback(event));
+    } else {
+      let objectStore;
+
+      if (event.request.method === "PATCH") {
+        objectStore = "offlinePatches";
+      } else if (event.request.method === "POST") {
+        objectStore = "offlinePosts";
+      } else if (event.request.method === "DELETE") {
+        objectStore = "offlineDeletes";
+      }
+
+      event.respondWith(handleOfflineChange(event.request, objectStore));
+    }
+
   } else if (
     isPage &&
-    (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))
+    (url.pathname.includes("/logout") ||
+      url.pathname.includes("/login") ||
+      url.pathname.includes("/auth/google"))
   ) {
-    event.respondWith(fetchOnly(event));
+    event.respondWith(fetchOnlyFallBackOnOfflinePage(event));
   } else if (isPage) {
     //for pages etc.
-    event.respondWith(fetchFirstThenCache(event));
+
+    if (defaultNetworkMode) {
+      event.respondWith(fetchFirstThenCache(event));
+    } else {
+      event.respondWith(fetchFirstThenCache(event)); //änderungen sind ja eh in der indexDB
+    }
+
   } else {
+    console.log("wann wird dieser else else zweig überhaupt getriggert?");
+    //hier muss eigentlich auch eine trennung der modi stattfinden?
     event.respondWith(staleWhileRevalidate(event));
   }
 });
-
-//only for logout -> hier ein fallback einfügen der bitte dann auch nicht gecached wird:
-function fetchOnly(ev) {
-  return fetch(ev.request)
-    .then(fetchResponse => {
-      if (fetchResponse) {
-        return fetchResponse;
-      } else {
-        return caches.match("/offline");
-      }
-    })
-    .catch(() => {
-      return caches.match("/offline");
-    })
-}
 
 async function isOnline() {
   try {
@@ -255,56 +259,55 @@ async function isOnline() {
 }
 
 self.addEventListener("message", async (event) => {
-  if (event.data.type === "requestOnlineStatus") {
-    try {
-      const onlineStatus = await isOnline(event.data.url);
+  if (event.data === "switchToDefaultMode") {
+    defaultNetworkMode = true;
+    console.log("default network mode", defaultNetworkMode);
 
-      const serviceWorkerOnlineStatus = self.navigator.onLine ? true : false; //vllt verwenden vllt auch nicht? ^^:
+    if (isOnline()) {
+      //try to sync data:
 
-      self.clients.matchAll().then((clients) => {
-        clients.forEach((client) => {
-          client.postMessage({
-            type: "requestedOnlineStatus",
-            isOnline: onlineStatus,
-          });
-        });
-      });
-    } catch (error) {
-      console.error("Fehler beim Überprüfne des Online Status:");
+      try {
+        const requestPending = await isOfflineRequestPending();
+        if (requestPending) {
+          event.source.postMessage({
+            type: "showSyncButton"
+          })
+          
+        }
+      } catch (err) {
+        console.error(
+          "Fehler beim automatischen synchroniseren der offline Daten",
+          err
+        );
+      }
     }
   }
 });
 
 self.addEventListener("message", async (event) => {
-  if (event.data === "online") {
-    online = true;
-    console.log("online status:", online);
+  if (event.data === "syncOfflineData") {
+    if (isOnline()) {
 
-    try {
-      const requestsPending = await isOfflineRequestPending();
-      if (requestsPending) {
+      try {
+        const requestPending = await isOfflineRequestPending();
         executeSavedRequests();
-
-        console.log("Offline Daten synchronisiert:");
-
-        self.clients.matchAll().then((clients) => {
-          clients.forEach((client) => {
-            client.postMessage({
-              type: "offlineSync",
-            });
-          });
-        });
+        if (requestPending) {
+          event.source.postMessage({ //löst im frontend ein bestätigungsmodal aus - das jetzt auch nur noch auf der hauptseite zu sein braucht: TODO:
+            type: "offlineSync", 
+          })
+        }
+      } catch (err) {
+        console.error("Fehler beim automatischen aktualisieren der offline daten:", err);
       }
-    } catch (err) {
-      console.error("Fehler beim Überprüfen der gespeicherten Anfragen:", err);
+
     }
   }
-});
+})
 
-self.addEventListener("message", (event) => {
-  if (event.data === "offline") {
-    online = false;
-    console.log("online status:", online);
+self.addEventListener("message", async (event) => {
+  if (event.data === "switchToOfflineMode") {
+    defaultNetworkMode = false;
+    console.log("default network mode", defaultNetworkMode);
   }
 });
 
@@ -315,7 +318,7 @@ self.addEventListener("message", (event) => {
     const url = message.data;
 
     // nur ausführen wenn nicht online:
-    if (!online) {
+    if (!defaultNetworkMode) {
       isOfflineDataAvailable(url)
         .then((offlineData) => {
           // Senden Sie die offline Daten an den Client
@@ -325,7 +328,7 @@ self.addEventListener("message", (event) => {
           });
         })
         .catch((error) => {
-          //Fehlermeldung ignorieren.
+          /* console.error("Fehler beim abrufen der offline data:") */
         });
     }
   }
@@ -616,6 +619,21 @@ async function addToIndexDB(request, objectStore) {
 /*CACHING strategies -- bisher alle für den dynamic cache gedacht. da alle statischen ressourcen ja initial geladen werden müssten: */
 
 //new Strategies
+
+//only for logout -> hier ein fallback einfügen der bitte dann auch nicht gecached wird:
+function fetchOnlyFallBackOnOfflinePage(ev) {
+  return fetch(ev.request)
+    .then((fetchResponse) => {
+      if (fetchResponse) {
+        return fetchResponse;
+      } else {
+        return caches.match("/offline");
+      }
+    })
+    .catch(() => {
+      return caches.match("/offline");
+    });
+}
 
 function staleWhileRevalidate(ev) {
   //check cache and fallback on fetch for response

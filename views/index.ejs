@@ -26,9 +26,16 @@
 
 </main>
 
-<footer>
-  <div class="navigate-week-button-container" id="wifi-bar">
+<div id="show-wifi-bar" class="navigate-week-button-container text-accent" style="background: inherit; border: none;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+    <polyline points="17 11 12 6 7 11"></polyline>
+    <polyline points="17 18 12 13 7 18"></polyline>
+  </svg>
+</div>
 
+<footer>
+  <div class="navigate-week-button-container text-accent" id="wifi-bar" style="display: flex;">
     <div id="online-svg" style="display: none">
 
       <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
@@ -55,6 +62,24 @@
       </svg>
     </div>
 
+    <!--nur anzeigen wenn das gerät online im default modus && online && daten pedning sind === refresh button-->
+    <div id="sync-svg" style="display: none">
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-slack">
+        <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z">
+        </path>
+        <path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path>
+        <path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"></path>
+        <path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"></path>
+        <path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z">
+        </path>
+        <path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"></path>
+        <path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"></path>
+        <path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"></path>
+      </svg>
+    </div>
   </div>
 </footer>
 
@@ -72,13 +97,18 @@
         .then((registration) => {
           if (registration && registration.active) {
             console.log("Ein Service Worker ist bereits aktiv.");
+
+            handleNetworkModeSelector(registration);
+
           } else {
-            // Kein aktiver Service Worker vorhanden, registriere einen neuen
             navigator.serviceWorker.register("/register-service-worker", {
-              scope: "/" // Der Scope sollte auf die Root-URL Ihrer Anwendung zeigen
+              scope: "/" // global scope
             })
               .then((registration) => {
                 console.log("Service Worker registriert:", registration);
+
+                handleNetworkModeSelector(registration);
+
               })
               .catch((error) => {
                 console.log("Fehler bei der Registrierung des Service Workers:", error);
@@ -86,41 +116,98 @@
           }
         });
 
-      const onlineSVG = document.getElementById("online-svg");
-      const offlineSVG = document.getElementById("offline-svg");
 
-
-      const isOnlineModeOn = localStorage.getItem("wifi");
-      console.log("online mode on", isOnlineModeOn);
-
-      if (isOnlineModeOn === "true") {
-        onlineSVG.style.display = "block";
-        offlineSVG.style.display = "none";
-      } else if (isOnlineModeOn === "false") {
-        onlineSVG.style.display = "none";
-        offlineSVG.style.display = "block"
-      } else { //inital das hier wenn kein wert gesetzt ist:
-        onlineSVG.style.display = "block";
-        offlineSVG.style.display = "none";
-      }
-
-
-      onlineSVG.addEventListener("click", () => {
-        localStorage.setItem("wifi", false);
-        onlineSVG.style.display = "none";
-        offlineSVG.style.display = "block";
-      })
-
-      offlineSVG.addEventListener("click", () => {
-        localStorage.setItem("wifi", true);
-        onlineSVG.style.display = "block";
-        offlineSVG.style.display = "none";
-      })
 
     } else {
       //ansonsten diese bar ausblenden
       document.getElementById("wifi-bar").style.display = "none";
     }
   });
+
+  // add logic independet off whether the service worker was already registered or not
+  async function handleNetworkModeSelector(registration) {
+
+    // show wifi bar only when the user wants:
+    const showWifiBar = document.getElementById("show-wifi-bar");
+    const wifiBar = document.getElementById("wifi-bar");
+
+    // only show this option if the screen is smaller than 1024px <= desktop pcs && laptops
+    const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    if (screenWidth > 1024) {
+      showWifiBar.style.display = "none";
+    }
+
+    showWifiBar.addEventListener("click", () => {
+      showWifiBar.style.display = "none";
+      wifiBar.style.transform = "translateY(0%)";
+    })
+
+    const onlineSVG = document.getElementById("online-svg");
+    const offlineSVG = document.getElementById("offline-svg");
+    const syncSVG = document.getElementById("sync-svg")
+
+    const isOnlineModeOn = localStorage.getItem("wifi");
+
+    // Funktion zum Warten auf die Aktivierung des Service Workers
+    async function waitForServiceWorkerActivation() {
+      while (!registration.active) {
+        await new Promise(resolve => setTimeout(resolve, 100)); // Warten Sie 100 Millisekunden und überprüfen Sie erneut
+      }
+    }
+
+    await waitForServiceWorkerActivation(); //auf registtrierung warten
+
+    // intitialen status setzen und an den service worker senden:
+    if (isOnlineModeOn === "true") {
+      registration.active.postMessage("switchToDefaultMode");
+      onlineSVG.style.display = "block";
+      offlineSVG.style.display = "none";
+
+    } else if (isOnlineModeOn === "false") {
+      registration.active.postMessage("switchToOfflineMode");
+      onlineSVG.style.display = "none";
+      offlineSVG.style.display = "block"
+    } else { //inital das hier wenn kein wert gesetzt ist:
+      registration.active.postMessage("switchToDefaultMode");
+      onlineSVG.style.display = "block";
+      offlineSVG.style.display = "none";
+    }
+
+
+    // bei auswahl neune status an den service worker senden und im localstorage für initiales laden speichern
+    onlineSVG.addEventListener("click", () => {
+
+      registration.active.postMessage("switchToOfflineMode");
+      syncSVG.style.display = "none";
+      localStorage.setItem("wifi", false);
+      onlineSVG.style.display = "none";
+      offlineSVG.style.display = "block";
+    })
+
+    offlineSVG.addEventListener("click", () => {
+
+      registration.active.postMessage("switchToDefaultMode");
+      localStorage.setItem("wifi", true);
+      onlineSVG.style.display = "block";
+      offlineSVG.style.display = "none";
+    })
+
+    //wenn auf den online modus gewechselt wird und der service worker feststellt dass es ungespeicherte daten aus dem offline mode gibt dann wird dieser button angezeigt: um zu synchroniseren:
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      const data = event.data;
+      // wenn die anfrage dazu gestellt wurde und die seite tatsächlich online ist:
+      if (data.type === "showSyncButton" && navigator.onLine) {
+        syncSVG.style.display = "block";
+        onlineSVG.style.display = "none";
+      }
+    })
+
+    syncSVG.addEventListener("click", () => {
+      registration.active.postMessage("syncOfflineData");
+      syncSVG.style.display = "none"; //danach wieder ausblenden:
+      onlineSVG.style.display = "block";
+    })
+
+  }
 
 </script>

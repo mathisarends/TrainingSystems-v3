@@ -2,15 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //ack button - sets modal display property to none
 
-    console.log("Handle offline data like that");
-
     const ackButton = document.getElementById("ackBTN");
     const offlineModal = document.getElementById("offlineModal");
 
     ackButton.addEventListener("click", e => {
         e.preventDefault();
 
-        hideModal
+        hideModal();
     })
 
     if ("serviceWorker" in navigator) {
@@ -18,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = event.data;
 
             if (data.type === "offlineSync") {
-                console.log("service worker hat nachricht gesendet jetzt das modal einblenden");
                 showModal();
                 setTimeout(hideModal, 4000);
             }
