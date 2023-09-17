@@ -1,71 +1,40 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* Auto Save Function even if the display is locked*/
-
-  const intervalInMilliseconds = 5 * 60 * 1000; // 5 minutes (in ms)
-
-  const timerWorker = new Worker(
-    URL.createObjectURL(
-      new Blob(
-        [
-          `
-  let remainingTime = 0;
-  let timerInterval;
-
-  self.addEventListener('message', function (e) {
-    const data = e.data;
-    if (data.command === 'start') {
-      remainingTime = data.duration;
-      startTimer();
-    }
-  });
-
-  function startTimer() {
-    const interval = 1000; // 1 Sekunde
-    timerInterval = setInterval(function () {
-      if (remainingTime <= 0) {
-        clearInterval(timerInterval);
-        self.postMessage({ command: 'complete' });
-      } else {
-        remainingTime -= interval;
-      }
-    }, interval);
-  }
-  // ...
-
-  `,
-        ],
-        { type: "application/javascript" }
-      )
-    )
-  );
-
-  timerWorker.postMessage({
-    command: "start",
-    duration: intervalInMilliseconds,
-  }); //starts inital timer
-
-  timerWorker.addEventListener("message", function (e) {
-    const data = e.data;
-    if (data.command === "complete") {
-      saveAndRestartTimer(); // timer is called again
-    }
-  });
-  function saveAndRestartTimer() {
-    const form = document.querySelector("form");
-    form.dispatchEvent(new Event("submit"));
-    timerWorker.postMessage({
-      command: "start",
-      duration: intervalInMilliseconds,
-    });
-  }
-
-  // DAs funktioniert auch nicht zu hundert prozent es werden fehlerhafte patch anfragen an den server gesendet
-  window.addEventListener("beforeunload", () => { //Bei Verlassen der Seite soll der Tinger gestoppt werdne
-    timerWorker.postMessage({ command: 'stop' });
-  });
   
+  //implements autosaving after there was a change event to a weight input
+  //also after a certain time interval through service worker
 
+  const autoSaveIntervall = 10 * 60 * 1000; // 5 minutes (in ms)
 
+  // everything that has to do with the auto save in this branch
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.ready.then(function (registration) {
+
+      //starts timer initially
+      if (registration.active) {
+        registration.active.postMessage({
+          command: "startAutoSaveTimer",
+          duration: autoSaveIntervall
+        })
+      }
+
+      //before the page is left the timer is reset: 
+      window.addEventListener("beforeunload", () => {
+        registration.active.postMessage({
+          command: "stopAutoSaveTimer",
+        });
+      })
+    })
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      const data = event.data;
+
+      // if the timer is complet => try to send form to server - timer is restartet in sw file
+      if (data.command === "autoSaveTimerCompleted") {
+        const form = document.querySelector("form");
+        form.dispatchEvent(new Event("submit"));
+      }
+    })
+  }
 
   // for showing the failure and sucess messages
   let indexVisibleSection = findIndexOfVisibleSection();
