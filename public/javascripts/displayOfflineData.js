@@ -2,10 +2,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then(function (registration) {
       if (registration.active) {
-        registration.active.postMessage({
-          command: "getOfflineData",
-          data: `${window.location.href}`,
-        });
+
+        const userIDInput = document.getElementById("userID");
+        
+        // then there is a userInput on the page request offline data for url and user
+        if (userIDInput) {
+          const userID = userIDInput.value;
+          registration.active.postMessage({
+            command: "getOfflineData",
+            url: `${window.location.href}`,
+            user: userID,
+          });
+        }
+
+
       }
     });
 

@@ -53,6 +53,7 @@ const assets = [
 
   "/javascripts/header/header.js",
   "/javascripts/homepage/pwaBanner.js",
+  "/javascripts/homePage/syncThroughSW.js",
 
   "/javascripts/register/navigation.js",
   "/javascripts/register/volumeCalculations.js",
@@ -265,7 +266,7 @@ self.addEventListener("message", async (event) => {
     if (onlineStatus) {
       try {
         const requestPending = await isOfflineRequestPending(userID); //for the currently registered user:
-        await executeSavedRequests();
+        await executeSavedRequests(userID);
         if (requestPending) { //this triggers confirmation modal in the frontend
           event.source.postMessage({
             type: "offlineSync",
@@ -295,10 +296,13 @@ self.addEventListener("message", (event) => {
   const message = event.data;
 
   if (message.command === "getOfflineData") {
-    const url = message.data;
+    const url = message.url;
+    const userID = message.user;
+
+    console.log("userID", userID);
 
     if (!isSynced) { //if the data was not synced then
-      isOfflineDataAvailable(url)
+      isOfflineDataAvailable(url, userID)
         .then((offlineData) => {
           event.source.postMessage({
             command: "offlineData",
@@ -425,7 +429,7 @@ async function returnTrainingTitlesEdited() {
 }
 
 // this function looks for offline data for a specific url in the local database and returns it to the client
-async function isOfflineDataAvailable(url) {
+async function isOfflineDataAvailable(url, userID) {
   if (!DB) {
     await openDB();
   }
@@ -433,21 +437,25 @@ async function isOfflineDataAvailable(url) {
     const patchTransaction = DB.transaction("offlinePatches", "readonly");
     const patchStore = patchTransaction.objectStore("offlinePatches");
 
-    const request = patchStore.get(url);
+    const request = patchStore.getAll();
+    let matchingResult;
 
-    request.onsuccess = () => {
-      const data = request.result ? request.result.body : false;
+    request.onsuccess = (event) => {
+      const allPatches = event.target.result;
+      for (const patch of allPatches) {
+        if (patch.url === url && patch.userIdentification === userID) {
+          matchingResult = patch;
+        }
+      }
 
+      const data = matchingResult ? matchingResult.body : false;
+  
       if (data) {
         resolve(data);
       } else {
         reject("No Offline Data available");
       }
-    };
-
-    request.onerror = (error) => {
-      reject("Error while requesting offline data", error);
-    };
+    }
   });
 }
 
@@ -501,112 +509,147 @@ async function isOfflineRequestPending(userID) {
 
   return new Promise((resolve, reject) => {
     const patchTransaction = DB.transaction("offlinePatches", "readonly");
-    const postTransaction = DB.transaction("offlinePosts", "readonly");
-    const deleteTransaction = DB.transaction("offlineDeletes", "readonly"); 
     const patchStore = patchTransaction.objectStore("offlinePatches");
-    const postStore = postTransaction.objectStore("offlinePosts");
-    const deleteStore = deleteTransaction.objectStore("offlineDeletes"); 
 
-    let totalRequests = 0;
+    let found = false;
 
-    // fitlers entries where userIdentification matches
-    const filterAndCount = (store) => {
-      const request = store.openCursor(); // opens cursor to search through store
-      request.onsuccess = (event) => {
-        const cursor = event.target.result; // cursor operation sucessful
-        if (cursor) {
-          if (cursor.value.userIdentification === userID) {
-            totalRequests++;
+    patchTransaction.oncomplete = async function () {
+      if (found) {
+        resolve(true);
+      } else {
+        const postTransaction = DB.transaction("offlinePosts", "readonly");
+        const postStore = postTransaction.objectStore("offlinePosts");
+
+        postTransaction.oncomplete = async function () {
+          if (found) {
+            resolve(true);
+          } else {
+            const deleteTransaction = DB.transaction("offlineDeletes", "readonly");
+            const deleteStore = deleteTransaction.objectStore("offlineDeletes");
+
+            deleteTransaction.oncomplete = async function () {
+              if (found) {
+                resolve(true);
+              } else {
+                reject(false);
+              }
+            };
+
+            const allDeletes = deleteStore.getAll();
+            allDeletes.onsuccess = async function () {
+              for (const del of allDeletes.result) {
+                if (del.userIdentification === userID) {
+                  found = true;
+                  break;
+                }
+              }
+            };
           }
-          cursor.continue(); // to next entrie
-        } else {
-          resolve(totalRequests > 0);
-        }
-      };
-      request.onerror = (err) => {
-        reject(`Error while counting in ${store.name}`, err);
-      };
+        };
+
+        const allPosts = postStore.getAll();
+        allPosts.onsuccess = async function () {
+          for (const post of allPosts.result) {
+            if (post.userIdentification === userID) {
+              found = true;
+              break;
+            }
+          }
+        };
+      }
     };
 
-    filterAndCount(patchStore);
-    filterAndCount(postStore);
-    filterAndCount(deleteStore);
+    const allPatches = patchStore.getAll();
+    allPatches.onsuccess = async function () {
+      for (const patch of allPatches.result) {
+        if (patch.userIdentification === userID) {
+          found = true;
+          break;
+        }
+      }
+    };
   });
 }
 
 // executes all saved requests (patches, post, deletes), if there is an error give it back to the calling function
-async function executeSavedRequests() {
+async function executeSavedRequests(userID) {
   return new Promise(async (resolve, reject) => {
     const patchesTransaction = DB.transaction("offlinePatches", "readonly");
     const patchesStore = patchesTransaction.objectStore("offlinePatches");
 
-    //iterate over all entries and try to send the requests to server in order to synchronize offline data
-    //if therer is an error reject
+    const patchPromises = [];
+
     const allPatches = patchesStore.getAll();
     allPatches.onsuccess = async function () {
       for (const patch of allPatches.result) {
-        const requestData = {
-          method: patch.method,
-          url: patch.url,
-          headers: patch.headers,
-          body: JSON.stringify(patch.body),
-        };
-        try {
-          await sendSavedRequestToServer(requestData);
-        } catch (error) {
-          reject(error);
-          return;
+        if (patch.userIdentification === userID) {
+          const requestData = {
+            method: patch.method,
+            url: patch.url,
+            headers: patch.headers,
+            body: JSON.stringify(patch.body),
+          };
+
+          const patchPromise = sendSavedRequestToServer(requestData);
+          patchPromises.push(patchPromise);
         }
       }
 
-      // handle Offline Posts the same way
+      // Handle Offline Posts the same way
       const postsTransaction = DB.transaction("offlinePosts", "readonly");
       const postsStore = postsTransaction.objectStore("offlinePosts");
+
+      const postPromises = [];
 
       const allPosts = postsStore.getAll();
       allPosts.onsuccess = async function () {
         for (const post of allPosts.result) {
-          const requestData = {
-            method: post.method,
-            url: post.url,
-            headers: post.headers,
-            body: JSON.stringify(post.body),
-          };
-          try {
-            await sendSavedRequestToServer(requestData);
-          } catch (error) {
-            reject(error);
-            return;
+          if (post.userIdentification === userID) {
+            const requestData = {
+              method: post.method,
+              url: post.url,
+              headers: post.headers,
+              body: JSON.stringify(post.body),
+            };
+            const postPromise = sendSavedRequestToServer(requestData);
+            postPromises.push(postPromise);
           }
         }
 
-        // handleOfflineDeletes
+        // Handle Offline Deletes
         const deletesTransaction = DB.transaction("offlineDeletes", "readonly");
         const deletesStore = deletesTransaction.objectStore("offlineDeletes");
+
+        const deletePromises = [];
 
         const allDeletes = deletesStore.getAll();
         allDeletes.onsuccess = async function () {
           for (const del of allDeletes.result) {
-            const requestData = {
-              method: del.method,
-              url: del.url,
-              headers: del.headers,
-              body: JSON.stringify(del.body),
-            };
-            try {
-              await sendSavedRequestToServer(requestData);
-            } catch (error) {
-              reject(error);
-              return;
+            if (del.userIdentification === userID) {
+              const requestData = {
+                method: del.method,
+                url: del.url,
+                headers: del.headers,
+                body: JSON.stringify(del.body),
+              };
+              const deletePromise = sendSavedRequestToServer(requestData);
+              deletePromises.push(deletePromise);
             }
           }
 
+          // Wait for all promises to resolve
+          try {
+            await Promise.all([...patchPromises, ...postPromises, ...deletePromises]);
+            // All requests were handled properly, resolve() and set isSynced flag
+            isSynced = true;
+            resolve();
+          } catch (error) {
+            // If any promise rejects, propagate the error
+            reject(error);
+          }
         };
       };
     };
-    // All requests were handled properly resolve() and set isSynced flag
-    isSynced = true;
-    resolve();
   });
 }
 
@@ -639,7 +682,34 @@ async function sendSavedRequestToServer(requestData) {
       const store = transaction.objectStore(objectStoreName);
       //clear out the offline data when the data was synced 
 
-      // store.delete(requestData.url); //leads to inconsistend behaviour if the user syncs and continues in offline mode: just keep the data: TODO: check wheter this leads to problems:
+      store.delete(requestData.url); //leads to inconsistend behaviour if the user syncs and continues in offline mode: just keep the data: TODO: check wheter this leads to problems:
+
+      try {
+        // Die Seite abrufen
+        const newVersionOfPage = await fetch(requestData.url);
+      
+        const urlObject = new URL(requestData.url);
+        const relativePath = urlObject.pathname;
+      
+        // html content of currentpage
+        const htmlContent = await newVersionOfPage.text();
+      
+        // set the response header to html
+        const responseHeaders = new Headers({
+          "Content-Type": "text/html", // Hier setzen Sie den HTML-Header
+        });
+      
+        // cache html so that the user sees the changes directly while still in offline mode:
+        caches.open(staticCache).then((cache) => {
+          cache.put(relativePath, new Response(htmlContent, { headers: responseHeaders }));
+        });
+      
+        console.log("Page successfully cached:", relativePath);
+      
+      } catch (error) {
+        console.error("Error caching page:", error);
+      }
+
 
       console.log("Data was send to server and is currently not deleted from indexDB");
     } catch (error) {

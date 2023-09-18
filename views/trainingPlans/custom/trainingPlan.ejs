@@ -4,8 +4,7 @@
     <input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>">
     <!--Parameter für loop im javascript-->
 
-    <% console.log(userID) %>
-    <input type="hidden" name="userIdentification" value="<%= userID %>">
+    <input id="userID" type="hidden" name="userIdentification" value="<%= userID %>">
 
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>
