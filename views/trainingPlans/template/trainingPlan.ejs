@@ -14,6 +14,8 @@
                 value="<%= defaultRepSchemeByCategory[category].defaultRPE %>">
             <% } %>
 
+            <input type="hidden" name="userIdentification" value="<%= userID %>">
+
 
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>" >

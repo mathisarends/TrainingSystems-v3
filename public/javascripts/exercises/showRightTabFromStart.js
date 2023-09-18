@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const navButtons = document.querySelectorAll(".tab-list button");
 
+    // save the current selection of tab in localstorage
     navButtons.forEach((button) => {
         button.addEventListener("click", e => {
             e.preventDefault();
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
 
+    // automatically display the last selected tab first when the page is loaded
     const lastSelectedTab = localStorage.getItem("selectedExerciseTab");
     if (lastSelectedTab) {
         const tabToSelect = document.getElementById(lastSelectedTab);

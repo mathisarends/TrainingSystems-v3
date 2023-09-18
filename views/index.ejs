@@ -8,6 +8,8 @@
     <!-- <button id="change-shit">change shit</button> -->
   </div>
 
+  <input id="userIdentification" type="hidden" name="userIdentification" value="<%= userID %>">
+
   <div>
     <div class="index-view" style="margin-top: 3rem; display: block">
       <% if (user) { %>
@@ -186,7 +188,12 @@
 
     offlineSVG.addEventListener("click", () => {
 
-      registration.active.postMessage("switchToDefaultMode");
+      const registratedUserID = document.getElementById("userIdentification").value;
+
+      registration.active.postMessage({
+        command: "switchToDefaultMode",
+        registratedUser: registratedUserID,
+      });
       localStorage.setItem("wifi", true);
       onlineSVG.style.display = "block";
       offlineSVG.style.display = "none";
@@ -203,7 +210,13 @@
     })
 
     syncSVG.addEventListener("click", () => {
-      registration.active.postMessage("syncOfflineData");
+
+      const registratedUserID = document.getElementById("userIdentification").value;
+
+      registration.active.postMessage({
+        command: "syncOfflineData",
+        registratedUser: registratedUserID,
+      });
       syncSVG.style.display = "none"; //danach wieder ausblenden:
       onlineSVG.style.display = "block";
     })

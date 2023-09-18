@@ -225,6 +225,8 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 
         res.render("trainingPlans/custom/trainingPlan", {
 
+          userID: user.id,
+
           trainingWeekData: trainingWeekData,
           firstTrainingWeekData: firstTrainingWeekData,
     
@@ -285,6 +287,8 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 
         //JUMP TODO: hier das gerenderte Tempalte ändern
         res.render("trainingPlans/custom/trainingPlanEdit", {
+
+          userID: user.id,
 
           layout: false,
     
@@ -404,6 +408,9 @@ for (let i = 0; i < templates.length; i++) {
       const afterPage = `/training/template-${templateType === 0 ? "A" : "B"}${templateIndexes[afterTemplateIndex]}`;
 
       res.render("trainingPlans/template/trainingPlan", {
+
+        userID: user.id,
+
         trainingWeekData: trainingWeekData,
         firstTrainingWeekData: firstTrainingWeekData.length > 0 ? firstTrainingWeekData : trainingWeekData,
 
@@ -578,6 +585,8 @@ async function handleTrainingSessionGET(req, res, index) {
     const date = formatDateWithDay(training.lastUpdated); //newst date from newest training
 
     res.render("trainingPlans/scratch/trainAgain", {
+
+      userID: user.id,
 
       exerciseCategories,
       categoryPauseTimes,
@@ -797,6 +806,9 @@ async function handleSessionEdit(req, res, sessionIndex) { //function for handli
     //hier müssen wir mehr informationen retrieven über die einzelnen trainingstage
 
     res.render("trainingPlans/scratch/editTraining", {
+
+      userID: user.id,
+
       sessionIndex: sessionIndex,
       trainingTitle,
       trainingPhase,
@@ -1118,6 +1130,7 @@ function formatDate(date) {
 function renderTrainingPlansView(res, user, additionalData = {}) {
   const defaultData = {
     user,
+    userID: user.id,
     errorCreatingNewCustomTrainingPlan: "",
     errorCreatingNewCustomTraining: "",
     lastVisitedTrainingMode: user.lastVisitedTrainingMode || "",

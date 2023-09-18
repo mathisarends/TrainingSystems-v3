@@ -17,18 +17,13 @@
       Fehler beim speichern der Daten
       </div>
     </div>
-
-  
-  
-    <% if (error) { %>
-      <div class="ff-sans-normal fs-500 text-accent letter-spacing-3" style="text-align: left;">
-        <%= messages.error %>
-      </div>
-      <% } %>
     
         <% const maxExercises=Math.max(...exerciseCategories.map(category=> categorizedExercises[category].length)); %>
     
           <form action="/exercises?_method=PATCH" method="POST" id="post-form">
+
+          <input type="hidden" name="userIdentification" value="<%= userID %>">
+
             <div class="exercise-container">
 
               <input type="hidden" name="maxExercises" value="<%= maxExercises %>">
@@ -191,8 +186,6 @@
 
 
       <!-- <script src="/javascripts/volume/showExtraInfo.js"></script> -->
-      <script src="/javascripts/exercises/resetConfirmation.js"></script>
       <script src="/javascripts/exercises/showSection.js"></script>
       <script src="/javascripts/exercises/showRightTabFromStart.js"></script>
       <script src="/javascripts/exercises/ajaxSave.js"></script>
-      <script src="/javascripts/exercises/beforeUnload.js"></script>

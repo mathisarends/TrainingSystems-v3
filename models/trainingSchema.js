@@ -1,3 +1,5 @@
+//schema for a single training session - saves on session of a kind and history of sessions up to 5
+
 const mongoose = require("mongoose");
 const User = require("./user");
 

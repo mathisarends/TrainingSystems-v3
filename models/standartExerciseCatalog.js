@@ -1,4 +1,4 @@
-// Define a fixed dataset of exercises
+// Define a fixed dataset of exercises, rep schemes and pause times
 
 
 const placeholder = {

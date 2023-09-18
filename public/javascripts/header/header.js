@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const primaryNav = document.querySelector(".primary-navigation");
   const navToggle = document.querySelector(".mobile-nav-toggle");
-  const showMobileNav = document.querySelectorAll(".mobile-nav-toggle svg")[0];
-  const closeMobileNav = document.querySelectorAll(".mobile-nav-toggle svg")[1];
+  const showMobileNav = document.querySelectorAll(".mobile-nav-toggle svg")[0]; //inline svg
+  const closeMobileNav = document.querySelectorAll(".mobile-nav-toggle svg")[1]; //inline svg
 
   navToggle.addEventListener("click", (e) => {
     e.preventDefault();
     const visibility = primaryNav.getAttribute("data-visible");
 
-    if (visibility === "false") {
+    if (visibility === "false") { //make it visibile if currently not 
       primaryNav.setAttribute("data-visible", true);
       navToggle.setAttribute("aria-expanded", true);
 
@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
     navOptions[3].classList.add("active");
   }
 
-  //um anfangsanimation zu verhindern wird diese css property erst nachträglich hinzugefügt
+  //css property is added after the page is loaded to prevent weird backsnapping behaviour
   setTimeout(() => {
-    primaryNav.style.transition = "transform 500ms ease-in-out"; // Fügen Sie die Transition hinzu
+    primaryNav.style.transition = "transform 500ms ease-in-out"; 
   }, 100); 
 });

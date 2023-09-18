@@ -17,9 +17,7 @@ function initializeSessionTimer(registration) {
     registration.active.postMessage({ command: 'keepAlive' });
   }, 10000); // 10 Sekunden Intervall (Passen Sie das Intervall nach Bedarf an)
 
-  const categoryPauseTimes = document.getElementsByClassName(
-    "category-pause-time-input"
-  );
+  const categoryPauseTimes = document.getElementsByClassName("category-pause-time-input");
   
   const exerciseCategorys = [
     "- Bitte Auswählen -",
@@ -37,11 +35,9 @@ function initializeSessionTimer(registration) {
 
 
   const weightInputs = document.getElementsByClassName("weight");
-  const categorySelectors = document.querySelectorAll(
-    ".exercise-category-selector"
-  );
+  const categorySelectors = document.querySelectorAll(".exercise-category-selector");
 
-  const progressBars = document.querySelector(".rest-pause-progress-bar");
+  const progressBar = document.querySelector(".rest-pause-progress-bar");
   const timerDisplay = document.querySelector(".rest-pause-timer");
 
   let lastCategory = "";
@@ -61,7 +57,7 @@ function initializeSessionTimer(registration) {
         
         //fehler konsolenausgabe verhinder wenn die seite neu geladen wird:
         if (!isNaN(progress) && isFinite(progress)) {
-            progressBars.value = progress;
+            progressBar.value = progress;
         }
   
   

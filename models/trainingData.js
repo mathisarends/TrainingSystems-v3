@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+//saves the best squat, bench, deadlift set in order to calculate strenght level and individualized volume
 
 const trainingDataSchema = new mongoose.Schema({
     recentSquatWeight: {

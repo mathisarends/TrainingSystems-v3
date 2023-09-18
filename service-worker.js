@@ -43,17 +43,13 @@ const assets = [
   //audio files:
   "/audio/newTimer.mp3",
   "/audio/save_sound.mp3",
-  "/audio/saveSound.mp3",
-  "/audio/tts_training_audio.mp3",
 
   //js files
   "/javascripts/displayOfflineData.js",
 
   "/javascripts/exercises/ajaxSave.js",
-  "/javascripts/exercises/resetConfirmation.js",
   "/javascripts/exercises/showRightTabFromStart.js",
   "/javascripts/exercises/showSection.js",
-  "/javascripts/exercises/beforeUnload.js",
 
   "/javascripts/header/header.js",
   "/javascripts/homepage/pwaBanner.js",
@@ -61,7 +57,6 @@ const assets = [
   "/javascripts/register/navigation.js",
   "/javascripts/register/volumeCalculations.js",
 
-  "/javascripts/trainingIndexPage/deleteTrainingConfirmation.js",
   "/javascripts/trainingIndexPage/redirect.js",
   "/javascripts/trainingIndexPage/showRightTabFromStart.js",
   "/javascripts/trainingIndexPage/trainingPlanCategorySelector.js",
@@ -80,14 +75,13 @@ const assets = [
   "/javascripts/trainingPage/pauseTimer.js",
   "/javascripts/trainingPage/removePlaceholder.js",
   "/javascripts/trainingPage/rpeInput.js",
-  "/javascripts/trainingPage/showTimer.js",
   "/javascripts/trainingPage/weightInput.js",
   "/javascripts/trainingPage/changeTitleAjax.js",
 
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
 
-  "/javascripts/scratch/pauseTimer.js",
+  "/javascripts/session/pauseTimer.js",
   "/offline",
 
 ];
@@ -191,8 +185,15 @@ self.addEventListener("fetch", async (event) => {
       event.respondWith(handleOfflineChange(event.request, objectStore));
     }
 
+    // has to be accessed over the network first because the userID is rendered at this page.
+    // on this page happens the sync process
+    // otherwise data from wrong account that was previously logged in in the device may be synced
+  } else if (url.pathname === "/" && isPage) {
+    event.respondWith(networkRevalidateAndCache(event));
+  }
+  
   //bestimmte pages sollen auch immer nur über das netzwerk accessed werden wegen authentication und zugriff auf google api
-  } else if (isPage && (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))) {
+  else if (isPage && (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))) {
     event.respondWith(networkOnlyAuthentication(event));
 
   } else if (isPage) {
@@ -228,15 +229,20 @@ async function isOnline() {
 
 // if the mode is switched to online show the sync button if there are requests pending: also is triggered initially then the page loads first
 self.addEventListener("message", async (event) => {
-  if (event.data === "switchToDefaultMode") {
+  if (event.data.command === "switchToDefaultMode") {
+
     defaultNetworkMode = true;
+    
+    const userID = event.data.registratedUser;
+    console.log("userID switch to default mode:", userID);
+    const onlineStatus = await isOnline();
+    console.log("online Status", onlineStatus);
 
-    if (isOnline()) {
+    if (onlineStatus) {
       try {
-        const requestPending = await isOfflineRequestPending();
-        const onlineStatus = await isOnline();
+        const requestPending = await isOfflineRequestPending(userID); //for the certain user:
 
-        if (requestPending && onlineStatus) {
+        if (requestPending && onlineStatus && !isSynced) {
           event.source.postMessage({
             type: "showSyncButton",
           });
@@ -250,13 +256,15 @@ self.addEventListener("message", async (event) => {
 
 // trys to syncOfflineData while in default mode and network connection on. 
 self.addEventListener("message", async (event) => {
-  if (event.data === "syncOfflineData") {
+  if (event.data.command === "syncOfflineData") {
+
+    const userID = event.data.registratedUser;
 
     const onlineStatus = await isOnline();
 
     if (onlineStatus) {
       try {
-        const requestPending = await isOfflineRequestPending();
+        const requestPending = await isOfflineRequestPending(userID); //for the currently registered user:
         await executeSavedRequests();
         if (requestPending) { //this triggers confirmation modal in the frontend
           event.source.postMessage({
@@ -486,7 +494,7 @@ async function openDB(callback) {
 }
 
 // checks whether there are any offline requests pending - counts from all stroes and if there is a single entry return true else false;
-async function isOfflineRequestPending() {
+async function isOfflineRequestPending(userID) {
   if (!DB) {
     await openDB();
   }
@@ -499,37 +507,30 @@ async function isOfflineRequestPending() {
     const postStore = postTransaction.objectStore("offlinePosts");
     const deleteStore = deleteTransaction.objectStore("offlineDeletes"); 
 
-    const patchCountRequest = patchStore.count();
-    const postCountRequest = postStore.count();
-    const deleteCountRequest = deleteStore.count(); 
+    let totalRequests = 0;
 
-    // Auf die Ergebnisse der count-Anfragen warten
-    patchCountRequest.onsuccess = () => {
-      postCountRequest.onsuccess = () => {
-        deleteCountRequest.onsuccess = () => {
-          const totalRequests =
-            patchCountRequest.result + postCountRequest.result + deleteCountRequest.result; 
-
-          if (totalRequests > 0) {
-            resolve(true); 
-          } else {
-            resolve(false); 
+    // fitlers entries where userIdentification matches
+    const filterAndCount = (store) => {
+      const request = store.openCursor(); // opens cursor to search through store
+      request.onsuccess = (event) => {
+        const cursor = event.target.result; // cursor operation sucessful
+        if (cursor) {
+          if (cursor.value.userIdentification === userID) {
+            totalRequests++;
           }
-        };
-
-        deleteCountRequest.onerror = (err) => { 
-          reject("Error while counting in offlineDeletes", err);
-        };
+          cursor.continue(); // to next entrie
+        } else {
+          resolve(totalRequests > 0);
+        }
       };
-
-      postCountRequest.onerror = (err) => {
-        reject("Error while counting in offlinePosts", err);
+      request.onerror = (err) => {
+        reject(`Error while counting in ${store.name}`, err);
       };
     };
 
-    patchCountRequest.onerror = (err) => {
-      reject("Error while couting in offlinePatches", err);
-    };
+    filterAndCount(patchStore);
+    filterAndCount(postStore);
+    filterAndCount(deleteStore);
   });
 }
 
@@ -663,6 +664,7 @@ async function handleOfflineChange(request, objectStore) {
 async function addToIndexDB(request, objectStore) {
   const formDataObject = await request.json(); // us the data that was send with the request in order to store it
   const method = request.method;
+  const userID = formDataObject.userIdentification;
   const headers = {};
   request.headers.forEach((value, key) => {
     headers[key] = value;
@@ -683,6 +685,7 @@ async function addToIndexDB(request, objectStore) {
     method: method,
     headers: headers,
     body: formDataObject,
+    userIdentification: userID, // for not accidently syncing data from another account when changed
   });
 
   addRequest.onsuccess = () => {

@@ -4,6 +4,9 @@
     <input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>">
     <!--Parameter für loop im javascript-->
 
+    <% console.log(userID) %>
+    <input type="hidden" name="userIdentification" value="<%= userID %>">
+
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>
             <input class="category-pause-time-input" type="hidden" value="<%= categoryPauseTimes[category] %>">
@@ -14,10 +17,6 @@
             <input class="category-default-rpe-input" type="hidden"
                 value="<%= defaultRepSchemeByCategory[category].defaultRPE %>">
             <% } %>
-
-
-
-
 
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>">

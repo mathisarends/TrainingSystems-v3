@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const navigateFurtherButtons = document.querySelectorAll(".navigate-further-btn");
+
+  //used for further options directly after the user has registered
+
+    const navigateFurtherButtons = document.querySelectorAll(".navigate-further-btn"); //
     const pageIndicators = document.querySelectorAll(".dot-indicators button");
     const contentPages = document.querySelectorAll(".content-page");
 
     const form = document.querySelector("form");
-
 
     navigateFurtherButtons.forEach((button, index) => {
         button.addEventListener("click", e => {
@@ -12,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (index === contentPages.length - 1) { // wenn es der letzte ist
                 form.dispatchEvent(new Event("submit"));
 
-                /* window.location.href = "/login"; */
             } else {
                 pageIndicators[index].setAttribute("aria-selected", false);
                 pageIndicators[(index + 1) % pageIndicators.length].setAttribute("aria-selected", true);
@@ -26,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     pageIndicators.forEach((pageIndicator, index) => {
         pageIndicator.addEventListener("click", e => {
             e.preventDefault();
-            console.log(index);
 
             for (let i = 0; i < pageIndicators.length; i++) {
                 pageIndicators[i].setAttribute("aria-selected", false);
@@ -41,12 +41,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const relativeURL = window.location.pathname + window.location.search;
 
+    // ajax saving in order to tell the user whether the data was saved sucessfully or not
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
     
         const formData = new FormData(event.target);
     
-        // Wandele die FormData in ein JavaScript-Objekt um
         const formDataObject = {};
         formData.forEach((value, key) => {
           formDataObject[key] = value;
@@ -55,37 +55,34 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const response = await fetch(`${relativeURL}`, {
             method: "POST",
-            body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
+            body: JSON.stringify(formDataObject), 
             headers: {
-              "Content-Type": "application/json", // Setze den Content-Type auf application/json
+              "Content-Type": "application/json", 
             },
           });
     
           if (response.ok) {
             showMessage(".save-status-sucess", "Erfolgreich gespeichert");
-
             const lastButton = navigateFurtherButtons[navigateFurtherButtons.length - 1];
 
-            prepareLastButton(lastButton);
+            prepareLastButton(lastButton); //shows the navigate to login button
 
           } else {
             
             try {
-              const errorData = await response.json();
               showMessage(".save-status-failure", "Trage bitte alle Werte ein!");
             } catch (error) {
-              // Die Antwort ist kein JSON, behandeln Sie sie entsprechend.
-              console.error("Fehler beim Aktualisieren ", error);
+              console.error("Error while saving ", error);
               showMessage(".save-status-failure", "Fehler beim Aktualisieren");
             } finally {
-                // es soll immer ein weiter
+                // always navigate futher
                 const lastButton = navigateFurtherButtons[navigateFurtherButtons.length - 1];
 
                 prepareLastButton(lastButton);
             }
           }
         } catch (error) {
-          console.error("Fehler beim Aktualisieren ", error);
+          console.error("Error while saving ", error);
           showMessage(".save-status-failure", "Fehler beim Aktualisieren");
         }
       });
@@ -105,9 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
       function showMessage(element, message, success = true, duration = 7500) {
         const messageElement = document.querySelector(element);
     
-        setTimeout(() => { //weicherer übergang damit animation zeit hat
+        setTimeout(() => { //smoother transition with animated class hidden
           messageElement.classList.remove("hidden");
-        }, 250); // Verzögerung von 10 Millisekunden
+        }, 250); 
     
         messageElement.textContent = message;
     

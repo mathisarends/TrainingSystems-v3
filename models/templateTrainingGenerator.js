@@ -1,3 +1,5 @@
+//creates two new template training plans (when a new user registers or when he resets his template trainingsg)
+
 const NewTrainingPlan = require("./trainingPlanSchema");
 
 const placeholderExercise = {
@@ -51,6 +53,7 @@ const placeholderExercise = {
     const weeksCount = 4; // Number of weeks
     const daysPerWeek = 4; // Number of training days per week
   
+    //rpe and backoff rpe are incremented each week
     let topRPE = 7.5;
     let backoffRPE = 6.5;
   
@@ -310,6 +313,7 @@ const placeholderExercise = {
     const weeksCount = 4; // Number of weeks
     const daysPerWeek = 4; // Number of training days per week
   
+    //rpe and backoff rpe are incremented each week
     let topRPE = 7;
     let backoffRPE = 6.5;
   

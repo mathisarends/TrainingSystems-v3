@@ -5,11 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function switchViews() {
         if (indexViews[0].style.display === "block") {
-            console.log("1");
             indexViews[0].style.display = "none";
             indexViews[1].style.display = "block"
         } else {
-            console.log("2");
             indexViews[0].style.display = "block";
             indexViews[1].style.display = "none"
         }
@@ -17,13 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();         // Verhindern Sie, dass das Browser-interne Installations-Popup angezeigt wird
+        e.preventDefault();       
 
-        deferredPrompt = e;         // Speichern Sie das Ereignis-Objekt für spätere Verwendung
+        deferredPrompt = e;         // save the event object for later use
 
-        if (window.innerWidth <= 768 && !pwaInstalled()) { // wennn der nutzer sich auf einem mobile gerät befindet und die app nocht nicht installiert hat
+        if (window.innerWidth <= 768 && !pwaInstalled()) { // if the user is on mobile and has not installed the app yet
 
-            switchViews(); //trotzdem wird hier nicht das richtige angezeigt: 
+            switchViews();  
 
             const installButton = document.getElementById("install-button");
 
@@ -32,10 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 deferredPrompt.userChoice.then((choiceResult) => {
 
                     if (choiceResult.outcome === 'accepted') {
-                        console.log('Benutzer hat die Installation akzeptiert');
                         localStorage.setItem("pwaInstalled", true);
                     } else {
-                        console.log('Benutzer hat die Installation abgelehnt');
                     }             
 
                     deferredPrompt = null; // Setzen Sie das Ereignis-Objekt zurück
@@ -46,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // gives back boolean value whether the app is installed or not
     function pwaInstalled() {
         return localStorage.getItem("pwaInstalled") === "true";
     }

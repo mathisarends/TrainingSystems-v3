@@ -4,38 +4,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteSessionPart = document.querySelectorAll(".delete-form-training");
     const deleteTemplatePart = document.querySelectorAll(".reset-template-training-form");
 
+    // in order to decide which endpoint is used
     const upperLimitForCustomTrainingPlans = deleteCustomPlansPart.length;
-    console.log(upperLimitForCustomTrainingPlans + " upperLimit customs");
     const upperLimitForSession = parseInt(upperLimitForCustomTrainingPlans) + deleteSessionPart.length;
-    console.log(upperLimitForSession + " upper limit for session");
 
-      // Kombinieren Sie die NodeLists in einem Array
+      // Combine all delte forms to one array
     const allDeleteForms = [...deleteCustomPlansPart, ...deleteSessionPart, ...deleteTemplatePart];
 
-    //regardless of type: - for index
-    const trainingPreviews = document.querySelectorAll(".training-plan-container:first-child");
-    console.log(trainingPreviews.length + " all training previews");
+    const deleleEndPoints = {
+        custom: "/training/delete-training-plan",
+        session: "/training/delete-training",
+        template: "/training/reset-template-training",
+      };
 
-
-    //ajax save klappt schonmal
     allDeleteForms.forEach((form, index) => {
 
-        let fetchUrl;
+        let fetchUrl; //decide by index which route shall be used
         if (index < upperLimitForCustomTrainingPlans) {
-            console.log("custom löschen")
-            fetchUrl = "/training/delete-training-plan";
+            fetchUrl = deleleEndPoints.custom;
         } else if (index < upperLimitForSession) {
-            console.log("session löschen");
-            fetchUrl = "/training/delete-training";
+            fetchUrl = deleleEndPoints.session;
         } else {
-            console.log("template resetten");
-            fetchUrl = "/training/reset-template-training";
+            fetchUrl = deleleEndPoints.template;
         }
 
         form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-
-            console.log("default verhindert");
+            event.preventDefault(); //prevent auto-submit
 
             const formData = new FormData(event.target);
             const formDataObject = {};
@@ -48,49 +42,47 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(formDataObject);
 
             try {
-                const response = await fetch(fetchUrl, {
+                await fetch(fetchUrl, {
                     method: "DELETE", 
-                    body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
+                    body: JSON.stringify(formDataObject),
                     headers: {
-                      "Content-Type": "application/json", // Setze den Content-Type auf application/json
+                      "Content-Type": "application/json", 
                     },
                 })
 
-                if (response.ok) {
-                    console.log("response ist okay");
-                    location.reload();
-                } else {
-                    console.log("response ist nicht okay");
-                }
-
             } catch (error) {
+                console.log("Error while trying to delete", error);
+
+            } finally { // either way the page has to reload in order to have congruent behaviour with the upperlimites etc
                 location.reload();
-                console.error("Fehler beim aktualisieren...");
             }
         })
     })
 
-    /*Modal vor dem Löschen: ------------------------- */
+    // Confirmation modal before delete
     const confirmationModal = document.getElementById("confirmationModal");
     const confirmResetButton = document.getElementById("confirmResetButton");
+    const cancelDeleteButton = document.getElementById("cancelResetButton");
 
-    //gets called by all delete or reset buttons
+    // is called by all delete or reset buttons
     function setupConfirmationModal(button, form, titleSelector, defaultTitle) {
         button.addEventListener("click", e => {
             e.preventDefault();
     
             const modalContent = confirmationModal.querySelector('.modal-content input[type="text"]');
             const deleteTitle = form.querySelector(titleSelector)?.value || defaultTitle;
-            console.log(deleteTitle);
             modalContent.value = `"${deleteTitle}" löschen?`;
             confirmResetButton.textContent = "BESTÄTIGEN";
             confirmationModal.style.display = "block";
     
             confirmResetButton.addEventListener("click", () => {
-                /* form.submit(); */
                 form.dispatchEvent(new Event("submit"));
                 confirmationModal.style.display = "none";
             });
+
+            cancelDeleteButton.addEventListener("click", () => {
+                confirmationModal.style.display = "none";
+            })
         });
     }
 
@@ -103,20 +95,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /*COSTUM ------------------------------------------*/
+    /* CUSTOM PLANS --------------------------*/
+
     const customTrainingContainers = document.querySelectorAll("section:nth-of-type(1) .custom-training-container");
     const deleteCustomTrainingForms = document.getElementsByClassName("delete-custom-form");
     const deleteCustomTrainingButtons = document.querySelectorAll(".delete-custom-form button");
     const startCustomTrainingButton = document.getElementById("start-custom-training-button");
     const createCustomTrainingPlanBTN = document.getElementById("createCustomTrainingPlanBTN");
-    const customNextTrainingWeeks = document.getElementsByClassName("customNextTrainingWeek");
     const editCustomTrainingBTN = document.getElementById("edit-custom-training-button");
+    const customNextTrainingWeeks = document.getElementsByClassName("customNextTrainingWeek"); // used in order to link directly to the latest training week
 
-    const customTrainingPlanContainer = document.querySelectorAll(".training-plan-container")[0];
+    const customTrainingPlanContainer = document.querySelectorAll(".training-plan-container")[0]; // for pulse effect = shows the user that there was not selected a training prior
 
     let customCurrentSelectedTrainingWeek;
     let lastSelectedLinkIndex = null;
 
+    // shows only the last selected delete form and saves the index of the lastSelected link
     function selectCustomTraining(index) {
         for (let i = 0; i < customTrainingContainers.length; i++) {
             customTrainingContainers[i].classList.remove("selected");
@@ -141,11 +135,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndex);
             const customPlanPage = `/training/custom-${alphaValue}${customCurrentSelectedTrainingWeek}`;
             window.location.href = customPlanPage;
-        } else {
+        } else { // if there was no training selected prior a animation is shown to the user
             pulseEffect(customTrainingPlanContainer);
         }
     });
     
+    // redirects the createCustomTraining route when the defaultNetworkMode is enabled and wifi is on
     createCustomTrainingPlanBTN.addEventListener("click", (e) => {
         e.preventDefault();
 
@@ -176,8 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             e.preventDefault();
                             notAccesibleModal.style.display = "none";
                         })
-
-
                         
                     } else {
                          window.location.href = `${window.location.origin}/training/create-training-plan`;

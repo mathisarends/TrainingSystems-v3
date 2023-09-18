@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const mainTables = exerciseTables.slice(0, 3);
     const accesoireTables = exerciseTables.slice(3);
 
+    // display certain categories according to the section navigated to
     navButtons.forEach((navButton, index) => {
       navButton.addEventListener("click", e => {
         e.preventDefault();

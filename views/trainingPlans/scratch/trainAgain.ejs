@@ -16,6 +16,8 @@
                 value="<%= defaultRepSchemeByCategory[category].defaultRPE %>">
             <% } %>
 
+            <input type="hidden" name="userIdentification" value="<%= userID %>">
+
 
                 <div class="table-section">
                     <h1 class="numbered-title" style="margin: 0; padding-top: 0.5em; padding-left: 0.65em;"><span
@@ -247,7 +249,7 @@
 
 <!-- <script src="/javascripts/trainingPage/displayOfflineData.js"></script> -->
 
-<script src="/javascripts/scratch/pauseTimer.js"></script>
+<script src="/javascripts/session/pauseTimer.js"></script>
 
 <script>
     const trainingHistoryContainer = document.getElementsByClassName("training-history")[0];

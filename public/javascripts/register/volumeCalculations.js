@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+    // page is used after registration if the user in order to calculate certain fields automatically based on input
+
         let bodyweight = "";
             let gender = "";
             let total;

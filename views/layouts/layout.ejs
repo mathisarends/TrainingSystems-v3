@@ -19,8 +19,7 @@
 <body class="home">
     <%- include("../partials/header.ejs") %>
         <%- body %> <!-- Hier wird der eigentliche Inhalt der gerenderten Seite eingefügt -->
-        
-
+    
         <%- include("../partials/offlineModal.ejs") %>
         <!--jede seite schickt ihren online status an den aktiven service worker | auch bei wechsel -->
         <script src="/javascripts/displayOfflineData.js"></script>

@@ -22,6 +22,9 @@ Router.get("/volume", checkAuthenticated, async (req, res) => {
         user.trainingData.length > 0 ? user.trainingData[0] : {};
 
       res.render("tools/volume", {
+
+        userID: user.id,
+
         id: req.user.id,
         name: user.name,
         squatMax: user.maxSquat || "",

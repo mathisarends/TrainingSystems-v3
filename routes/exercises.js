@@ -264,7 +264,7 @@ Router.post("/reset", checkAuthenticated, async (req, res) => {
     
         user.exercises = standartExerciseCatalog;
     
-        await user.save();
+        await user.save({ overwrite: true});
         console.log("Exercises zurückgesetzt!");
         res.status(200).json({});
     
@@ -319,10 +319,10 @@ module.exports = Router;
     }, {});
   
     return {
+      userID: user.id,
       exerciseCategories: exerciseCategories,
       categoryPauseTimes: categoryPauseTimes,
       categorizedExercises: categorizedExercises,
       defaultRepSchemeByCategory: defaultRepSchemeByCategory,
-      error: "",
     };
   }

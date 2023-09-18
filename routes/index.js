@@ -62,6 +62,7 @@ Router.get("/", async (req, res) => {
       }
       res.render("index", {
         user: user,
+        userID: user.id,
       });
     } else {
       res.redirect("/welcome");
@@ -81,18 +82,6 @@ Router.get("/offline", async (req, res) => {
   res.render("offline");
 })
 
-
-
-Router.get("/home", async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).send("Benutzer nicht gefunden");
-    }
-  } catch (err) {
-    console.log("Fehler beim Laden der homePage", err);
-  }
-})
 
 module.exports = Router;
 
