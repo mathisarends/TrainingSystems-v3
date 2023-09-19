@@ -112,6 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         showMessage(".save-status-sucess", "Erfolgreich aktualisiert");
       } else {
+        // server may get restarted or time out so the get an error here because we fetch to the wrong url:
+        // against login for example if the session is closed
         
         showMessage(".save-status-failure", "Fehler beim aktualisieren");
       }

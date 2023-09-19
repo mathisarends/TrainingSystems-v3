@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  // calculates the median if the user decides to input more values than one in the following format
+  // 10;10;15;15
+
 const targetRPEInputs = document.getElementsByClassName("targetRPE");
 const rpeInputs = document.getElementsByClassName("actualRPE");
 const setInputs = document.getElementsByClassName("sets");

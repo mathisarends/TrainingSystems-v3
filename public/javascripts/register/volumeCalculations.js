@@ -24,21 +24,21 @@ document.addEventListener("DOMContentLoaded", () => {
             })
     
             squatInput.addEventListener("change", () => {
-                //versuche total zu kalkulieren
+                // try to calc total if one of the inputs changes
                 total = calcTotal(squatInput.value, benchInput.value, deadliftInput.value);
                 updateStrengthLevel(bodyweight, total, gender);
                 console.log(total);
             })
     
             benchInput.addEventListener("change", () => {
-                //versuche total zu kalkulieren
+                // try to calc total if one of the inputs changes
                 total = calcTotal(squatInput.value, benchInput.value, deadliftInput.value);
                 updateStrengthLevel(bodyweight, total, gender);
                 console.log(total);
             })
     
             deadliftInput.addEventListener("change", () => {
-                //versuche total zu kalkulieren
+                // try to calc total if one of the inputs changes
                 total = calcTotal(squatInput.value, benchInput.value, deadliftInput.value);
                 updateStrengthLevel(bodyweight, total, gender);
                console.log(total);
@@ -75,9 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     
     
-    
+            // calcs strengthlevel based on bodyweight, total and gender
             function calcStrenghtLevel(bodyweight, total, gender) {
-                //gender wird als String übergeben weil es zur Anwendungsglogik passt
                 if (gender === "männlich") {
                     if (bodyweight <= 53) {
                         if (total >= 455) {

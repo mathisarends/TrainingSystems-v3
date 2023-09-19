@@ -22,5 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     updateVolumePhases();
-    volumePhaseSelector.addEventListener("change", updateVolumePhases);
+    volumePhaseSelector.addEventListener("change", updateVolumePhases); //dont need that anymore because the display
+    //property is set while rendering
 })

@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
 
-    if (selectedButton) {
+    if (selectedButton) { // click on the button so that the display styles are applied correctly
         selectedButton.click();
     } else {
         navButtons[0].setAttribute("aria-selected", true);

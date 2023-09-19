@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tableRow = tableRows[i];
         const nextTableRow = tableRows[i + 1];
 
+        // because there are 12 exercise-name-selectors and 11 of these are not shown - select only the one displayed
         const visibleSelectors = tableRow.querySelectorAll(
             '.exercise-name-selector:not([style*="display: none"])'
         );

@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  // calcs all volume medians based on squatmev and squatmrv etc.
   
   const squatMEVs = document.getElementsByClassName("squatmev");
   const squatMRVs = document.getElementsByClassName("squatmrv");

@@ -1,24 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("/register-service-worker")
-      .then((registration) => {
-        console.log("Service worker ist registriert", registration);
 
-        initializeApp(registration);
-      })
-      .catch((err) => {
-        console.log("Fehler bei der Registrierung des Service Workers:", err);
-      });
+  if ("serviceWorker" in navigator) {
+
+    // prioritize service worker - ready api
+    navigator.serviceWorker.ready.then(function (registration) {
+      console.log("Service worker ist registriert", registration);
+
+      initializeApp(registration);
+    })
   }
 });
 
 function initializeApp(registration) {
 
+  let currentTimerTime = 0; //for restarting the timer while keeping it alive
+
+  // in order to detect which timer display or progress bar is addressed
+  const navButtons = document.querySelectorAll(".dot-indicators button");
+  const workoutTables = document.querySelectorAll(".workout-table"); 
+  const progressBars = document.getElementsByClassName("rest-pause-progress-bar");
+  const timerDisplays = document.getElementsByClassName("rest-pause-timer");
+
+  let currentDayIndex = findCurrentlyDisplayedWorkoutTable();
+  let currentWorkoutTable = workoutTables[currentDayIndex];
+  let currentProgressBar = progressBars[currentDayIndex];
+  let currentTimerDisplay = timerDisplays[currentDayIndex];
+  let lastCategory = "";
+
+  const pageHeadlines = document.querySelectorAll(".numbered-title");
+  const restPauseContainers = document.querySelectorAll(".rest-pause-container");
+  const maxScreenWidthToShowTimer = 1154; // in px
+
+  // exercise pauseTimes by category from backend
   const categoryPauseTimes = document.getElementsByClassName(
     "category-pause-time-input"
   );
 
+  // exercise categories from backend
   const exerciseCategorys = [
     "- Bitte Auswählen -",
     "Squat",
@@ -33,101 +51,92 @@ function initializeApp(registration) {
     "Legs",
   ];
 
-  const navButtons = document.querySelectorAll(".dot-indicators button");
-  const workoutTables = document.querySelectorAll(".workout-table"); //all workout tables
-  const progressBars = document.getElementsByClassName(
-    "rest-pause-progress-bar"
-  );
-  const timerDisplays = document.getElementsByClassName("rest-pause-timer");
 
-  let currentDayIndex = findCurrentlyDisplayedWorkoutTable();
-  let currentWorkoutTable = workoutTables[currentDayIndex];
-  let currentProgressBar = progressBars[currentDayIndex];
-  let currentTimerDisplay = timerDisplays[currentDayIndex];
-  let lastCategory = "";
-
-  const displayTimerField = document.querySelectorAll(".numbered-title")[0];
-  const restPauseContainer = document.querySelectorAll(
-    ".rest-pause-container"
-  )[0];
-
-  const maxScreenWidthToShowTimer = 1154; // in px
 
   // show timer through clicking on headline, another clicks hides it and disables the timer
-  displayTimerField.addEventListener("click", e => {
-    e.preventDefault();
-    if (window.innerWidth <= maxScreenWidthToShowTimer) {
-      if (restPauseContainer.style.display === "block") {
-        restPauseContainer.style.display = "none";
-        //send message to sw to stop timer
-        registration.active.postMessage( {
-          command: "stop",
-        })
+  pageHeadlines.forEach((pageHeadline, index) => {
+    pageHeadline.addEventListener("click", e => {
+      e.preventDefault();
 
-        currentProgressBar.value = 100;
-        currentTimerDisplay.textContent = "00:00";
+      // mobile only feature
+      if (window.innerWidth <= maxScreenWidthToShowTimer) {
+        if (restPauseContainers[index].style.display === "block") { // if the display was previously displayed hide it and reset timer
+          restPauseContainers[index].style.display = "none";
 
-      } else if (restPauseContainer.style.display === "none") {
-        restPauseContainer.style.display = "block";
+          registration.active.postMessage({ //send message to sw to stop timer
+            command: "stop",
+          })
+
+          currentProgressBar.value = 100;
+          currentTimerDisplay.textContent = "00:00";
+          currentTimerTime = 0;
+  
+        } else if (restPauseContainers[index].style.display === "none") { // if the display was previously not display show it 
+          restPauseContainers[index].style.display = "block";
+        }
+      } else {
+        restPauseContainers[index].style.display = "none";
       }
-    } else {
-      // Bildschirm ist größer als die maximale Breite, den Pause-Timer ausblenden
-      restPauseContainer.style.display = "none";
-    }
+    })
   })
 
+
+  // variables in order to detec a double tap / click event
   let isTimerPaused = false;
   let clickCount = 0;
   let clickTimeout;
 
-  restPauseContainer.addEventListener("click", e => {
-    e.preventDefault();
-
-    // Erhöhen Sie die Klickzählung und starten Sie ein Timeout, um auf einen zweiten Klick zu warten
-    clickCount++;
-
-    if (clickCount === 1) {
-      // first click wait for the possible following click
-      clickTimeout = setTimeout(() => {
-        // single click
-        if (clickCount === 1) { 
-          if (!isTimerPaused) { //timer is currently running
-            registration.active.postMessage( {
-              command: "pauseTimer",
-            })
-            isTimerPaused = true;
-          } else if (isTimerPaused) { //timer not running: 
+  restPauseContainers.forEach((restPauseContainer, index) => {
+    restPauseContainer.addEventListener("click", e => {
+      e.preventDefault();
+  
+      clickCount++;
+  
+      if (clickCount === 1) {
+        clickTimeout = setTimeout(() => { // first click wait for the possible following click
+          if (clickCount === 1) {            // single click => pause or continue timer
+            if (!isTimerPaused) {
+              registration.active.postMessage( {
+                command: "pauseTimer",
+              })
+              isTimerPaused = true;
+            } else if (isTimerPaused) {
+              registration.active.postMessage({
+                command: "continueTimer",
+              })
+            }
+          }
+          else if (clickCount === 2) { // add rest time 30 sekunds per double tap
             registration.active.postMessage({
-              command: "continueTimer",
+              command: "addRestTime",
             })
           }
-        }
-        // double click
-        else if (clickCount === 2) {
-          registration.active.postMessage({
-            command: "addRestTime",
-          })
-        }
-        // Zurücksetzen der Klickzählung nach Verarbeitung
-        clickCount = 0;
-      }, 350); // tzime in which the second klick has to follow in order to detect the double klick event:
-    }
-  });
+          clickCount = 0;
+        }, 350); // time in which the second klick has to follow in order to detect the double klick event:
+      }
+    });
+  })
+ 
 
 
   window.addEventListener("resize", () => {
-    if (window.innerWidth > maxScreenWidthToShowTimer) {
-        // Bildschirm ist größer als die maximale Breite, alle Pause-Timer ausblenden
-        restPauseContainer.forEach(container => {
+    if (window.innerWidth > maxScreenWidthToShowTimer) { // the display is bigger than mobile screen size threshold dont show restPauseContainers
+        restPauseContainers.forEach(container => {
             container.style.display = "none";
         });
     }
   });
 
-  // Alle 10 Sekunden ein Signal an den Service Worker senden
+
+  // send keepAlive signal every ten seconds if the timer is currently running
   setInterval(() => {
-    registration.active.postMessage({ command: "keepAlive" });
-  }, 10000); // 10 Sekunden Intervall (Passen Sie das Intervall nach Bedarf an)
+    if (currentTimerTime !== 0) {
+      registration.active.postMessage({
+        command: "keepAlive",
+        duration: currentTimerTime,
+       });
+    }
+  }, 10000);
 
 
   updateCurrentTable();
@@ -135,16 +144,18 @@ function initializeApp(registration) {
   navButtons.forEach((navButton, index) => {
     navButton.addEventListener("click", (e) => {
       currentDayIndex = index;
-      updateCurrentTable(); // Event Listener für den neuen Table einrichten
+      updateCurrentTable(); // setup eventlisteners that trigger pause time for the newly displayed table
     });
   });
 
   const audioElement = document.getElementById("timerAudio");
 
-  // TIMER DISPLAY LOGIC
+  // TIMER DISPLAY LOGIC - receives a currentTime command every second from service worker => used to animate the progressbar and timer display
   navigator.serviceWorker.addEventListener("message", (event) => {
     const data = event.data;
     if (data.command === "currentTime") {
+      currentTimerTime = data.currentTime;
+
       const currentTime = data.currentTime / 1000;
       const formattedTime = data.formattedTime;
 
@@ -160,7 +171,9 @@ function initializeApp(registration) {
 
       if (currentTime <= 0) {
         audioElement.play();
-        currentProgressBar.value = 100; //progress bar wieder auf full setzen:
+        currentProgressBar.value = 100;
+        currentTimerDisplay.textContent = "00:00";
+        currentTimerTime = 0;
       }
     }
   });
@@ -172,6 +185,7 @@ function initializeApp(registration) {
       }
     }
   }
+
   function findCurrentlyDisplayedWorkoutTable() {
     for (let index = 0; index < navButtons.length; index++) {
       const button = navButtons[index];
@@ -182,6 +196,7 @@ function initializeApp(registration) {
     return -1;
   }
 
+  // sets up the newly or initially display workout table for listening to change events to the weight input so that the pause timer is triggered
   function updateCurrentTable() {
     currentWorkoutTable = workoutTables[currentDayIndex];
     currentProgressBar = progressBars[currentDayIndex];

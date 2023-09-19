@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const repsInputs = document.getElementsByClassName("reps");
     const targetRPEInputs = document.getElementsByClassName("targetRPE");
 
+    // if one of the exerciseCategorySelectors changes => display default set and rep and rpe values
     for (let i = 0; i < exerciseCategorySelectors.length; i++) {
         exerciseCategorySelectors[i].addEventListener("change", () => {
 

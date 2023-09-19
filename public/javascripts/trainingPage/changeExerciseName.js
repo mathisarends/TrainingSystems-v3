@@ -2,8 +2,6 @@
 //changes Exercise Selector in dependance of the exercise-category-selector
 const displayedSelectors = document.querySelectorAll('.exercise-name-selector:not([style*="display: none"])');
 
-
-
 document.addEventListener("DOMContentLoaded", () => {
 
   //remove placeholder values
@@ -41,10 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 
-// das hier muss dynamisch von der page gesendet werden ist mir momentan zu hardcoded
-
-
-
 function indexForCategory(category) {
   // This function maps category names to their corresponding index in exerciseNameSelectors
   switch (category) {
@@ -52,7 +46,6 @@ function indexForCategory(category) {
       return 1;
     case "Bench":
       return 2;
-    // Add more cases for other categories...
     case "Deadlift":
         return 3;
     case "Overheadpress":

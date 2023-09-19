@@ -34,19 +34,17 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = 0; i < currentNoteInputs.length; i++) {
             if (i < currentNoteInputs.length - 1) {
                 currentNoteInputs[i].addEventListener("change", () => {
-                    if (currentNoteInputs[i].value === "new" && i < currentNoteInputs.length - 2) {
+                    if (currentNoteInputs[i].value.toLowerCase() === "new" && i < currentNoteInputs.length - 2) {
 
                         currentNoteInputs[i].value = ""; //acts as a prompt so value is removed
 
 
-                        //wenn es das letzte value ist - nur eine reihe aufrücken
+                        //if it is the last value only move up one row
                         if (i === indexOfFirstEmptyTableRow - 1) {
-                            console.log("case 1")
                             const valuesOfCurrentTable = getAllPropertiesOfExerciseRow(currentTableRows[i]);
                             copyExerciseToAnotherTableRow(valuesOfCurrentTable, currentTableRows[i], currentTableRows[i + 1]);
                             return;
                         } else {
-                            console.log("case 2");
 
                             const valuesOfAffectedRows = [];
 
@@ -64,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                         }
 
-                    } else if (currentNoteInputs[i].value === "delete") {
+                    } else if (currentNoteInputs[i].value.toLowerCase() === "delete") {
 
                         currentNoteInputs[i].value = ""; //acts as a prompt so value is removed
 
@@ -73,11 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             console.log("case 1");
                             clearAllDataFromTableRow(currentTableRows[i]);
                         } else {
-                            //exercise löschen aber alle anderen aufrücken lassen: 
+                            //delete exercise the rest move up
                             
                             clearAllDataFromTableRow(currentTableRows[i]);
 
-                            // alle nachfolgenden table rows die inhalte haben....
+                            // all table rows taht have content
                             for (let k = i + 1; k < indexOfFirstEmptyTableRow; k++) {
                                 const exerciseDataOfTableRow = getAllPropertiesOfExerciseRow(currentTableRows[k]);
                                 copyExerciseToAnotherTableRow(exerciseDataOfTableRow, currentTableRows[k], currentTableRows[k - 1]);
@@ -95,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const exerciseCategorySelector = destRow.querySelector(".exercise-category-selector");
         exerciseCategorySelector.value = exerciseData.category;
-        exerciseCategorySelector.dispatchEvent(new Event("change")); //manuelles change event für visibility
+        exerciseCategorySelector.dispatchEvent(new Event("change")); // manuell change event so that the display is set acordingly
 
         const exerciseNameSelector = destRow.querySelector('.exercise-name-selector:not([style*="display: none"])'); //actually displayed selector
 
@@ -113,8 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         clearAllDataFromTableRow(sourceRow); //clears all data from existing table:
 
-        /* destRow.querySelector(".exercise-category-selector").value = exerciseData.exerciseCategory;
-        destRow.querySelector(".exercise-name-selector").value = exerciseData.exerciseName; */
     }
 
     function clearAllDataFromTableRow(row) {
@@ -134,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getAllPropertiesOfExerciseRow(row) {
 
-        // kleiner kniff wegen den ganzen selectors:
+        // only one of the selectors is displayed
         const displayedNameSelector = row.querySelector('.exercise-name-selector:not([style*="display: none"])');
 
         const category = row.querySelector(".exercise-category-selector").value;
@@ -162,7 +158,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return returnObject;
     }
 
-    //TODO: event listener für add events einbauen der das nochma checkt: 
+    // the page is rendered with no gaps from the start:
+    // that means if (there is not a category selected === "- Bitte Auswählen -") then that is the lastIndex
     function findIndexOfFirstEmptyExerciseRow(tableRows) {
         for (let index = 0; index < tableRows.length; index++) {
             const exerciseCategory = tableRows[index].querySelector(".exercise-category-selector").value;

@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("pauseTimer session eingebunden");
     
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.ready.then(registration => {
@@ -12,10 +10,34 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function initializeSessionTimer(registration) {
-      // Alle 10 Sekunden ein Signal an den Service Worker senden
+
+  let remainingTime = 0; // used in order to send the timer service worker wake up signals
+
+  const weightInputs = document.getElementsByClassName("weight"); //triggers timer
+  const categorySelectors = document.querySelectorAll(".exercise-category-selector");
+
+  const displayTimerField = document.getElementsByClassName("numbered-title")[0];
+  const restPauseContainer = document.getElementsByClassName("rest-pause-container")[0];
+  const progressBar = document.querySelector(".rest-pause-progress-bar");
+  const timerDisplay = document.querySelector(".rest-pause-timer");
+
+  let lastCategory = ""; //keep track of wich pauseTime is applied
+
+  const audioElement = document.getElementById("timerAudio");
+
+  let isTimerPaused = false;
+  let clickCount = 0;
+  let clickTimeout;
+  
   setInterval(() => {
-    registration.active.postMessage({ command: 'keepAlive' });
-  }, 10000); // 10 Sekunden Intervall (Passen Sie das Intervall nach Bedarf an)
+    if (remainingTime !== 0) {
+      registration.active.postMessage({ 
+        command: 'keepAlive',
+        duration: remainingTime
+       });
+    }
+
+  }, 10000); 
 
   const categoryPauseTimes = document.getElementsByClassName("category-pause-time-input");
   
@@ -33,20 +55,68 @@ function initializeSessionTimer(registration) {
     "Legs",
   ];
 
+  restPauseContainer.addEventListener("click", e => {
+    e.preventDefault();
+    clickCount++;
 
-  const weightInputs = document.getElementsByClassName("weight");
-  const categorySelectors = document.querySelectorAll(".exercise-category-selector");
+    if (clickCount === 1) {
+      clickTimeout = setTimeout(() => {
+        if (clickCount === 1) { // single click => pause timer
+          if (!isTimerPaused) { 
+            registration.active.postMessage( {
+              command: "pauseTimer",
+            })
+            isTimerPaused = true;
+          } else if (isTimerPaused) {
+            registration.active.postMessage({
+              command: "continueTimer",
+            })
+          }
+        }
+        else if (clickCount === 2) { // double click => add 30 seconds to timer
+          registration.active.postMessage({
+            command: "addRestTime",
+          })
+        }
+        clickCount = 0;
+      }, 350); // time in which the second klick has to follow in order to detect the double klick event:
+    }
+  })
 
-  const progressBar = document.querySelector(".rest-pause-progress-bar");
-  const timerDisplay = document.querySelector(".rest-pause-timer");
+  let isTimerDisplayed = false;
+  displayTimerField.addEventListener("click", e => {
+    e.preventDefault();
+    if (isTimerDisplayed) {
+      restPauseContainer.style.display = "none";
+      isTimerDisplayed = false;
 
-  let lastCategory = "";
+      registration.active.postMessage({ //send message to sw to stop timer
+        command: "stop",
+      })
 
-  const audioElement = document.getElementById("timerAudio");
+      progressBar.value = 100;
+      timerDisplay.textContent = "00:00";
+      remainingTime = 0;
+
+    } else {
+      restPauseContainer.style.display = "block";
+      isTimerDisplayed = true;
+    }
+  })
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > maxScreenWidthToShowTimer) {
+        // Bildschirm ist größer als die maximale Breite, alle Pause-Timer ausblenden
+        restPauseContainer.forEach(container => {
+            container.style.display = "none";
+        });
+    }
+  });
 
   navigator.serviceWorker.addEventListener("message", (event) => {
     const data = event.data;
     if (data.command === "currentTime") {
+      remainingTime = data.currentTime;
       const currentTime = data.currentTime / 1000;
       const formattedTime = data.formattedTime;
   
@@ -63,6 +133,8 @@ function initializeSessionTimer(registration) {
   
       if (currentTime <= 0) {
         audioElement.play();
+        progressBar.value = 100;
+        remainingTime = 0;
       }
     }
   });

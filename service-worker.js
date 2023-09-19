@@ -65,7 +65,6 @@ const assets = [
 
   "/javascripts/trainingPage/ajaxAutoSave.js",
   "/javascripts/trainingPage/calcBackoffMax.js",
-  "/javascripts/trainingPage/calcMax.js",
   "/javascripts/trainingPage/calculateSetsTonnage.js",
   "/javascripts/trainingPage/calcVolumeMedians.js",
   "/javascripts/trainingPage/changeExerciseName.js",
@@ -84,6 +83,7 @@ const assets = [
 
   "/javascripts/session/pauseTimer.js",
   "/offline",
+  "/welcome",
 
 ];
 
@@ -902,7 +902,6 @@ self.addEventListener("message", function (event) {
 })
 
 function startAutoSaveTimer(event) {
-  console.log("neuer aufruf der methode:")
   const interval = 1000; // 1 second
 
   if (timerInterval) {
@@ -981,8 +980,18 @@ self.addEventListener("message", function(event) {
 self.addEventListener("message", function (event) {
   const data = event.data;
   if (data.command === "keepAlive") {
+
+    if (!isTimerPaused) {
+      restartRestPauseTimer(data.duration - 1000); //1 sekunde direkt abziehen:
+    }
   }
 });
+
+function restartRestPauseTimer(newDuration) {
+  clearInterval(timer);
+  remainingTime = newDuration;
+  startTimer(newDuration);
+}
 
 self.addEventListener("message", function (event) {
   const data = event.data;
@@ -997,14 +1006,17 @@ function startTimer(duration) {
   const interval = 1000; // 1 second
 
   if (timer) {
-    clearInterval(timer); // if there is already a timer clear it
+    clearInterval(timer); // Wenn bereits ein Timer läuft, stoppe ihn
   }
+
+  // Direkte Aktualisierung der Timer-Anzeige beim Start
+  updateTimerDisplay(remainingTime);
 
   timer = setInterval(function () {
     if (remainingTime <= 0) {
       clearInterval(timer);
 
-      // send push notification to client that the timer has exproed
+      // Sende Push-Benachrichtigung an den Client, dass der Timer abgelaufen ist
       self.registration.showNotification("TTS", {
         body: "Your timer has expired!",
         tag: "timer-notification",
@@ -1013,44 +1025,54 @@ function startTimer(duration) {
     } else {
       remainingTime -= interval;
 
-      // formatt remaining time to mm:ss
+      // Formatiere die verbleibende Zeit auf mm:ss
       const currentTime = remainingTime / 1000;
       const minutes = Math.floor(currentTime / 60);
       const seconds = Math.floor(currentTime % 60);
-      const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
+      let formattedTime = `${String(minutes).padStart(2, "0")}:${String(
         seconds
       ).padStart(2, "0")}`;
 
-      // display remaining time in push-notification
+      // Zeige die verbleibende Zeit in der Push-Benachrichtigung an
       self.registration.showNotification("TTS", {
         body: `Remaining time: ${formattedTime}`,
         tag: "timer-notification",
       });
 
-      // send the remaining time to frontend for timer display
-      self.clients.matchAll().then((clients) => {
-        clients.forEach((client) => {
-          client.postMessage({
-            command: "currentTime",
-            currentTime: remainingTime,
-            formattedTime: formattedTime,
-          });
-        });
-      });
+      // Sende die verbleibende Zeit an die Frontend-Anwendung zur Anzeige
+      updateTimerDisplay(remainingTime, formattedTime);
     }
   }, interval);
+}
+
+
+function updateTimerDisplay(time, formattedTime) {
+
+  if (!formattedTime) {
+    const currentTime = time / 1000;
+    const minutes = Math.floor(currentTime / 60);
+    const seconds = Math.floor(currentTime % 60);
+    formattedTime = `${String(minutes).padStart(2, "0")}:${String(
+      seconds
+    ).padStart(2, "0")}`;
+  }
+
+
+  // Aktualisiere die Timer-Anzeige in der Benutzeroberfläche
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
+      client.postMessage({
+        command: "currentTime",
+        currentTime: time,
+        formattedTime: formattedTime,
+      });
+    });
+  });
 }
 
 function stopTimer() {
   clearInterval(timer);
   remainingTime = 0;
-  self.clients.matchAll().then((clients) => {
-    clients.forEach((client) => {
-      client.postMessage({
-        command: 'timerStopped',
-      });
-    });
-  });
 }
 
 function pauseTimer() {

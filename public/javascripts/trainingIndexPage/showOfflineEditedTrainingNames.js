@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Diese Seite zeigt auf der TrainingsIndex Seite die richtigen Titel
+  // this script shows the right titles on the training index page if they were edited while offline or in offline mode
+  // also shows the 
+
   const trainingPlanTitles = document.querySelectorAll(".training-plan-title");
   const sessionTitles = document.querySelectorAll(".session-title");
 
   const trainingPlanContainers = document.querySelectorAll(".training-plan-container");
-  const noTrainingAvailableContainers = document.querySelectorAll(".no-training-available");
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then((registration) => {

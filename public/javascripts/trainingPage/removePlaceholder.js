@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+    // if the placeholder category is selected: dont display it by setting the opacity to 0
+
     const exerciseCategorySelectors = document.getElementsByClassName("exercise-category-selector");
 
     for (let i = 0; i < exerciseCategorySelectors.length; i++) {

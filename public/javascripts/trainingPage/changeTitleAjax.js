@@ -1,18 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("change Title ajax");
+    // changes the title of the training edit page while not refreshing - used in order to catch fetch events in service worker
 
     const backToTrainingPageBTN = document.querySelector(".form-button");
-    backToTrainingPageBTN.addEventListener("click", e => {
-        e.preventDefault();
 
+    backToTrainingPageBTN.addEventListener("click", e => { //simply navigates back to training
+        e.preventDefault();
         window.location.href = "/training";
     })
 
     const submitButton = document.querySelector(".form-button-2");
 
     submitButton.addEventListener("click", e => {
-
         e.preventDefault();
         form.dispatchEvent(new Event("submit"));
     })
@@ -32,14 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch(`${window.location.pathname}`, {
                 method: "PATCH",
-                body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
+                body: JSON.stringify(formDataObject), // send json object
                 headers: {
-                    "Content-Type": "application/json", // Setze den Content-Type auf application/json
+                    "Content-Type": "application/json", // set contennt type accordingly
                 },
             });
 
             if (response.ok) {
-                console.log("GEPATCHED");
                 showMessage(".save-status-sucess", "Erfolgreich aktualisiert");
 
             } else {
@@ -47,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (err) {
             console.error("Fehler beim aktualisieren", err);
-            showMessage(".save-status-failure", "Keine Internetverbindung deine Daten werden später aktualisiert!");
+            showMessage(".save-status-failure", "Offline Modus: Daten erfolgreich aktualisert!");
         }
 
     })

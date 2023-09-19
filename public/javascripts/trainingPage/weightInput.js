@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  // calculates the median if the user decides to input more values than one in the following format
+  // 10;10;15;15
+
     const weightInput = document.getElementsByClassName("weight");
 
     for (let i = 0; i < weightInput.length; i++) {
