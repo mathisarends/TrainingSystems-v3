@@ -1,5 +1,5 @@
 // service-worker.js
-const version = 22;
+const version = 23;
 
 const staticCache = `static-assets-${version}-new`; //html files etc.
 const dynamicCache = `dynamic-assets-${version}`;
@@ -46,14 +46,14 @@ const assets = [
 
   //js files
   "/javascripts/displayOfflineData.js",
+  "/javascripts/pwaBanner.js",
+  "/javascripts/syncThroughSW.js",
 
   "/javascripts/exercises/ajaxSave.js",
   "/javascripts/exercises/showRightTabFromStart.js",
   "/javascripts/exercises/showSection.js",
 
   "/javascripts/header/header.js",
-  "/javascripts/homepage/pwaBanner.js",
-  "/javascripts/homePage/syncThroughSW.js",
 
   "/javascripts/register/navigation.js",
   "/javascripts/register/volumeCalculations.js",
