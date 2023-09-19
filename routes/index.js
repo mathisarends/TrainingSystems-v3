@@ -65,7 +65,7 @@ Router.get("/", async (req, res) => {
         userID: user.id,
       });
     } else {
-      res.redirect("/welcome");
+      res.render("indexNoAuthentication");
     }
   } catch (err) {
     console.log("Fehler beim Laden der Hauptseite");

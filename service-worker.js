@@ -839,6 +839,9 @@ function networkRevalidateAndCache(ev) {
     })
     .catch((err) => {
         // if network requests fail try to cache Response => fallback on offlinepage
+
+        console.log("Felher beim aufrufen der seite", err);
+
       return caches.match(ev.request).then((cacheResponse) => {
         if (cacheResponse) {
           return cacheResponse;
