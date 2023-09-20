@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       //aufpassen Netzwerkfehler ist nicht der einzigste Fehler der auftreten kann:
-      console.error("Fehler beim Aktualisieren ", error);
       showMessage(".save-status-failure", "Offline Mode: Erfolgreich aktualisert!");
     }
   });

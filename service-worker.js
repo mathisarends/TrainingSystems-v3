@@ -68,7 +68,6 @@ const assets = [
   "/javascripts/trainingPage/calculateSetsTonnage.js",
   "/javascripts/trainingPage/calcVolumeMedians.js",
   "/javascripts/trainingPage/changeExerciseName.js",
-  "/javascripts/trainingPage/displayCalculatedVolumes.js",
   "/javascripts/trainingPage/displayDefaultSetSchema.js",
   "/javascripts/trainingPage/displayTrainingDay.js",
   "/javascripts/trainingPage/notePrompts.js",
@@ -151,9 +150,9 @@ self.addEventListener("install", (ev) => {
 });
 
 self.addEventListener("fetch", async (event) => {
-  /* const isOnline = self.navigator.onLine; */ //zuverlässigen weg als diesen gefunden.
   const url = new URL(event.request.url);
 
+  // determine the type of request
   const isImage = url.hostname.includes("picsum.photos") || url.pathname.endsWith(".png") || url.pathname.endsWith(".jpg");
   const isCSS = url.pathname.endsWith(".css") || url.hostname.includes("googleapis.com");
   const isJS = url.pathname.endsWith(".js");
@@ -162,33 +161,30 @@ self.addEventListener("fetch", async (event) => {
   const isFont = url.hostname.includes("gstatic") || url.pathname.endsWith("woff2");
   const isPage = event.request.mode === "navigate"; 
 
-  if (isCSS | isJS || isManfifest || isImage || isAudio || isFont) {
+  if (isCSS | isJS || isManfifest || isImage || isFont) {
     event.respondWith(staleNoRevalidate(event)); 
-  } else if (event.request.method === "POST" && event.request.url.includes("/login")) {
+
+  } else if (isAudio) { //because this isnt found in the cache unfortunatley
+    event.respondWith(cacheOnlyAudio(event));
+
+  } else if (event.request.method === "POST" && event.request.url.includes("/login")) { //the login post requests always have to go other the network
     event.respondWith(changeThroughNetworkOfflineFallback(event));
 
-    //bei sonstigen patch/post/delete requests entscheided der ausgewählte modus darüber (netzwerk oder lokal zwischenspeichern)
+    // change requests to the page go over the network first and fall back on local storage indexDB
   } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
     
     if (defaultNetworkMode) {
       event.respondWith(changeThroughNetworkOfflineFallback(event));
     } else {
-      let objectStore;
 
-      if (event.request.method === "PATCH") {
-        objectStore = "offlinePatches";
-      } else if (event.request.method === "POST") {
-        objectStore = "offlinePosts";
-      } else if (event.request.method === "DELETE") {
-        objectStore = "offlineDeletes";
-      }
+      const objectStore = determineObjectStoreByMethod(event.request.method);
 
       event.respondWith(handleOfflineChange(event.request, objectStore));
     }
 
     // has to be accessed over the network first because the userID is rendered at this page.
     // on this page happens the sync process
-    // otherwise data from wrong account that was previously logged in in the device may be synced
+    // otherwise data from wrong account that was previously logged in in the device may be synced also the app server wont start up at all
   } else if (url.pathname === "/" && isPage) {
     event.respondWith(networkRevalidateAndCache(event));
   }
@@ -209,6 +205,20 @@ self.addEventListener("fetch", async (event) => {
     event.respondWith(staleWhileRevalidate(event));
   }
 });
+
+function determineObjectStoreByMethod(method) {
+  let objectStore;
+
+  if (method === "PATCH") {
+    objectStore = "offlinePatches";
+  } else if (method === "POST") {
+    objectStore = "offlinePosts";
+  } else if (method === "DELETE") {
+    objectStore = "offlineDeletes";
+  }
+
+  return objectStore;
+}
 
 async function isOnline() {
   try {
@@ -235,15 +245,14 @@ self.addEventListener("message", async (event) => {
     defaultNetworkMode = true;
     
     const userID = event.data.registratedUser;
-    console.log("userID switch to default mode:", userID);
+    console.log(userID, "switched to default mode");
     const onlineStatus = await isOnline();
-    console.log("online Status", onlineStatus);
 
     if (onlineStatus) {
       try {
         const requestPending = await isOfflineRequestPending(userID); //for the certain user:
 
-        if (requestPending && onlineStatus && !isSynced) {
+        if (requestPending && onlineStatus && !isSynced) { //is synced initially to false
           event.source.postMessage({
             type: "showSyncButton",
           });
@@ -273,7 +282,7 @@ self.addEventListener("message", async (event) => {
           });
         }
       } catch (err) {
-        console.error("Fehler beim automatischen aktualisieren der offline daten:", err);
+        console.error("Error while trying to update offline data:", err);
 
         // this shows a failure modal in the frontend
         event.source.postMessage({
@@ -397,8 +406,6 @@ async function returnDeletedTrainings() {
   })
 }
 
-
-
 // used on trainingIndexPage | this method returns locally saved data in offlineMode in order to show the user changes in meta data (title, frequenncy etc)
 async function returnTrainingTitlesEdited() {
   if (!DB) {
@@ -451,10 +458,8 @@ async function isOfflineDataAvailable(url, userID) {
       const data = matchingResult ? matchingResult.body : false;
   
       if (data) {
-        console.log("offline data wurde gefunden: ");
         resolve(data);
       } else {
-        console.log("offline data wurde nicht gefunden");
         reject("No Offline Data available");
       }
     }
@@ -787,8 +792,30 @@ function networkOnlyAuthentication(ev) {
     });
 }
 
-  //check cache and fallback on fetch for response - always attempt to fetch a new copy and update the cache
+function cacheOnlyAudio(ev) {
+  return caches.match(ev.request).then((cacheResponse) => {
+    if (cacheResponse) {
+      return cacheResponse;
+    } else {
+      console.log("Audio-Datei nicht im Cache gefunden, versuche, sie herunterzuladen...");
 
+      return fetch(ev.request).then((networkResponse) => {
+        if (networkResponse.ok) {
+
+          caches.open(staticCache).then((cache) => {
+            cache.put(ev.request, networkResponse.clone());
+          });
+          return networkResponse;
+        } else {
+          console.error("Fehler beim Herunterladen der Audio-Datei.");
+          // Hier kannst du eine Fehlerbehandlung durchführen, z.B. eine Ersatz-Datei bereitstellen.
+        }
+      });
+    }
+  });
+}
+
+  //check cache and fallback on fetch for response - always attempt to fetch a new copy and update the cache
 function staleWhileRevalidate(ev) {
   return caches.match(ev.request).then((cacheResponse) => {
     let fetchResponse = fetch(ev.request).then((response) => {
@@ -809,9 +836,6 @@ function staleNoRevalidate(ev) {
     if (cacheResponse) {
       return cacheResponse; // if the ressource is in cache return 
     } else {
-      // if not try to fetch it and put it in the cache for later requests
-      console.log("das hier");
-      console.log(ev.request);
       return fetch(ev.request).then((response) => {
         return caches.open(dynamicCache).then((cache) => {
           cache.put(ev.request, response.clone());
@@ -845,8 +869,6 @@ function networkRevalidateAndCache(ev) {
     .catch((err) => {
         // if network requests fail try to cache Response => fallback on offlinepage
 
-        console.log("Felher beim aufrufen der seite", err);
-
       return caches.match(ev.request).then((cacheResponse) => {
         if (cacheResponse) {
           return cacheResponse;
@@ -866,15 +888,8 @@ async function changeThroughNetworkOfflineFallback(ev) {
 
     return response;
   } catch (err) {
-    let objectStore;
 
-    if (ev.request.method === "PATCH") {
-      objectStore = "offlinePatches";
-    } else if (ev.request.method === "POST") {
-      objectStore = "offlinePosts";
-    } else {
-      objectStore = "offlineDeletes";
-    }
+    const objectStore = determineObjectStoreByMethod(ev.request.method);
 
     await handleOfflineChange(requestClone, objectStore);
   }
