@@ -6,7 +6,7 @@ const dynamicCache = `dynamic-assets-${version}`;
 const imageCache = `imageCache-${version}`;
 
 let DB = null;
-let isSynced = true;
+let isSynced = false;
 let defaultNetworkMode = true; //true = default behaviour, false = offline mode to save data
 
 const imageAssets = [
@@ -300,8 +300,9 @@ self.addEventListener("message", (event) => {
     const userID = message.user;
 
     console.log("userID", userID);
+    console.log("isSynced", isSynced);
 
-    if (!isSynced) { //if the data was not synced then
+    // is synced flag not used anymore because entries are deleted then synced_
       isOfflineDataAvailable(url, userID)
         .then((offlineData) => {
           event.source.postMessage({
@@ -312,7 +313,6 @@ self.addEventListener("message", (event) => {
         .catch((error) => {
           console.log("Error while trying to retrieve the offline Data", error);
         });
-    }
 
   }
 });
@@ -451,8 +451,10 @@ async function isOfflineDataAvailable(url, userID) {
       const data = matchingResult ? matchingResult.body : false;
   
       if (data) {
+        console.log("offline data wurde gefunden: ");
         resolve(data);
       } else {
+        console.log("offline data wurde nicht gefunden");
         reject("No Offline Data available");
       }
     }
@@ -800,13 +802,16 @@ function staleWhileRevalidate(ev) {
   });
 }
 
-// for static static files (css, js, image, manifest) and pages in offline mode
+//TODO:
+// for static static files (css, js, image, manifest) and pages in offline mode: TODO im offline mode wird das hier zweimal aufgerufen mit einem fehler: wahrscheinlich wegen mp3
 function staleNoRevalidate(ev) {
   return caches.match(ev.request).then((cacheResponse) => {
     if (cacheResponse) {
       return cacheResponse; // if the ressource is in cache return 
     } else {
       // if not try to fetch it and put it in the cache for later requests
+      console.log("das hier");
+      console.log(ev.request);
       return fetch(ev.request).then((response) => {
         return caches.open(dynamicCache).then((cache) => {
           cache.put(ev.request, response.clone());

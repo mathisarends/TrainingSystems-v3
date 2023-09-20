@@ -80,6 +80,16 @@ function initializeApp(registration) {
     })
   })
 
+  window.addEventListener("beforeunload", event => {
+    registration.active.postMessage({
+      command: "stop"
+    });
+
+    currentProgressBar.value = 100;
+    currentTimerDisplay.textContent = "00:00";
+    currentTimerTime = 0
+  })
+
 
   // variables in order to detec a double tap / click event
   let isTimerPaused = false;

@@ -1,12 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("Einbindemeldung zum testen:")
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then(function (registration) {
       if (registration.active) {
 
         const userIDInput = document.getElementById("userID");
+        console.log("userIDUnput bestimmt über verzweigung", userIDInput);
         
         // then there is a userInput on the page request offline data for url and user
         if (userIDInput) {
+          console.log("get offline data request is sent");
           const userID = userIDInput.value;
           registration.active.postMessage({
             command: "getOfflineData",
