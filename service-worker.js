@@ -6,7 +6,7 @@ const dynamicCache = `dynamic-assets-${version}`;
 const imageCache = `imageCache-${version}`;
 
 let DB = null;
-let isSynced = false;
+let isSynced = true; //TODO: testen ob das problme macht
 let defaultNetworkMode = true; //true = default behaviour, false = offline mode to save data
 
 const imageAssets = [
@@ -238,6 +238,18 @@ async function isOnline() {
   }
 }
 
+//the frontend can ask whetere the service worker is online
+self.addEventListener("message", async (event) => {
+  if (event.data.command === "getOnlineStatus") {
+    const onlineStatus = await isOnline();
+
+    event.source.postMessage({
+      type: "swOnlineStatus",
+      onlineStatus: onlineStatus,
+    })
+  }
+})
+
 // if the mode is switched to online show the sync button if there are requests pending: also is triggered initially then the page loads first
 self.addEventListener("message", async (event) => {
   if (event.data.command === "switchToDefaultMode") {
@@ -252,7 +264,7 @@ self.addEventListener("message", async (event) => {
       try {
         const requestPending = await isOfflineRequestPending(userID); //for the certain user:
 
-        if (requestPending && onlineStatus && !isSynced) { //is synced initially to false
+        if (requestPending && onlineStatus) { //is synced initially to false
           event.source.postMessage({
             type: "showSyncButton",
           });
@@ -271,6 +283,10 @@ self.addEventListener("message", async (event) => {
     const userID = event.data.registratedUser;
 
     const onlineStatus = await isOnline();
+
+    event.source.postMessage({
+      type: "showWaitForSyncModal",
+    })
 
     if (onlineStatus) {
       try {
@@ -339,6 +355,7 @@ self.addEventListener("message", async (event) => {
       command: "networkModeResponse",
       networkMode: defaultNetworkMode, // global variable. true = default behaviour while fetching, false = the data is saved locally in indexDB storage in order to save data. data may be synced then online and default network mode
       onlineStatus: onlineStatus,
+      isSynced: isSynced,
     })
   }
 })

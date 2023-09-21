@@ -67,28 +67,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
     await waitForServiceWorkerActivation();
 
-    // intitialen status setzen und an den service worker senden:
-    if (isOnlineModeOn === "true") {
-      registration.active.postMessage({
-        command: "switchToDefaultMode",
-        registratedUser: registratedUserID,
-      });
+    //get online status first => if !online then set the wifi to offline automatically
+    // if online set the custom wifi
+    registration.active.postMessage({
+      command: "getOnlineStatus",
+    });
 
-      showOnlineSVG();
-    } else if (isOnlineModeOn === "false") {
-      registration.active.postMessage("switchToOfflineMode");
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      const data = event.data;
 
-      showOfflineSVG();
-    } else {
-      //inital the default mode is selected
+      if (data.type === "swOnlineStatus") {
 
-      registration.active.postMessage({
-        command: "switchToDefaultMode",
-        registratedUser: registratedUserID,
-      });
+        const onlineStatus = data.onlineStatus;
 
-      showOnlineSVG();
-    }
+        if (onlineStatus) {
+          // set initial status and send it to service worker => value from localstorage
+          if (isOnlineModeOn === "true") {
+            registration.active.postMessage({
+              command: "switchToDefaultMode",
+              registratedUser: registratedUserID,
+            });
+
+            showOnlineSVG();
+          } else if (isOnlineModeOn === "false") {
+            registration.active.postMessage("switchToOfflineMode");
+
+            showOfflineSVG();
+          } else {
+            //inital the default mode is selected
+
+            registration.active.postMessage({
+              command: "switchToDefaultMode",
+              registratedUser: registratedUserID,
+            });
+
+            showOnlineSVG();
+          }
+        } else if (!onlineStatus) {
+
+          // if the device is not online always set network mode to false;
+          registration.active.postMessage("switchToOfflineMode");
+          showOfflineSVG();
+        }
+      }
+    });
 
     // bei auswahl neune status an den service worker senden und im localstorage für initiales laden speichern
     onlineSVG.addEventListener("click", () => {
@@ -98,14 +120,34 @@ document.addEventListener("DOMContentLoaded", () => {
       showOfflineSVG(); //switch view to offline - always display current status
     });
 
+    // the user is not allowed to switch to online mode when the device itself is offline
     offlineSVG.addEventListener("click", () => {
       registration.active.postMessage({
-        command: "switchToDefaultMode",
-        registratedUser: registratedUserID,
+        command: "getOnlineStatus",
       });
 
-      localStorage.setItem("wifi", true);
-      showOnlineSVG();
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        const data = event.data;
+
+        if (data.type === "swOnlineStatus") {
+          if (data.onlineStatus === true) {
+            registration.active.postMessage({
+              command: "switchToDefaultMode",
+              registratedUser: registratedUserID,
+            });
+            localStorage.setItem("wifi", true);
+            showOnlineSVG();
+          } else {
+            //show modal that the device is not online
+
+            offlineModal.querySelector("input").value =
+              "Keine Internetverbindung";
+
+            showModal();
+            setTimeout(hideModal, 3000);
+          }
+        }
+      });
     });
 
     //wenn auf den online modus gewechselt wird und der service worker feststellt dass es ungespeicherte daten aus dem offline mode gibt dann wird dieser button angezeigt: um zu synchroniseren:
@@ -133,6 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const ackButton = document.getElementById("ackBTN");
     const offlineModal = document.getElementById("offlineModal");
 
+    const waitForSyncModal = document.getElementById("waitForSyncModal"); //to inform the user process has started
+
     ackButton.addEventListener("click", (e) => {
       e.preventDefault();
 
@@ -145,8 +189,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // if the data was synced show modal for 3 seconds
         if (data.type === "offlineSync") {
+          waitForSyncModal.style.display = "none";
+
           showModal();
-          setTimeout(hideModal, 3000);
+
+          setTimeout(hideModal, 2500);
         }
       });
 
@@ -154,13 +201,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = event.data;
 
         if (data.type === "offlineSyncFailure") {
+          //do not display the loading modal anymore => instead show the new one
+
+          waitForSyncModal.style.display = "none";
+
           offlineModal.querySelector("input").value =
             "Fehler beim Synchronisieren";
           showModal();
+
           setTimeout(hideModal, 4000);
 
           syncSVG.style.display = "none";
           onlineSVG.style.display = "block";
+        }
+      });
+
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        const data = event.data;
+
+        if (data.type === "showWaitForSyncModal") {
+          waitForSyncModal.style.display = "block";
         }
       });
     }
@@ -168,6 +228,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Funktion zum Einblenden des Modals
     function showModal() {
       offlineModal.style.display = "block";
+
+      ackButton.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        hideModal();
+      });
     }
 
     // Funktion zum Ausblenden des Modals
@@ -177,16 +243,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showOnlineSVG() {
-        onlineSVG.style.display = "block";
-        offlineSVG.style.display = "none";
-      }
-    
-      function showOfflineSVG() {
-        onlineSVG.style.display = "none";
-        offlineSVG.style.display = "block";
-      }
+      onlineSVG.style.display = "block";
+      offlineSVG.style.display = "none";
+    }
+
+    function showOfflineSVG() {
+      onlineSVG.style.display = "none";
+      offlineSVG.style.display = "block";
+    }
   }
-
-
-
 });

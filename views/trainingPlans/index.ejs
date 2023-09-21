@@ -11,6 +11,9 @@
             class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
     </div>
 
+
+    <input id="userIdentification" type="hidden" name="userIdentification" value="<%= userID %>">
+
     <!--Custom Trainings-->
     <section class="custom-view-container flow" style="--flow-space: 2em;">
 
@@ -38,7 +41,7 @@
                                     </div>
                                     <input type="text" class="customNextTrainingWeek"
                                         value="<%= customCurrentTrainingWeek[i] %>" style="display: none">
-                                        <div class="training-plan-title uppercase">
+                                    <div class="training-plan-title uppercase">
                                         <%= userCustomTrainings[i].title || "Custom A" %>
                                     </div>
                                     <div class="ff-sans-cond fs-400 letter-spacing-4">
@@ -57,7 +60,18 @@
                             <button class="main-page-button edit-training-plan-button uppercase"
                                 id="edit-custom-training-button">Bearbeiten</button>
 
+                            <button class="more-training-options main-page-button training-page-button uppercase letter-spacing-1" style="display: none">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-chevrons-down">
+                                    <polyline points="7 13 12 18 17 13"></polyline>
+                                    <polyline points="7 6 12 11 17 6"></polyline>
+                                </svg>
+                            </button>
+
                             <% for (let i=0; i < userCustomTrainings.length; i++) { %>
+
                                 <form action="/training/delete-training-plan?_method=DELETE" method="POST"
                                     class="delete-custom-form" style="display: none">
                                     <input type="hidden" value="<%= i %>" name="deleteIndex">
@@ -66,6 +80,13 @@
                                         value="<%= userCustomTrainings[i].title %>">
                                     <button class="main-page-button uppercase" type="submit">Löschen</button>
                                 </form>
+
+                                <!--Hier kann die logik zum archivieren eines bestimmten planes eingefügt werden-->
+                                <!--TODO das auch umsetzen:-->
+                                <form action="#" method="POST" class="archive-custom-form" style="display: none;">
+                                    <button class="main-page-button uppercase" type="submit">ARCHIVIEREN</button>
+                                </form>
+
                                 <% } %>
 
                         </div>
@@ -166,8 +187,8 @@
                 Bearbeiten
             </button>
             <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
-                <form action="/training/reset-template-training?_method=DELETE" method="POST" class="reset-template-training-form"
-                    style="display: none;">
+                <form action="/training/reset-template-training?_method=DELETE" method="POST"
+                    class="reset-template-training-form" style="display: none;">
                     <input type="hidden" value="<%= i %>" name="resetIndex">
                     <input type="hidden" value="template-training" name="trainingPlanType">
                     <button class="main-page-button uppercase" type="submit">Löschen</button>
@@ -190,9 +211,10 @@
 
     <div id="notAccesibleModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
         <div class="modal-content flow" style="--flow-space: 0.5em;">
-            <input type="text" readonly value="Offline Mode Restriced">
+            <input type="text" readonly value="Offline Mode Restriced" style="white-space: pre-line;">
             <div class="modal-buttons">
-                <button class="modal-button text-accent" id="notAccesibleModalACK">VERSTANDEN</button>
+                <button class="modal-button text-accent" id="syncNowButton">SYNC NOW</button>
+                <button class="modal-button text-accent" id="cancelSyncButton">CANCEL</button>
             </div>
         </div>
     </div>

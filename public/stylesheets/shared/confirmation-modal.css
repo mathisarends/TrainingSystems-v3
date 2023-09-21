@@ -48,9 +48,15 @@
   .modal-content p {
     text-align: center;
   }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
   
   /* Stil für die Buttons im Dialogfeld */
   .modal-button {
+    flex: 1;
     margin: 5px;
     padding: 8px 16px;
     background: hsl(var(--clr-dark));
