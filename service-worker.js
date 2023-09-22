@@ -166,6 +166,7 @@ self.addEventListener("fetch", async (event) => {
 
   } else if (isAudio) { //because this isnt found in the cache unfortunatley
     event.respondWith(cacheOnlyAudio(event));
+    console.log(url);
 
   } else if (event.request.method === "POST" && event.request.url.includes("/login")) { //the login post requests always have to go other the network
     event.respondWith(changeThroughNetworkOfflineFallback(event));
@@ -364,7 +365,10 @@ self.addEventListener("message", (event) => {
   const message = event.data;
 
   if (message.command === "getOfflineEditedTrainingTitles") {
-      returnTrainingTitlesEdited()
+
+    const userID = message.userID;
+
+      returnTrainingTitlesEdited(userID)
         .then((editedEntries) => {
           event.source.postMessage({
             command: "offlineTrainingEdits",
@@ -382,7 +386,9 @@ self.addEventListener("message", (event) => {
   const message = event.data;
   if (message.command === "getOFflineDeletedTrainings") {
 
-    returnDeletedTrainings()
+    const userID = message.userID;
+
+    returnDeletedTrainings(userID)
       .then((deletedTrainings) => {
         event.source.postMessage({
           command: "sendDeletedTrainings",
@@ -395,7 +401,7 @@ self.addEventListener("message", (event) => {
   }
 })
 
-async function returnDeletedTrainings() {
+async function returnDeletedTrainings(userID) {
   if (!DB) {
     await openDB();
   }
@@ -406,13 +412,21 @@ async function returnDeletedTrainings() {
 
     const request = delteStore.getAll();
 
-    request.onsuccess = () => {
-      const result = request.result;
+    let deletedTrainings = [];
 
-      if (result.length === 0) {
+    request.onsuccess = (event) => {
+      const allDeletes = event.target.result;
+
+      for (const del of allDeletes) {
+        if (del.userIdentification === userID) {
+          deletedTrainings.push(del.body);
+        }
+      }
+
+      if (deletedTrainings.length === 0) {
         reject(); //no deleted plans => reject
       } else {
-        resolve(result); //send back the contents that there deleted (fetchRequestData)
+        resolve(deletedTrainings); //send back the contents that there deleted (fetchRequestData)
       }
     }
 
@@ -424,7 +438,7 @@ async function returnDeletedTrainings() {
 }
 
 // used on trainingIndexPage | this method returns locally saved data in offlineMode in order to show the user changes in meta data (title, frequenncy etc)
-async function returnTrainingTitlesEdited() {
+async function returnTrainingTitlesEdited(userID) {
   if (!DB) {
     await openDB();
   }
@@ -437,7 +451,8 @@ async function returnTrainingTitlesEdited() {
     request.onsuccess = () => {
       const result = request.result;
 
-      const editedEntries = result.filter((entry) => entry.url.includes("edit")); //keep all the entrys that have edit included
+      // filter entries by userID
+      const editedEntries = result.filter((entry) => entry.url.includes("edit") && entry.userIdentification === userID); //keep all the entrys that have edit included
 
       if (editedEntries.length === 0) {
         reject(); //no entries were found => reject
@@ -810,8 +825,10 @@ function networkOnlyAuthentication(ev) {
 }
 
 function cacheOnlyAudio(ev) {
+  console.log("audio", ev.request);
   return caches.match(ev.request).then((cacheResponse) => {
     if (cacheResponse) {
+      console.log(cacheResponse);
       return cacheResponse;
     } else {
       console.log("Audio-Datei nicht im Cache gefunden, versuche, sie herunterzuladen...");
@@ -821,8 +838,8 @@ function cacheOnlyAudio(ev) {
 
           caches.open(staticCache).then((cache) => {
             cache.put(ev.request, networkResponse.clone());
+            return networkResponse;
           });
-          return networkResponse;
         } else {
           console.error("Fehler beim Herunterladen der Audio-Datei.");
           // Hier kannst du eine Fehlerbehandlung durchführen, z.B. eine Ersatz-Datei bereitstellen.

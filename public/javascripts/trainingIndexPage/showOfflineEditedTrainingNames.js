@@ -7,17 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const trainingPlanContainers = document.querySelectorAll(".training-plan-container");
 
+  const userID = document.getElementById("userIdentification").value;
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then((registration) => {
       if (registration.active) {
         registration.active.postMessage({
           command: "getOfflineEditedTrainingTitles",
+          userID: userID,
         });
 
         //dont show deleted Trainings
         registration.active.postMessage({
           //hier die deletes anfragen:
           command: "getOFflineDeletedTrainings",
+          userID: userID,
         })
       }
     });
@@ -31,16 +35,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (deletedTrainings) {
           for (const deletedTraining of deletedTrainings) {
-            if (deletedTraining.body.trainingPlanType === "custom-training") {
+            if (deletedTraining.trainingPlanType === "custom-training") {
               const allCustomTrainings = trainingPlanContainers[0].querySelectorAll(".custom-training-container");
-              allCustomTrainings[deletedTraining.body.deleteIndex].style.display = "none";
+              allCustomTrainings[deletedTraining.deleteIndex].style.display = "none";
 
 
-            } else if (deletedTraining.body.trainingPlanType === "session-training") {
+            } else if (deletedTraining.trainingPlanType === "session-training") {
               const allCustomSessions = trainingPlanContainers[1].querySelectorAll(".custom-training-container");
-              allCustomSessions[deletedTraining.body.deleteIndex].style.display = "none";
+              allCustomSessions[deletedTraining.deleteIndex].style.display = "none";
 
-            } else if (deletedTraining.body.trainingPlanType === "template-training") {
+            } else if (deletedTraining.trainingPlanType === "template-training") {
               // hier eigentlich nichts weiter machen: //vllt das hier gar nicht zulassen oder überlegen was man da machen kann.
               // alte daten würden ja noch angezeigt werden ^^:
             }

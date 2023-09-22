@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
     template: "/training/reset-template-training",
   };
 
+  const userIdentification = document.getElementById("userIdentification").value;
+  console.log("userIdentification", userIdentification);
+
   allDeleteForms.forEach((form, index) => {
     let fetchUrl; //decide by index which route shall be used
     if (index < upperLimitForCustomTrainingPlans) {
@@ -45,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       formDataObject.url = fetchUrl;
+      formData.userIdentification = userIdentification;
+      console.log(formData.userIdentification + " vs " + userIdentification);
 
       console.log(formDataObject);
 

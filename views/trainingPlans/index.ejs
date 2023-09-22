@@ -11,7 +11,6 @@
             class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
     </div>
 
-
     <input id="userIdentification" type="hidden" name="userIdentification" value="<%= userID %>">
 
     <!--Custom Trainings-->
@@ -78,6 +77,7 @@
                                     <input type="hidden" value="custom-training" name="trainingPlanType">
                                     <input type="hidden" class="deleteTitle"
                                         value="<%= userCustomTrainings[i].title %>">
+                                    <input type="hidden" name="userIdentification" value="<%= userID %>">
                                     <button class="main-page-button uppercase" type="submit">Löschen</button>
                                 </form>
 
@@ -144,6 +144,7 @@
                                     <input type="hidden" value="<%= i %>" name="deleteIndex">
                                     <input type="hidden" value="session-training" name="trainingPlanType">
                                     <input type="hidden" class="deleteTitle" value="<%= userTrainings[i].title %>">
+                                    <input type="hidden" name="userIdentification" value="<%= userID %>">
                                     <button class="main-page-button trainin-plan-button uppercase"
                                         type="submit">Löschen</button>
                                 </form>
@@ -191,8 +192,8 @@
                     class="reset-template-training-form" style="display: none;">
                     <input type="hidden" value="<%= i %>" name="resetIndex">
                     <input type="hidden" value="template-training" name="trainingPlanType">
+                    <input type="hidden" name="userIdentification" value="<%= userID %>">
                     <button class="main-page-button uppercase" type="submit">Löschen</button>
-
                 </form>
                 <% } %>
         </div>

@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             tableSections[index].style.display = "block";
             navButton.setAttribute("aria-selected", true);
+
+            window.scrollTo(0, 0); //jump to start of the page
         })
     })
 
@@ -30,6 +32,52 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         navButtons[0].setAttribute("aria-selected", true);
     }
+
+    //logic for swiping
+    const workoutTable = document.querySelectorAll(".workout-table");
+    let startX;
+    let endX;
+
+    workoutTable.forEach((workoutTable, index) => {
+
+        workoutTable.addEventListener("touchstart", (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        workoutTable.addEventListener("touchend", e => {
+            endX = e.changedTouches[0].clientX;
+    
+            const swipeThreshold = 110;
+    
+            if (startX - endX > swipeThreshold) {
+                navigateToNextDay();             // Swipe left, navigate to the next day
+            } else if (endX - startX > swipeThreshold) {
+                navigateToPreviousDay();             // Swipe right, navigate to the previous day
+            }
+        })
+
+    })
+
+
+    function navigateToNextDay() {
+        const selectedButton = document.querySelector(".dot-indicators button[aria-selected='true']");
+        const nextButton = selectedButton.nextElementSibling || navButtons[0];
+
+        if (nextButton) {
+            nextButton.click();
+        }
+    }
+
+    function navigateToPreviousDay() {
+        const selectedButton = document.querySelector(".dot-indicators button[aria-selected='true']");
+        const previousButton = selectedButton.previousElementSibling || navButtons[navButtons.length - 1];
+
+        if (previousButton) {
+            previousButton.click();
+        }
+    }
+
+
 
 
 })   
