@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const onlineStatus = data.onlineStatus;
 
+        // if the device is only check for localstorage value | if offline then always set it to offline
         if (onlineStatus) {
           // set initial status and send it to service worker => value from localstorage
           if (isOnlineModeOn === "true") {

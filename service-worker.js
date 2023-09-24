@@ -169,6 +169,7 @@ self.addEventListener("fetch", async (event) => {
     console.log(url);
 
   } else if (event.request.method === "POST" && event.request.url.includes("/login")) { //the login post requests always have to go other the network
+    defaultNetworkMode = true; //every new login the network mode is set to true;
     event.respondWith(changeThroughNetworkOfflineFallback(event));
 
     // change requests to the page go over the network first and fall back on local storage indexDB
@@ -182,14 +183,7 @@ self.addEventListener("fetch", async (event) => {
 
       event.respondWith(handleOfflineChange(event.request, objectStore));
     }
-
-    // has to be accessed over the network first because the userID is rendered at this page.
-    // on this page happens the sync process
-    // otherwise data from wrong account that was previously logged in in the device may be synced also the app server wont start up at all
-  } else if (url.pathname === "/" && isPage) {
-    event.respondWith(networkRevalidateAndCache(event));
   }
-  
   //bestimmte pages sollen auch immer nur über das netzwerk accessed werden wegen authentication und zugriff auf google api
   else if (isPage && (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))) {
     event.respondWith(networkOnlyAuthentication(event));
@@ -248,6 +242,17 @@ self.addEventListener("message", async (event) => {
       type: "swOnlineStatus",
       onlineStatus: onlineStatus,
     })
+  }
+})
+
+self.addEventListener("message", event => {
+  if (event.data.command === "simpleSwitchToDefaultMode") {
+    console.log("simple switch to default");
+    defaultNetworkMode = true;
+
+    event.source.postMessage({
+      type: "switchToDefaultSucess"
+    });
   }
 })
 
@@ -343,10 +348,7 @@ self.addEventListener("message", (event) => {
   }
 });
 
-// the client can request the isSynced status in order to decide wheter offline data shall be disp
-self.addEventListener
-
-// client sends a request when trying to access certain routes => this eventListener sends back the current networkMode and the current online Status
+// client sends a request when trying to access certain routes (redirect on training index) => this eventListener sends back the current networkMode and the current online Status
 self.addEventListener("message", async (event) => {
   const message = event.data;
 
