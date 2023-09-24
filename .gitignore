@@ -3,3 +3,4 @@ dbconfig.js
 mailerCredentials.js
 auth.js
 .env
+.vscode

@@ -181,11 +181,11 @@ table .table-row td:last-of-type {
     }
 
     tr {
-        background-color: hsl( var(--clr-dark-2) / 0.725);
+        background-color: hsl( var(--clr-dark-2) / 0.675);
     }
     
     tr:nth-of-type(2n) {
-        background-color: hsl( var(--clr-dark) / 0.725);
+        background-color: hsl( var(--clr-dark) / 0.675);
     }
     
 

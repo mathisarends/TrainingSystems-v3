@@ -830,23 +830,12 @@ function cacheOnlyAudio(ev) {
   console.log("audio", ev.request);
   return caches.match(ev.request).then((cacheResponse) => {
     if (cacheResponse) {
-      console.log(cacheResponse);
+      console.log("Audio-Datei aus dem Cache gefunden.");
       return cacheResponse;
     } else {
-      console.log("Audio-Datei nicht im Cache gefunden, versuche, sie herunterzuladen...");
-
-      return fetch(ev.request).then((networkResponse) => {
-        if (networkResponse.ok) {
-
-          caches.open(staticCache).then((cache) => {
-            cache.put(ev.request, networkResponse.clone());
-            return networkResponse;
-          });
-        } else {
-          console.error("Fehler beim Herunterladen der Audio-Datei.");
-          // Hier kannst du eine Fehlerbehandlung durchführen, z.B. eine Ersatz-Datei bereitstellen.
-        }
-      });
+      console.error("Audio-Datei nicht im Cache gefunden.");
+      // Hier kannst du eine Fehlerbehandlung durchführen, wenn die Ressource nicht im Cache ist.
+      return null;
     }
   });
 }

@@ -70,6 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .querySelectorAll(".table-section")
       [indexVisibleSection].querySelector(element);
 
+        // Überprüfen, ob das Nachrichten-Element die Klasse "hidden" hat
+      if (!messageElement.classList.contains("hidden")) {
+        messageElement.classList.add("hidden");
+      }
+
     setTimeout(() => { //weicherer übergang damit animation zeit hat
       messageElement.classList.remove("hidden");
     }, 250); // Verzögerung von 10 Millisekunden
@@ -90,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.querySelector("form");
   form.addEventListener("submit", async (event) => {
+    
     event.preventDefault();
 
     const formData = new FormData(event.target);
@@ -115,11 +121,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // server may get restarted or time out so the get an error here because we fetch to the wrong url:
         // against login for example if the session is closed
         
-        showMessage(".save-status-failure", "Fehler beim aktualisieren");
+        showMessage(".save-status-sucess", "Fehler beim aktualisieren");
       }
     } catch (error) {
       //aufpassen Netzwerkfehler ist nicht der einzigste Fehler der auftreten kann:
-      showMessage(".save-status-failure", "Offline Mode: Erfolgreich aktualisert!");
+      showMessage(".save-status-sucess", "Offline Mode: Erfolgreich aktualisert!");
     }
   });
 
