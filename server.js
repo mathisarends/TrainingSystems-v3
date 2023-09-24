@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const baseUrl = process.env.BASE_URL;
 
 const express = require("express");
+const cors = require("cors");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const flash = require("express-flash");
@@ -77,6 +78,7 @@ app.set("layout", "layouts/layout");
 app.use(expressLayouts);
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/public/audio", cors());
 app.use(express.static("public", { maxAge: 0 }));
 app.use(express.urlencoded({ extended: true })); //ACHTUNG HIER AUF FEHLER PRÜFEN
 app.use(bodyParser.urlencoded({ extended: true }));
