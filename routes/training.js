@@ -8,155 +8,29 @@ import TrainingSchema from "../models/trainingSchema.js";
 import templateTrainingsGenerator from "../models/templateTrainingGenerator.js";
 
 import { checkAuthenticated } from "../authMiddleware.js";
-import { redirectToReferer } from "../redirectMiddleware.js";
 
 const templates = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]; //template ULR-Endings
 const customTemplateLetters = ["A", "B", "C", "D"]; //customURL-Endings
 const maxWeeks = 6; 
 
-router.get("/", checkAuthenticated, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return redirectToReferer(req, res);
-    }
+import { getTrainingIndexPage, getCreateTrainingPlan, postCreateTrainingPlan, handleDeleteTrainingPlan, patchCustomTraining } from "../controller/trainingController.js";
 
-    renderTrainingPlansView(res, user);
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-
-
-
-router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).send("Benutzer nicht gefunden");
-    }
-
-    if (user.trainingPlansCustomNew.length >= 3) {
-      renderTrainingPlansView(res, user, {
-        errorCreatingNewCustomTrainingPlan: "Maximale Anzahl an Plänen erreicht."
-      });
-
-    } else {
-      res.render("trainingPlans/custom/createNewCustomTraining", {layout: false});
-    }
-  } catch (err) {
-    console.log("Fehler beim Erstellen des Trainingsplans " + err);
-  }
-});
-
-router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-      if (!user) {
-        return res.status(404).send("Benutzer nicht gefunden");
-      }
-
-    const trainingPlanData = req.body;
-    const trainingPlanName = trainingPlanData.training_title;
-    const trainingPlanPhase = trainingPlanData.training_phase;
-    const trainingPlanFrequency = trainingPlanData.training_frequency;
-    const trainingPlanWeeks = trainingPlanData.training_weeks;
-
-    const lastUpdated = new Date();
-
-    const trainingWeeks = createNewTrainingPlanWithPlaceholders(trainingPlanWeeks, trainingPlanFrequency);
-
-    const newTrainingPlan = new NewTrainingPlan({
-      user: req.user._id,
-      title: trainingPlanName,
-      trainingFrequency: trainingPlanFrequency,
-      trainingPhase: trainingPlanPhase,
-      lastUpdated: lastUpdated,
-      trainingWeeks: trainingWeeks,
-    });
-
-    user.trainingPlansCustomNew.push(newTrainingPlan);
-    user.trainingPlansCustomNew.sort((a, b) => b.lastUpdated - a.lastUpdated); // sorts by date descending
-
-    await user.save();
-
-    res.redirect("/training/custom-A1");  
-
-  } catch (err) {
-    console.log("Es ist ein Fehler beim erstellen des Trainingsplans vorgefallen! " + err);
-  }
-})
-
-
-
-router.delete("/delete-training-plan", checkAuthenticated, async (req, res) => {
-  const indexToDelete = req.body.deleteIndex;
-
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).send("Benutzer nicht gefunden");
-    }
-
-    user.trainingPlansCustomNew.splice(indexToDelete, 1);
-    await user.save();
-
-    /* res.redirect("/training"); */
-    res.status(200).json({});
-
-  } catch (err) {
-    console.log("Fehler beim löschen des Trainingsplans: " + err);
-  }
-})
+//regular custom training plans (standart)
+router.get("/", checkAuthenticated, getTrainingIndexPage);
+router.get("/create-training-plan", checkAuthenticated, getCreateTrainingPlan);
+router.post("/create-training-plan", checkAuthenticated, postCreateTrainingPlan);
+router.delete("/delete-training-plan", checkAuthenticated, handleDeleteTrainingPlan)
 
 //PATCH CUSTOM TRAININGS
 for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}${week}`;
-    router.patch(routePath, checkAuthenticated, async (req, res) => {
-      try {
-        const user = await User.findById(req.user._id);
-        if (!user) {
-          return res.status(404).send("Benutzer nicht gefunden");
-        }
-
-        const updatedData = req.body;
-        const trainingPlan = user.trainingPlansCustomNew[i];
-
-        trainingPlan.lastUpdated = new Date(); //save timestamp
-
-        const trainingWeek = trainingPlan.trainingWeeks[week - 1];
-
-        for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
-          const trainingDay = trainingWeek.trainingDays[i];
-          updateTrainingDayNotes(trainingDay, updatedData, i);
-          
-          // 9 Exercise Felder damit in for loop
-          for (let j = 0; j < 9; j++) {
-            const exercise = trainingDay.exercises[j];
-            updateExerciseDetails(trainingDay, exercise, updatedData, i, j);
-          }
-        }
-
-        //update Title and Training Phase
-      
-      await user.save();
-      console.log("Daten erfolgreich gespeichert")
-
-
-      /* const referer = req.headers.referer || "/";
-      res.redirect(referer);  */
-      res.status(200).json({});
-
-      } catch (err) {
-        console.log(`Fehler beim Patchen der Seite CUSTOM ${letter}${week}! ` + err);
-        res.status(500).json({ error: `Fehler beim Patchen der Seite CUSTOM ${letter}${week}! ` + err })
-      }
-    })
+    router.patch(routePath, checkAuthenticated, (req, res) => patchCustomTraining(req, res, week, i));
   }
 }
+
+// bis hier hin gekommen und die untere funktion schon kopiert
 
 // retrieves lastTrainingDay of the week based on weight input
 function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
