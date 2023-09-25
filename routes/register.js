@@ -1,12 +1,12 @@
-const express = require("express");
-const User = require("../models/user");
-const Router = express.Router();
-const bcrypt = require("bcrypt");
+import express from "express";
+import User from "../models/user.js";
+const router = express.Router();
+import bcrypt from "bcrypt";
 
-const standartExerciseCatalog = require("../models/standartExerciseCatalog");
-const templateTrainingGenerator = require("../models/templateTrainingGenerator");
+import standartExerciseCatalog from "../models/standartExerciseCatalog.js";
+import templateTrainingGenerator from "../models/templateTrainingGenerator.js";
 
-const passwordValidator = require("password-validator");
+import passwordValidator from "password-validator";
 const passwordSchema = new passwordValidator();
 passwordSchema // Mindestlänge von 8 Zeichen
   .is()
@@ -26,11 +26,11 @@ passwordSchema // Mindestlänge von 8 Zeichen
   .not()
   .spaces();
 
-Router.get("/", (req, res) => {
+router.get("/", (req, res) => {
   res.render("register/index", { layout: false, error: "" });
 });
 
-Router.post("/", async (req, res) => {
+router.post("/", async (req, res) => {
   let newUser; // Deklaration außerhalb des try-Blocks
 
   try {
@@ -136,7 +136,7 @@ Router.post("/", async (req, res) => {
 });
 
 // auf diese Seite wird man weitergeleitet nach der Restrierung und man kann seine einstellungen vornehmen
-Router.get("/config", async (req, res) => {
+router.get("/config", async (req, res) => {
   try {
     const userID = req.query.userID; // from query-parameter
 
@@ -154,7 +154,7 @@ Router.get("/config", async (req, res) => {
   }
 });
 
-Router.post("/config", async (req, res) => {
+router.post("/config", async (req, res) => {
   //Doping und regenerationsfähigkeit auf Standartwerte setzen:
 
   try {
@@ -215,10 +215,4 @@ Router.post("/config", async (req, res) => {
 
 })
 
-
-
-
-
-
-
-module.exports = Router;
+export default router;

@@ -1,42 +1,46 @@
+import dotenv from "dotenv";
+
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+  dotenv.config();
 }
 
-const baseUrl = process.env.BASE_URL;
+import express from "express";
+import cors from "cors";
+import session from "express-session";
+import MongoDBStoreFactory from "connect-mongodb-session";
+import flash from "express-flash";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from "path";
+import bodyParser from 'body-parser';
+import passport from "passport";
+import expressLayouts from "express-ejs-layouts";
+import methodOverride from "method-override";
+import initializePassport from "./passport-config.js";
 
-const express = require("express");
-const cors = require("cors");
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
-const flash = require("express-flash");
-const path = require("path");
-const bodyParser = require('body-parser');
+import indexRouter from "./routes/index.js";
+import trainingRouter from "./routes/training.js";
+import loginRouter from "./routes/login.js";
+import registerRouter from "./routes/register.js";
+import logoutRouter from "./routes/logout.js";
+import toolRouter from "./routes/tools.js";
+import exerciseRouter from "./routes/exercises.js";
 
-const passport = require("passport");
-const expressLayouts = require("express-ejs-layouts");
-const methodOverride = require("method-override");
-const initializePassport = require("./passport-config");
+import mongoose from "mongoose";
+import crypto from "crypto";
+import "./oauth.js";
 
-const indexRouter = require("./routes/index");
-const trainingRouter = require("./routes/training");
-const loginRouter = require("./routes/login");
-const registerRouter = require("./routes/register");
-const logoutRouter = require("./routes/logout");
-const toolRouter = require("./routes/tools");
-const exerciseRouter = require("./routes/exercises");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const mongoose = require("mongoose");
-const crypto = require("crypto");
-
-const oauth = require("./oauth");
-
+const MongoDBStore = MongoDBStoreFactory(session); 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 8080;
 
 const mongoURI = process.env.MONGODB_URI;
 const sessionSecret= process.env.SESSION_SECRET;
 
-// MongoDB Verbindung
+// connect to MongoDB database
 async function connect() {
   try {
     await mongoose.connect(mongoURI, {
@@ -77,7 +81,7 @@ app.set("views", __dirname + "/views");
 app.set("layout", "layouts/layout");
 app.use(expressLayouts);
 app.use(methodOverride("_method"));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(__dirname + "/public"));
 app.use("/public/audio", cors());
 app.use(express.static("public", { maxAge: 0 }));
 app.use(express.urlencoded({ extended: true })); //ACHTUNG HIER AUF FEHLER PRÜFEN

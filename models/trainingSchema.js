@@ -1,7 +1,7 @@
 //schema for a single training session - saves on session of a kind and history of sessions up to 5
 
-const mongoose = require("mongoose");
-const User = require("./user");
+import mongoose from "mongoose";
+import User from "./user.js";
 
 const trainingSchema = new mongoose.Schema({
   user: {
@@ -33,4 +33,4 @@ const trainingSchema = new mongoose.Schema({
 });
 
 const TrainingSchema = mongoose.model("TrainingSchema", trainingSchema);
-module.exports = TrainingSchema;
+export default TrainingSchema;

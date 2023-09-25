@@ -1,5 +1,5 @@
-const multer = require("multer");
-const path = require("path");
+import multer from "multer";
+import path from "path";
 
 // Definiere Speicherort und Dateinamen für die Profilbilder
 const storage = multer.diskStorage({

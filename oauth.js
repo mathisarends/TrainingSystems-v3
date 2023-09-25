@@ -1,13 +1,11 @@
-const dotenv = require('dotenv');
+import dotenv from "dotenv";
 dotenv.config();
 
-//für user registration: 
-const standartExerciseCatalog = require("./models/standartExerciseCatalog");
-const templateTrainingGenerator = require("./models/templateTrainingGenerator");
-
-const passport = require("passport");
-const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
-const User = require("./models/user");
+import passport from "passport";
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import standartExerciseCatalog from "./models/standartExerciseCatalog.js";
+import templateTrainingGenerator from "./models/templateTrainingGenerator.js";
+import User from "./models/user.js";
 
 // use environment variables instead
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;

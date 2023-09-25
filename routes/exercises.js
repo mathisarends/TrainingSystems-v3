@@ -1,15 +1,12 @@
-const express = require("express");
-const Router = express.Router();
+import express from "express";
 
-const User = require("../models/user");
-const standartExerciseCatalog = require("../models/standartExerciseCatalog");
+import User from "../models/user.js";
+import standartExerciseCatalog from "../models/standartExerciseCatalog.js";
+import { checkAuthenticated } from "../authMiddleware.js";
 
-const {
-  checkAuthenticated,
-  checkNotAuthenticated,
-} = require("../authMiddleware");
+const router = express.Router();
 
-Router.get("/", checkAuthenticated, async (req, res) => {
+router.get("/", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -25,7 +22,7 @@ Router.get("/", checkAuthenticated, async (req, res) => {
   }
 });
 
-Router.post("/", checkAuthenticated, async (req, res) => {
+router.post("/", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -90,7 +87,7 @@ Router.post("/", checkAuthenticated, async (req, res) => {
   }
 });
 
-Router.patch("/", checkAuthenticated, async (req, res) => {
+router.patch("/", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -254,7 +251,7 @@ function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTime
 
 
 
-Router.post("/reset", checkAuthenticated, async (req, res) => {
+router.post("/reset", checkAuthenticated, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
     
@@ -274,7 +271,7 @@ Router.post("/reset", checkAuthenticated, async (req, res) => {
       }
 })
 
-module.exports = Router;
+export default router;
 
 
   function prepareExercisesData(user) {

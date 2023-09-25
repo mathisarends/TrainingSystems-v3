@@ -296,4 +296,4 @@ const standartExerciseCatalog = [
         },
 ];
 
-module.exports = standartExerciseCatalog;
+export default standartExerciseCatalog;

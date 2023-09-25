@@ -1,6 +1,4 @@
-//creates two new template training plans (when a new user registers or when he resets his template trainingsg)
-
-const NewTrainingPlan = require("./trainingPlanSchema");
+import NewTrainingPlan from "./trainingPlanSchema.js";
 
 const placeholderExercise = {
     category: "",
@@ -569,7 +567,7 @@ const placeholderExercise = {
     return trainingWeeks;
   }
 
-  module.exports = {
+  export default {
     createTemplatePlanA,
     createTemplatePlanB,
-  };
+  }

@@ -1,7 +1,6 @@
-// passport-config.js
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
-const User = require("./models/user"); // Passe den Pfad entsprechend an
+import { Strategy as LocalStrategy } from "passport-local";
+import bcrypt from "bcrypt";
+import User from "./models/user.js";
 
 function initialize(passport) {
     const authenticateUser = async (username, password, done) => {
@@ -34,4 +33,4 @@ function initialize(passport) {
     });
 }
 
-module.exports = initialize;
+export default initialize;

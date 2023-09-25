@@ -1,5 +1,4 @@
-// Beispiel Logout-Route
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -7,4 +6,4 @@ router.get("/", (req, res) => {
     res.redirect("/login"); // back to login
 });
 
-module.exports = router;
+export default router;

@@ -1,6 +1,4 @@
-//schema for a trainingplan that has trainingweeks and days
-
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const trainingPlanSchema = new mongoose.Schema({
   user: {
@@ -37,5 +35,4 @@ const trainingPlanSchema = new mongoose.Schema({
 });
 
 const TrainingPlan = mongoose.model("TrainingPlan", trainingPlanSchema);
-
-module.exports = TrainingPlan;
+export default TrainingPlan;

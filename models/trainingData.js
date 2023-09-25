@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 //saves the best squat, bench, deadlift set in order to calculate strenght level and individualized volume
 
 const trainingDataSchema = new mongoose.Schema({
@@ -41,4 +41,4 @@ const trainingDataSchema = new mongoose.Schema({
 });
 
 const TrainingData = mongoose.model("TrainingData", trainingDataSchema);
-module.exports = TrainingData;
+export default TrainingData;

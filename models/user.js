@@ -1,9 +1,8 @@
-const mongoose = require("mongoose");
-const TrainingData = require("./trainingData");
-const Exercise = require("./exercises");
-
-const TrainingPlan = require("./trainingPlanSchema");
-const TrainingSchema = require("./trainingSchema"); //for new scratch trainings
+import mongoose from "mongoose";
+import TrainingData from "./trainingData.js";
+import Exercise from "./exercises.js";
+import TrainingPlan from "./trainingPlanSchema.js";
+import TrainingSchema from "./trainingSchema.js";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -88,4 +87,4 @@ const userSchema = new mongoose.Schema({
 
 
 const User = mongoose.model("User", userSchema);
-module.exports = User;
+export default User;

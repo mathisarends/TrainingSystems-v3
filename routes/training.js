@@ -1,20 +1,20 @@
-const express = require("express");
-const Router = express.Router();
+import express from "express";
+const router = express.Router();
 
-const User = require("../models/user");
-const NewTrainingPlan = require("../models/trainingPlanSchema");
-const TrainingSchema = require("../models/trainingSchema");
+import User from "../models/user.js";
+import NewTrainingPlan from "../models/trainingPlanSchema.js";
+import TrainingSchema from "../models/trainingSchema.js";
 
-const templateTrainingsGenerator = require("../models/templateTrainingGenerator");
+import templateTrainingsGenerator from "../models/templateTrainingGenerator.js";
 
-const { checkAuthenticated, checkNotAuthenticated, } = require("../authMiddleware");
-const redirectToReferer = require("../redirectMiddleware");
+import { checkAuthenticated } from "../authMiddleware.js";
+import { redirectToReferer } from "../redirectMiddleware.js";
 
 const templates = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]; //template ULR-Endings
 const customTemplateLetters = ["A", "B", "C", "D"]; //customURL-Endings
 const maxWeeks = 6; 
 
-Router.get("/", checkAuthenticated, async (req, res) => {
+router.get("/", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -30,7 +30,7 @@ Router.get("/", checkAuthenticated, async (req, res) => {
 
 
 
-Router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
+router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -50,7 +50,7 @@ Router.get("/create-training-plan", checkAuthenticated, async (req, res) => {
   }
 });
 
-Router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
+router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
       if (!user) {
@@ -90,7 +90,7 @@ Router.post("/create-training-plan", checkAuthenticated, async (req, res) => {
 
 
 
-Router.delete("/delete-training-plan", checkAuthenticated, async (req, res) => {
+router.delete("/delete-training-plan", checkAuthenticated, async (req, res) => {
   const indexToDelete = req.body.deleteIndex;
 
   try {
@@ -115,7 +115,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}${week}`;
-    Router.patch(routePath, checkAuthenticated, async (req, res) => {
+    router.patch(routePath, checkAuthenticated, async (req, res) => {
       try {
         const user = await User.findById(req.user._id);
         if (!user) {
@@ -178,7 +178,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}${week}`;
-    Router.get(routePath, checkAuthenticated, async (req, res) => {
+    router.get(routePath, checkAuthenticated, async (req, res) => {
       try {
         const user = await User.findById(req.user._id);
         if (!user) {
@@ -267,7 +267,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
     const routePath = `/custom-${letter}-edit`;
-    Router.get(routePath, checkAuthenticated, async (req, res) => {
+    router.get(routePath, checkAuthenticated, async (req, res) => {
       try {
         const user = await User.findById(req.user._id);
         if (!user) {
@@ -310,7 +310,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}-edit`;
-    Router.patch(routePath, checkAuthenticated, async (req, res) => {
+    router.patch(routePath, checkAuthenticated, async (req, res) => {
       try {
         const user = await User.findById(req.user._id);
         if (!user) {
@@ -366,7 +366,7 @@ for (let i = 0; i < templates.length; i++) {
   const templateType = templateName.startsWith("A") ? 0 : 1; // 0 for A templates, 1 for B templates
   const weekIndex = parseInt(templateName.slice(1) - 1);
 
-  Router.get(`/template-${templateName}`, checkAuthenticated, async (req, res) => {
+  router.get(`/template-${templateName}`, checkAuthenticated, async (req, res) => {
     try {
       const user = await User.findById(req.user._id);
       if (!user) {
@@ -450,7 +450,7 @@ for (let i = 0; i < templates.length; i++) {
 
 for (let i = 0; i < templates.length; i++) {
   const templateName = templates[i];
-  Router.patch(`/template-${templateName}`, checkAuthenticated, async (req, res) => {
+  router.patch(`/template-${templateName}`, checkAuthenticated, async (req, res) => {
     try {
       const user = await User.findById(req.user._id);
       if (!user) {
@@ -497,7 +497,7 @@ for (let i = 0; i < templates.length; i++) {
   })
 }
 
-Router.delete("/reset-template-training", checkAuthenticated, async (req, res) => {
+router.delete("/reset-template-training", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -528,13 +528,13 @@ Router.delete("/reset-template-training", checkAuthenticated, async (req, res) =
 
 //TODO: Hier müssen gleich anpassungen gemacht werden
 for (let i = 1; i <= 5; i++) { // 5 Training Slots GET
-  Router.get(`/session-edit-${i}`, checkAuthenticated, async (req, res) => {
+  router.get(`/session-edit-${i}`, checkAuthenticated, async (req, res) => {
     await handleSessionEdit(req, res, i - 1);
   });
 }
 
 for (let i = 1; i <= 5; i++) { // 5 Training Slots POST
-  Router.patch(`/session-edit-${i}`, checkAuthenticated, async (req, res) => {
+  router.patch(`/session-edit-${i}`, checkAuthenticated, async (req, res) => {
     await handleSessionEditPatch(req, res, i - 1);
   });
 }
@@ -542,13 +542,13 @@ for (let i = 1; i <= 5; i++) { // 5 Training Slots POST
 
 // 2 Neue Routen für den Training Mode der Trainingsfunktion GET UND POST
 for (let i = 1; i <= 5; i++) {
-  Router.get(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
+  router.get(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
     await handleTrainingSessionGET(req, res, i - 1);
   }) 
 }
 
 for (let i = 1; i <= 5; i++) {
-  Router.patch(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
+  router.patch(`/session-train-${i}`, checkAuthenticated, async (req, res) => {
     await handleTrainingSessionPOST(req, res, i - 1);
   }) 
 }
@@ -632,7 +632,7 @@ function getLastEditedTrainingDates(trainings) {
 
 
 
-Router.get("/createTraining", checkAuthenticated, async (req, res) => {
+router.get("/createTraining", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -656,7 +656,7 @@ Router.get("/createTraining", checkAuthenticated, async (req, res) => {
 })
 
 
-Router.post("/createTraining", checkAuthenticated, async (req, res) => {
+router.post("/createTraining", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -718,7 +718,7 @@ Router.post("/createTraining", checkAuthenticated, async (req, res) => {
 })
 
 
-Router.delete("/delete-training", checkAuthenticated, async (req, res) => {
+router.delete("/delete-training", checkAuthenticated, async (req, res) => {
   const indexToDelete = req.body.deleteIndex;
   console.log(indexToDelete);
 
@@ -741,7 +741,7 @@ Router.delete("/delete-training", checkAuthenticated, async (req, res) => {
 
 })
 
-module.exports = Router;
+export default router;
 
 //for retrieving the user exercise Data. Almost every GET uses this method
 function categorizeExercises(exercises) {

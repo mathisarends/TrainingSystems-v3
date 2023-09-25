@@ -1,17 +1,14 @@
-const express = require("express");
-const User = require("../models/user");
-const Router = express.Router();
-const {
-  checkAuthenticated,
-  checkNotAuthenticated,
-} = require("../authMiddleware");
-const TrainingData = require("../models/trainingData");
+import express from "express";
+import User from "../models/user.js";
+const router = express.Router();
+import { checkAuthenticated } from "../authMiddleware.js";
+import TrainingData from "../models/trainingData.js";
 
-Router.get("/", (req, res) => {
+router.get("/", (req, res) => {
   res.render("tools/index");
 });
 
-Router.get("/volume", checkAuthenticated, async (req, res) => {
+router.get("/volume", checkAuthenticated, async (req, res) => {
   try {
     if (req.user) {
       const user = await User.findById(req.user._id);
@@ -58,7 +55,7 @@ Router.get("/volume", checkAuthenticated, async (req, res) => {
   }
 });
 
-Router.post("/volume", checkAuthenticated, async (req, res) => {
+router.post("/volume", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -82,7 +79,7 @@ Router.post("/volume", checkAuthenticated, async (req, res) => {
   }
 });
 
-Router.patch("/volume", checkAuthenticated, async (req, res) => {
+router.patch("/volume", checkAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -102,15 +99,15 @@ Router.patch("/volume", checkAuthenticated, async (req, res) => {
   }
 })
 
-Router.get("/backoff", (req, res) => {
+router.get("/backoff", (req, res) => {
   res.render("tools/backoff");
 });
 
-Router.get("/max", (req, res) => {
+router.get("/max", (req, res) => {
   res.render("tools/max");
 });
 
-module.exports = Router;
+export default router;
 
 function patchUserData(user, formData) {
   const {

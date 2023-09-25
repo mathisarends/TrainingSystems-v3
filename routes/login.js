@@ -1,25 +1,20 @@
-const express = require("express");
-const passport = require("passport");
-const Router = express.Router();
-
-const transporter = require("../mailerConfig");
-const jwt = require("jsonwebtoken");
+import express from "express";
+import passport from "passport";
+const router = express.Router();
+import transporter from "../mailerConfig.js";
+import jwt from "jsonwebtoken";
 
 const jwtSecret = process.env.JWT_SECRET;
 
-const bcrypt = require("bcrypt");
-const {
-  checkAuthenticated,
-  checkNotAuthenticated,
-} = require("../authMiddleware");
+import bcrypt from "bcrypt";
+import { checkNotAuthenticated } from "../authMiddleware.js";
+import User from "../models/user.js";
 
-const User = require("../models/user");
-
-Router.get("/", checkNotAuthenticated, (req, res) => {
+router.get("/", checkNotAuthenticated, (req, res) => {
   res.render("login/index", {layout: false});
 });
 
-Router.post(
+router.post(
   "/",
   passport.authenticate("local", {
     successRedirect: "/",
@@ -28,11 +23,11 @@ Router.post(
   })
 );
 
-Router.get("/reset", checkNotAuthenticated, (req, res) => {
+router.get("/reset", checkNotAuthenticated, (req, res) => {
   res.render("login/reset", { layout: false, errorNotification: "" });
 })
 
-Router.get("/resetPassword/:token",  async (req, res) => {
+router.get("/resetPassword/:token",  async (req, res) => {
 
   try {
     const token = req.params.token;
@@ -55,7 +50,7 @@ Router.get("/resetPassword/:token",  async (req, res) => {
   }
 })
 
-Router.post("/resetPassword",  async (req, res) => {
+router.post("/resetPassword",  async (req, res) => {
 
   try {
     const token = req.body.token;
@@ -86,7 +81,7 @@ Router.post("/resetPassword",  async (req, res) => {
 })
 
 
-Router.post("/reset", async (req, res) => {
+router.post("/reset", async (req, res) => {
   const emailReceived = req.body.email;
 
 
@@ -132,4 +127,4 @@ Router.post("/reset", async (req, res) => {
     }
 })
 
-module.exports = Router;
+export default router;
