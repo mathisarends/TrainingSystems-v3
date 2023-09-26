@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="/stylesheets/shared/confirmation-modal.css">
 
-<form id="workout-form" method="POST" action="/training/session-trainin-<%= number %>?_method=PATCH" name="editTraining" class="flow" style="padding-bottom: 5em;"> <!--name ist wichtig für modal-->
+<form id="workout-form" method="POST" action="/training/session-trainin-<%= number %>?_method=PATCH" name="editTraining"
+    class="flow" style="padding-bottom: 5em;"> <!--name ist wichtig für modal-->
 
     <input type="hidden" id="exercise-category-length" value="<%= exerciseCategories.length %>">
     <!--Parameter für loop im javascript-->
@@ -16,7 +17,7 @@
                 value="<%= defaultRepSchemeByCategory[category].defaultRPE %>">
             <% } %>
 
-            <input id="userID" type="hidden" name="userIdentification" value="<%= userID %>">
+                <input id="userID" type="hidden" name="userIdentification" value="<%= userID %>">
 
 
                 <div class="table-section">
@@ -32,10 +33,12 @@
                             <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
                         </div>
                     </div>
-                    <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent" style="margin-top: 1em; padding-left: 1em;">
+                    <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+                        style="margin-top: 1em; padding-left: 1em;">
                         Daten erfolgreich gespeichert
                     </div>
-                    <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent" style="margin-top: 1em; padding-left: 1em;">
+                    <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+                        style="margin-top: 1em; padding-left: 1em;">
                         Fehler beim speichern der Daten
                     </div>
 
@@ -73,36 +76,37 @@
                                             </select>
                                         </td>
                                         <td data-cell="Exercise">
-                                                <% for (const category in categorizedExercises) { %>
+                                            <% for (const category in categorizedExercises) { %>
 
-                                                    <select name="exercise_name_<%= i %>" class="exercise-name-selector"
-                                                        <%=exerciseData.category===category ? '' : 'disabled' %>
-                                                        style="<%= exerciseData.category===category ? ''
-                                                            : 'display: none;' %>">
-                                                            <% for (const exerciseName of
-                                                                categorizedExercises[category]) { %>
-                                                                <option value="<%= exerciseName %>"
-                                                                    <%=exerciseData.exercise===exerciseName ? 'selected'
-                                                                    : '' %>
-                                                                    >
-                                                                    <%= exerciseName %>
-                                                                </option>
-                                                                <% } %>
-                                                    </select>
-                                                    <% } %>
+                                                <select name="exercise_name_<%= i %>" class="exercise-name-selector"
+                                                    <%=exerciseData.category===category ? '' : 'disabled' %>
+                                                    style="<%= exerciseData.category===category ? '' : 'display: none;'
+                                                        %>">
+                                                        <% for (const exerciseName of categorizedExercises[category]) {
+                                                            %>
+                                                            <option value="<%= exerciseName %>"
+                                                                <%=exerciseData.exercise===exerciseName ? 'selected'
+                                                                : '' %>
+                                                                >
+                                                                <%= exerciseName %>
+                                                            </option>
+                                                            <% } %>
+                                                </select>
+                                                <% } %>
                                         </td>
                                         <td data-cell="Sets"><input type="number" class="sets"
                                                 name="exercise_sets_<%= i %>" value="<%= exerciseData.sets %>"></td>
                                         <td data-cell="Reps"><input type="number" class="reps"
                                                 name="exercise_reps_<%= i %>" value="<%= exerciseData.reps %>"></td>
-                                        <td data-cell="Weight"><input type="text" class="weight"
-                                                name="exercise_weight_<%= i %>">
+                                        <td data-cell="Weight"><input type="text" class="weight" step="0.5"
+                                                name="exercise_weight_<%= i %>" value="<%= exerciseData.weight %>">
                                         </td>
                                         <td data-cell="RPE"><input type="number" class="targetRPE"
-                                                name="exercise_targetRPE_<%= i %>"
-                                                value="<%= exerciseData.targetRPE %>"></td>
-                                        <td data-cell="RPE"><input type="number" class="actualRPE" step="0.5"
-                                                name="exercise_actualRPE_<%= i %>"></td>
+                                                name="exercise_targetRPE_<%= i %>" step="0.5"
+                                                value="<%= exerciseData.targetRPE %>" step="0.5"></td>
+                                        <td data-cell="@"><input type="number" class="actualRPE" step="0.5"
+                                                name="exercise_actualRPE_<%= i %>"
+                                                value="<%= exerciseData.actualRPE %>"></td>
                                         <td data-cell="1RM"><input type="number" class="estMax" step="0.5"
                                                 name="exercise_max_<%= i %>" value="<%= exerciseData.estMax %>"></td>
                                     </tr>
@@ -115,100 +119,114 @@
                 <div class="flow" style="--flow-space: 0.5rem">
                     <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit"
                         style="margin: 0;">Save</button>
-                    <button class="main-page-button save-training-button uppercase ff-sans-normal" style="margin: 0;"
+
+                    <form id="end-session" method="POST" action="/training/session-trainin-<%= number %>" name="">
+                        <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">
+                            Beenden IMPLEMENT</button>
+                    </form>
+
+
+                <button class="main-page-button save-training-button uppercase ff-sans-normal" style="margin: 0;"
                         id="show-training-history">History</button>
                 </div>
 
                 <audio id="timerAudio">
-                            <source src="/audio/newTimer.mp3" type="audio/mpeg">
-                        Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
-                        </audio>
+                    <source src="/audio/newTimer.mp3" type="audio/mpeg">
+                    Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
+                </audio>
 
-                        <audio id="save-audio">
-                            <source src="/audio/save_sound.mp3" type="audio/mpeg">     
-                            Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
-                        </audio>
+                <audio id="save-audio">
+                    <source src="/audio/save_sound.mp3" type="audio/mpeg">
+                    Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
+                </audio>
 
 
                 <div class="training-history-container">
 
                     <div class="training-history flow" style="display: none">
                         <!--Wir sind auf der Train-again Page hier sollen alle Trainings nochmal angezeigt werden-->
-                        <% if (training.trainings.length > 1) { %>
+                        <% if (training.trainings.length> 1) { %>
                             <% for (let i=0; i < training.trainings.length; i++) { %>
-                            <% const previousWeekData=previousTrainingData[i]; %>
-                                <div class="table-section">
-                                    <table class="workout-table create-training-table">
-                                        <caption>
-                                            <%= previousTrainingDates[i] %>
-                                        </caption>
-                                        <thead>
-                                            <tr class="table-header-row">
-                                                <th>Category</th>
-                                                <th>Exercise</th>
-                                                <th>Sets</th>
-                                                <th>Reps</th>
-                                                <th>Weight</th>
-                                                <th>RPE</th>
-                                                <th>@</th>
-                                                <th>1RM</th>
-                                                <th>Notes</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!--Soll nur eine anzeige werden deswegen disabled und fehlende Name attribute-->
-                                            <% for (let j=1; j <=9; j++) { %>
-                                                <% const previousExerciseData=previousWeekData[j - 1]; %>
-                                                    <tr class="table-row">
-                                                        <td data-cell="category">
-                                                            <select disabled class="exercise-category-selector">
-                                                                <% for (const category of exerciseCategories) { %>
-                                                                    <option value="<%= category %>"
-                                                                        <%=previousExerciseData.category===category
-                                                                        ? 'selected' : '' %>>
-                                                                        <%= category %>
-                                                                    </option>
-                                                                    <% } %>
-                                                            </select>
-                                                        </td>
-                                                        <td data-cell="Exercise"><input disabled type="text"
-                                                                class="exercise-name"
-                                                                value="<%= previousExerciseData.exercise || "" %>"></td>
-                                                        <td data-cell="Sets"><input disabled type="number" class="sets"
-                                                                value="<%= previousExerciseData.sets || "" %>"></td>
-                                                        <td data-cell="Reps"><input disabled type="number" class="reps"
-                                                                value="<%= previousExerciseData.reps || "" %>"></td>
-                                                        <td data-cell="Weight"><input disabled type="text"
-                                                                class="weight"
-                                                                value="<%= previousExerciseData.weight || "" %>"></td>
-                                                        <td data-cell="RPE"><input disabled type="number"
-                                                                class="actualRPE" step="0.5"
-                                                                value="<%= previousExerciseData.targetRPE || "" %>">
-                                                        </td>
-                                                        <td data-cell="@RPE"><input disabled type="number"
-                                                                class="actualRPE" step="0.5"
-                                                                value="<%= previousExerciseData.actualRPE || "" %>">
-                                                        </td>
-                                                        <td data-cell="1RM"><input disabled type="number" class="estMax"
-                                                                step="0.5"
-                                                                value="<%= previousExerciseData.estMax || "" %>"></td>
-                                                        <td data-cell="Notes"><input disabled type="text"
-                                                                value="<%= previousExerciseData.notes || "" %>"></td>
-                                                    </tr>
-                                                    <% } %>
+                                <% const previousWeekData=previousTrainingData[i]; %>
+                                    <div class="table-section">
+                                        <table class="workout-table create-training-table">
+                                            <caption>
+                                                <%= previousTrainingDates[i] %>
+                                            </caption>
+                                            <thead>
+                                                <tr class="table-header-row">
+                                                    <th>Category</th>
+                                                    <th>Exercise</th>
+                                                    <th>Sets</th>
+                                                    <th>Reps</th>
+                                                    <th>Weight</th>
+                                                    <th>RPE</th>
+                                                    <th>@</th>
+                                                    <th>1RM</th>
+                                                    <th>Notes</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!--Soll nur eine anzeige werden deswegen disabled und fehlende Name attribute-->
+                                                <% for (let j=1; j <=9; j++) { %>
+                                                    <% const previousExerciseData=previousWeekData[j - 1]; %>
+                                                        <tr class="table-row">
+                                                            <td data-cell="category">
+                                                                <select disabled class="exercise-category-selector">
+                                                                    <% for (const category of exerciseCategories) { %>
+                                                                        <option value="<%= category %>"
+                                                                            <%=previousExerciseData.category===category
+                                                                            ? 'selected' : '' %>>
+                                                                            <%= category %>
+                                                                        </option>
+                                                                        <% } %>
+                                                                </select>
+                                                            </td>
+                                                            <td data-cell="Exercise"><input disabled type="text"
+                                                                    class="exercise-name"
+                                                                    value="<%= previousExerciseData.exercise || "" %>">
+                                                            </td>
+                                                            <td data-cell="Sets"><input disabled type="number"
+                                                                    class="sets"
+                                                                    value="<%= previousExerciseData.sets || "" %>"></td>
+                                                            <td data-cell="Reps"><input disabled type="number"
+                                                                    class="reps"
+                                                                    value="<%= previousExerciseData.reps || "" %>"></td>
+                                                            <td data-cell="Weight"><input disabled type="text"
+                                                                    class="weight"
+                                                                    value="<%= previousExerciseData.weight || "" %>">
+                                                            </td>
+                                                            <td data-cell="RPE"><input disabled type="number"
+                                                                    class="actualRPE" step="0.5"
+                                                                    value="<%= previousExerciseData.targetRPE || "" %>">
+                                                            </td>
+                                                            <td data-cell="@RPE"><input disabled type="number"
+                                                                    class="actualRPE" step="0.5"
+                                                                    value="<%= previousExerciseData.actualRPE || "" %>">
+                                                            </td>
+                                                            <td data-cell="1RM"><input disabled type="number"
+                                                                    class="estMax" step="0.5"
+                                                                    value="<%= previousExerciseData.estMax || "" %>">
+                                                            </td>
+                                                            <td data-cell="Notes"><input disabled type="text"
+                                                                    value="<%= previousExerciseData.notes || "" %>">
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
 
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-                                <% } %>
-                        <% } else { %>
-                            <div class="ff-sans-cond text-accent letter-spacing-3 fs-400"
-                                style="text-align: center; margin-top: 1.5em;">
-                                Es sieht so aus als hättest du keine weiteren gespeicherten Trainings dieser Art.
-                            </div>
-                            <% } %>
-                        
+                                    <% } %>
+                                        <% } else { %>
+                                            <div class="ff-sans-cond text-accent letter-spacing-3 fs-400"
+                                                style="text-align: center; margin-top: 1.5em;">
+                                                Es sieht so aus als hättest du keine weiteren gespeicherten Trainings
+                                                dieser Art.
+                                            </div>
+                                            <% } %>
+
 
                     </div>
 
@@ -230,39 +248,39 @@
 
 <%- include("../../partials/trainingPage/volumeRecommandations") %>
 
-<script src="/javascripts/trainingPage/calcVolumeMedians.js"></script>
-<script src="/javascripts/trainingPage/displayCalculatedVolumes.js"></script>
-<script src="/javascripts/trainingPage/removePlaceholder.js"></script>
+    <script src="/javascripts/trainingPage/calcVolumeMedians.js"></script>
+    <script src="/javascripts/trainingPage/displayCalculatedVolumes.js"></script>
+    <script src="/javascripts/trainingPage/removePlaceholder.js"></script>
 
-<script src="/javascripts/trainingPage/showTimer.js"></script>
-<script src="/javascripts/trainingPage/calculateSetsTonnage.js"></script>
-<script src="/javascripts/trainingPage/displayDefaultSetSchema.js"></script>
+    <script src="/javascripts/trainingPage/showTimer.js"></script>
+    <script src="/javascripts/trainingPage/calculateSetsTonnage.js"></script>
+    <script src="/javascripts/trainingPage/displayDefaultSetSchema.js"></script>
 
-<script src="/javascripts/trainingPage/weightInput.js"></script>
-<script src="/javascripts/trainingPage/rpeInput.js"></script>
-<script src="/javascripts/trainingPage/changeExerciseName.js"></script>
+    <script src="/javascripts/trainingPage/weightInput.js"></script>
+    <script src="/javascripts/trainingPage/rpeInput.js"></script>
+    <script src="/javascripts/trainingPage/changeExerciseName.js"></script>
 
-<script src="/javascripts/trainingPage/calcBackoffMax.js"></script>
+    <script src="/javascripts/trainingPage/calcBackoffMax.js"></script>
 
-<!--AutoSave macht auch Probleme-->
-<script src="/javascripts/trainingPage/ajaxAutoSave.js"></script>
+    <!--AutoSave macht auch Probleme-->
+    <script src="/javascripts/trainingPage/ajaxAutoSave.js"></script>
 
-<!-- <script src="/javascripts/trainingPage/displayOfflineData.js"></script> -->
+    <!-- <script src="/javascripts/trainingPage/displayOfflineData.js"></script> -->
 
-<script src="/javascripts/session/pauseTimer.js"></script>
+    <script src="/javascripts/session/pauseTimer.js"></script>
 
-<script>
-    const trainingHistoryContainer = document.getElementsByClassName("training-history")[0];
-    const showHistoryBTN = document.getElementById("show-training-history");
+    <script>
+        const trainingHistoryContainer = document.getElementsByClassName("training-history")[0];
+        const showHistoryBTN = document.getElementById("show-training-history");
 
-    showHistoryBTN.addEventListener("click", e => {
-        e.preventDefault();
+        showHistoryBTN.addEventListener("click", e => {
+            e.preventDefault();
 
-        if (trainingHistoryContainer.style.display === "block") {
-            trainingHistoryContainer.style.display = "none";
-        } else {
-            trainingHistoryContainer.style.display = "block";
-        }
-    })
+            if (trainingHistoryContainer.style.display === "block") {
+                trainingHistoryContainer.style.display = "none";
+            } else {
+                trainingHistoryContainer.style.display = "block";
+            }
+        })
 
-</script>
+    </script>

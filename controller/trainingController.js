@@ -94,7 +94,6 @@ export async function handleDeleteTrainingPlan(req, res) {
     user.trainingPlansCustomNew.splice(indexToDelete, 1);
     await user.save();
 
-    /* res.redirect("/training"); */
     res.status(200).json({});
   } catch (err) {
     console.log("Fehler beim löschen des Trainingsplans: " + err);
@@ -114,10 +113,11 @@ export async function patchCustomTraining(req, res, week, i) {
     trainingPlan.lastUpdated = new Date(); //save timestamp
 
     const trainingWeek = trainingPlan.trainingWeeks[week - 1];
+    
+    updateVolumeMarkers(updatedData, trainingWeek);
 
     for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
       const trainingDay = trainingWeek.trainingDays[i];
-      updateTrainingDayNotes(trainingDay, updatedData, i);
 
       // 9 Exercise Felder damit in for loop
       for (let j = 0; j < 9; j++) {
@@ -125,8 +125,9 @@ export async function patchCustomTraining(req, res, week, i) {
         updateExerciseDetails(trainingDay, exercise, updatedData, i, j);
       }
     }
+
     await user.save();
-    console.log("Patch on trainingplan sucessful");
+    console.log("Trainingsplan Änderungen gespeichert!");
     res.status(200).json({});
   } catch (err) {
     console.log("Error while patching custom page", err);
@@ -290,6 +291,24 @@ export async function patchCustomEditPage(req, res, i) {
   }
 }
 
+export async function getCustomStatisticPage(req, res, index) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+
+    const trainingPlan = user.trainingPlansCustomNew[index];
+    
+    if (!trainingPlan) {
+      return res.status(404).send("Training nicht gefunden!");
+    }
+
+  } catch (error) {
+    
+  }
+}
+
 /* TEMPLATE TRAINING */
 export async function getTemplateTraining(req, res, templateType, templateName, weekIndex, templates) {
   try {
@@ -389,10 +408,10 @@ export async function patchTemplateTraining(req, res, i, templateName) {
     const weekSuffix = parseInt(templateName.slice(1)); // Extract week suffix (1, 2, ...)
     const trainingWeek = trainingPlan.trainingWeeks[weekSuffix - 1]; // Adjust index
 
+    updateVolumeMarkers(updatedData, trainingWeek);
+
     for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
       const trainingDay = trainingWeek.trainingDays[i];
-      const trainingDayNotesFieldName = `workout_notes_${i + 1}`;
-      updateTrainingDayNotes(trainingDay, updatedData, i);
       
       for (let j = 0; j < trainingDay.exercises.length; j++) {
         const exercise = trainingDay.exercises[j];
@@ -668,6 +687,8 @@ export async function getTrainingSession(req, res, index) {
   }
 }
 
+// TODO: this here is called as a patch but is not a patch and should instead be called when a new training is created: 
+// updateVolumeMArkers für session implementieren:
 export async function patchTrainingSession(req, res, index) {
   try {
     const user = await User.findById(req.user._id);
@@ -682,10 +703,13 @@ export async function patchTrainingSession(req, res, index) {
 
     for (let i = 1; i <= 9; i++) {
       const exerciseObject = {
+        category: trainingData[`exercise_category_${i}`],
         exercise: trainingData[`exercise_name_${i}`],
         sets: trainingData[`exercise_sets_${i}`],
         reps: trainingData[`exercise_reps_${i}`],
         weight: trainingData[`exercise_weight_${i}`],
+        targetRPE: trainingData[`exercise_targetRPE_${i}`],
+        actualRPE: trainingData[`exercise_actualRPE_${i}`],
         rpe: trainingData[`exercise_actualRPE_${i}`],
         estMax: trainingData[`exercise_max_${i}`],
       }
@@ -705,7 +729,7 @@ export async function patchTrainingSession(req, res, index) {
     // Sortieren des trainings-Arrays nach dem trainingDate in absteigender Reihenfolge (neuestes zuerst)
     user.trainings[index].trainings.sort((a, b) => b.trainingDate - a.trainingDate);
 
-    // Überprüfen, ob mehr als 3 Einträge vorhanden sind und ggf. die ältesten löschen
+    // TODO: das hier kann eigentlich auch nicht sein:
   if (user.trainings[index].trainings.length > 3) {
     user.trainings[index].trainings = user.trainings[index].trainings.slice(0, 3);
   }
@@ -869,13 +893,6 @@ function categorizeExercises(exercises) {
         categorizedExercises,
         defaultRepSchemeByCategory,
     };
-}
-
-/* UPDATING TRAINING PLANS */
-function updateTrainingDayNotes(trainingDay, updatedData, index) {
-  const notesFieldName = `workout_notes_${index + 1}`;
-  trainingDay.trainingDayNotes =
-    updatedData[notesFieldName] || trainingDay.trainingDayNotes;
 }
 
 function updateExerciseDetails(trainingDay, exercise, updatedData, i, j) {
@@ -1098,6 +1115,29 @@ function getIndexOfMostRecentTrainingDay(trainingPlan) {
     weekIndex: 0,
     dayIndex: 0,
   };
+}
+
+// updates volume markers if there are changed
+function updateVolumeMarkers(updatedData, trainingWeek) {
+
+  if (trainingWeek.squatSetsDone != updatedData[`squat_sets_done`]) {
+    trainingWeek.squatSetsDone = (updatedData[`squat_sets_done`]);
+  }
+  if (trainingWeek.squatTonnage != updatedData[`squat_tonnage`]) {
+    trainingWeek.squatTonnage = updatedData[`squat_tonnage`];
+  }
+  if (trainingWeek.benchSetsDone != updatedData[`bench_sets_done`]) {
+    trainingWeek.benchSetsDone = updatedData[`bench_sets_done`];
+  }
+  if (trainingWeek.benchTonnage != updatedData[`bench_tonnage`]) {
+    trainingWeek.benchTonnage = updatedData[`bench_tonnage`];
+  }
+  if (trainingWeek.deadliftSetsDone != updatedData[`deadlift_sets_done`]) {
+    trainingWeek.deadliftSetsDone = updatedData[`deadlift_sets_done`];
+  }
+  if (trainingWeek.deadliftTonnage != updatedData[`deadlift_tonnage`]) {
+    trainingWeek.deadliftTonnage = updatedData[`deadlift_tonnage`];
+  }
 }
 
 // format date functions
