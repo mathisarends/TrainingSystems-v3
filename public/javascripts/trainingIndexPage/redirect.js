@@ -138,6 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const moreTrainingOptionsCustom = document.getElementsByClassName("more-training-options")[0];
   const archiveCustomPlansForm = document.getElementsByClassName("archive-custom-form");
 
+  const navToStatsButtons = document.querySelectorAll(".stats-page-button");
+
   let customCurrentSelectedTrainingWeek;
   let lastSelectedLinkIndex = null;
 
@@ -153,11 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
     customCurrentSelectedTrainingWeek = customNextTrainingWeeks[index].value;
   }
 
+
   moreTrainingOptionsCustom.addEventListener("click", e => {
     e.preventDefault();
     moreTrainingOptionsCustom.style.display = "none";
+    navToStatsButtons[0].style.display = "block";
     deleteCustomTrainingForms[lastSelectedLinkIndex].style.display = "block";
-    archiveCustomPlansForm[lastSelectedLinkIndex].style.display = "block";
   })
 
   customTrainingContainers.forEach((container, index) => {
@@ -166,6 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
       selectCustomTraining(index);
     });
   });
+
+  // the first on is for custom training plans
+  navToStatsButtons[0].addEventListener("click", e => {
+    e.preventDefault();
+    if (lastSelectedLinkIndex !== null) {
+      const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndex);
+      const redirectPage = `training/custom-${alphaValue}-stats`;
+      window.location.href = redirectPage;
+    }
+   })
 
   startCustomTrainingButton.addEventListener("click", (e) => {
     e.preventDefault();

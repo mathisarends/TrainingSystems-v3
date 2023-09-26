@@ -69,6 +69,8 @@
                                 </svg>
                             </button>
 
+                        <button class="main-page-button stats-page-button uppercase" style="display: none">STATS</button>
+
                             <% for (let i=0; i < userCustomTrainings.length; i++) { %>
 
                                 <form action="/training/delete-training-plan?_method=DELETE" method="POST"
@@ -80,13 +82,6 @@
                                     <input type="hidden" name="userIdentification" value="<%= userID %>">
                                     <button class="main-page-button uppercase" type="submit">Löschen</button>
                                 </form>
-
-                                <!--Hier kann die logik zum archivieren eines bestimmten planes eingefügt werden-->
-                                <!--TODO das auch umsetzen:-->
-                                <form action="#" method="POST" class="archive-custom-form" style="display: none;">
-                                    <button class="main-page-button uppercase" type="submit">ARCHIVIEREN</button>
-                                </form>
-
                                 <% } %>
 
                         </div>
@@ -138,6 +133,9 @@
                             <button class="main-page-button training-plan-button uppercase" id="edit-session">
                                 Bearbeiten
                             </button>
+
+                            <button class="main-page-button stats-page-button uppercase" style="display: none">STATS</button>
+
                             <% for (let i=0; i < userTrainings.length; i++) { %>
                                 <form action="/training/delete-training?_method=DELETE" method="POST"
                                     class="delete-form-training" style="display: none">
@@ -187,6 +185,9 @@
             <button class="main-page-button edit-training-plan-button uppercase" id="edit-template-training-button">
                 Bearbeiten
             </button>
+
+            <button class="main-page-button stats-page-button uppercase" style="display: none">STATS</button>
+
             <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
                 <form action="/training/reset-template-training?_method=DELETE" method="POST"
                     class="reset-template-training-form" style="display: none;">
