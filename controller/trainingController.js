@@ -291,12 +291,14 @@ export async function patchCustomEditPage(req, res, i) {
   }
 }
 
+// JUMP 
 export async function getCustomStatisticPage(req, res, index) {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).send("Benutzer nicht gefunden");
     }
+    const userID = req.user._id;
 
     const trainingPlan = user.trainingPlansCustomNew[index];
     
@@ -304,8 +306,39 @@ export async function getCustomStatisticPage(req, res, index) {
       return res.status(404).send("Training nicht gefunden!");
     }
 
+    const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+
+    const squatSetsDone = [];
+    const squatTonnage = [];
+    const benchSetsDone = [];
+    const benchTonnage = [];
+    const deadliftSetsDone = [];
+    const deadliftTonnage = [];
+
+    trainingPlan.trainingWeeks.forEach((trainingWeek, index) => {
+      squatSetsDone.push(trainingWeek.squatSetsDone);
+      squatTonnage.push(trainingWeek.squatTonnage);
+      benchSetsDone.push(trainingWeek.benchSetsDone);
+      benchTonnage.push(trainingWeek.benchTonnage);
+      deadliftSetsDone.push(trainingWeek.deadliftSetsDone);
+      deadliftTonnage.push(trainingWeek.deadliftTonnage);
+    })
+
+
+    res.render("trainingPlans/statsPage", {
+      trainingTitle, 
+      userID,
+
+      squatSetsDone,
+      squatTonnage,
+      benchSetsDone,
+      benchTonnage,
+      deadliftSetsDone,
+      deadliftTonnage
+    })
+
   } catch (error) {
-    
+    console.log("Fehler beim aufrufen der custom statistic page:");
   }
 }
 
@@ -318,6 +351,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
     }
     const trainingPlan = user.trainingPlanTemplate[templateType];
     const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+    console.log(trainingTitle);
     const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, weekIndex);
 
 

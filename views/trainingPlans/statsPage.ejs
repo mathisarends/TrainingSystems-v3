@@ -1,0 +1,211 @@
+<main id="main" class="grid-container grid-container--training flow">
+    <h1 class="numbered-title"><span aria-hidden="true">STATS</span><%= trainingTitle %></h1>
+
+    <div class="tab-list underline-indicators flex" role="tablist" aria-label="destination list"
+        style="justify-content: space-between;">
+        <button id="squat-tab" aria-selected="false" role="tab" aria-controls="custom-tab"
+            class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="0">Squat</button>
+        <button id="bench-tab" aria-selected="false" role="tab" aria-controls="session-tab"
+            class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Bench</button>
+        <button id="deadlift-tab" aria-selected="false" role="tab" aria-controls="template-tab"
+            class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Deadlift</button>
+    </div>
+
+    <input id="userIdentification" type="hidden" name="userIdentification" value="<%= userID %>">
+
+    <section class="custom-view-container flow" style="--flow-space: 2em;">
+
+        <div class="training-plan-container flex" style="--gap: 1rem;">
+            <% for (let i=0; i < squatSetsDone.length; i++) { %>
+
+                <% if (squatTonnage[i]) { %>
+                    <div class="custom-training-container">
+    
+                            <div class="training-plan-title uppercase">
+                                Woche <%= i + 1 %>
+                            </div>
+                            <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                <%= squatSetsDone[i] %> Sets - <%= squatTonnage[i] %> Tonnage
+                            </div>
+                    </div>
+                <% } %>
+
+                <% } %>
+        </div>
+
+        
+        <div class="training-button-container">
+            <button class="main-page-button training-plan-button uppercase"
+                id="start-custom-training-button">Trainieren</button>
+
+            <button class="main-page-button edit-training-plan-button uppercase"
+                id="edit-custom-training-button">Bearbeiten</button>
+
+                <button class="main-page-button back-button uppercase"
+                id="edit-custom-training-button">BACK</button>
+
+        </div>
+
+    </section>
+
+    <section class="custom-view-container flow" style="--flow-space: 2em;" hidden>
+        
+        <div class="training-plan-container flex" style="--gap: 1rem;">
+            <% for (let i=0; i < benchSetsDone.length; i++) { %>
+                
+                <% if (benchTonnage[i]) { %>
+                    <div class="custom-training-container">
+                        <div class="training-plan-title uppercase">
+                            Woche <%= i + 1 %>
+                        </div>
+                        <div class="ff-sans-cond fs-400 letter-spacing-4">
+                            <%= benchSetsDone[i] %> Sets - <%= benchTonnage[i] %> Tonnage
+                        </div>
+                    </div>
+                <% } %>
+
+                <% } %>
+        </div>
+
+
+            <div class="training-button-container">
+                <button class="main-page-button training-plan-button uppercase"
+                    id="start-custom-training-button">Trainieren</button>
+    
+                <button class="main-page-button edit-training-plan-button uppercase"
+                    id="edit-custom-training-button">Bearbeiten</button>
+    
+                    <button class="main-page-button back-button uppercase"
+                    id="edit-custom-training-button">BACK</button>
+    
+            </div>
+
+    </section>
+
+    <section class="custom-view-container flow" style="--flow-space: 2em;" hidden>
+
+        <div class="training-plan-container flex" style="--gap: 1rem;">
+            <% for (let i=0; i < deadliftSetsDone.length; i++) { %>
+
+                <% if (deadliftTonnage[i]) { %>
+                    <div class="custom-training-container" style="min-width: 100%;">
+                        <div class="training-plan-title uppercase">
+                            Woche <%= i + 1 %>
+                        </div>
+                        <div class="ff-sans-cond fs-400 letter-spacing-4">
+                            <%= deadliftSetsDone[i] %> Sets - <%= deadliftTonnage[i] %> Tonnage
+                        </div>
+                    </div>
+                <% } %>
+
+                <% } %>
+        </div>
+
+
+
+            <div class="training-button-container">
+                <button class="main-page-button training-plan-button uppercase"
+                    id="start-custom-training-button">Trainieren</button>
+    
+                <button class="main-page-button edit-training-plan-button uppercase"
+                    id="edit-custom-training-button">Bearbeiten</button>
+
+                    <button class="main-page-button back-button uppercase"
+                    id="edit-custom-training-button">BACK</button>
+    
+    
+            </div>
+
+    </section>
+
+
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+    // navigate.js
+    const navToTrainingBTNs = document.querySelectorAll(".training-plan-button");
+    const navToEditBTNs = document.querySelectorAll(".edit-training-plan-button");
+    const backBTNs = document.querySelectorAll(".back-button");
+
+    const pathName = window.location.pathname; ///training/custom-A-stats
+    const trainingType = pathName.substring(0, pathName.lastIndexOf("-"));
+    console.log(trainingType);
+
+
+    navToTrainingBTNs.forEach((trainingButton) => {
+        trainingButton.addEventListener("click", e => {
+            e.preventDefault();
+            window.location.href = `${trainingType}1`; // immer an erste woche eigentlich an zuletzt trainierte TODO:
+        })
+    })
+
+    navToEditBTNs.forEach((editButton) => {
+        editButton.addEventListener("click", e => {
+            e.preventDefault();
+            window.location.href = `${trainingType}-edit`;
+        })
+    })
+
+    backBTNs.forEach((backButton) => {
+        backButton.addEventListener("click", e => {
+            e.preventDefault();
+            window.location.href = "/training";
+        })
+    })
+
+
+
+// showStatsTab.js
+  const tabList = document.querySelector('[role="tablist"]');
+  const tabs = tabList.querySelectorAll('[role="tab"]');
+  const sections = document.querySelectorAll("section");
+
+  const title = document.querySelector("h1");
+
+  /*TODO: Oben die ÜBerschrift verändern und die active klasse entsprechend setzen ^^*/
+  for (let i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener("click", (e) => {
+      e.preventDefault();
+
+      for (let j = 0; j < sections.length; j++) {
+        sections[j].setAttribute("hidden", true);
+        tabs[j].setAttribute("aria-selected", false);
+      }
+
+      localStorage.setItem("statsTab", tabs[i].id);
+      sections[i].removeAttribute("hidden");
+      tabs[i].setAttribute("aria-selected", true);
+
+    });
+  }
+
+
+  /*show right button from start*/ 
+
+  function triggerClick(selectedTab) {
+                const clickEvent = new Event('click', {
+                    bubbles: true,
+                    cancelable: true,
+                });
+                selectedTab.dispatchEvent(clickEvent);
+            }
+
+    const lastSelectedTab = localStorage.getItem("statsTab");
+    if (lastSelectedTab) {
+        const tabToSelect = document.getElementById(lastSelectedTab);
+        if (tabToSelect) {
+            tabToSelect.setAttribute("aria-selected", true);
+            triggerClick(tabToSelect);
+        }
+    } else {
+        tabButtons[0].setAttribute("aria-selected", true);
+        triggerClick(tabButtons[0]);
+    }
+
+
+
+});
+
+</script>

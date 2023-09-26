@@ -27,7 +27,8 @@ import {
   getSessionEdit,
   patchSessionEdit,
   getTrainingSession,
-  patchTrainingSession
+  patchTrainingSession,
+  getCustomStatisticPage
 } from "../controller/trainingController.js";
 
 //regular custom training plans (standart)
