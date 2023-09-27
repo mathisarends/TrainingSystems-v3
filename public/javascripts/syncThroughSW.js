@@ -173,16 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     //ack button - sets modal display property to none
-    const ackButton = document.getElementById("ackBTN");
     const offlineModal = document.getElementById("offlineModal");
 
     const waitForSyncModal = document.getElementById("waitForSyncModal"); //to inform the user process has started
-
-    ackButton.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      hideModal();
-    });
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.addEventListener("message", (event) => {
@@ -226,15 +219,20 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    const closeModalButton = document.getElementById("close-modal-button");
+    closeModalButton.addEventListener("click", e => {
+      e.preventDefault();
+      waitForSyncModal.style.display = "none";
+      waitForSyncModal.classList.remove("active");
+/* 
+      function closeModal() {
+        modal.classList.remove('active');
+      } */
+    })
+
     // Funktion zum Einblenden des Modals
     function showModal() {
       offlineModal.style.display = "block";
-
-      ackButton.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        hideModal();
-      });
     }
 
     // Funktion zum Ausblenden des Modals

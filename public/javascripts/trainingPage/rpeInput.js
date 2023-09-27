@@ -50,13 +50,19 @@ for (let i = 0; i < targetRPEInputs.length; i++) {
         return;
       }
 
-      const sum = numbers.reduce((acc, num) => acc + num + 0);
-      const average = sum / numbers.length;
+      if (numbers.length == setInputs[i].value) {
+        const sum = numbers.reduce((acc, num) => acc + num + 0);
+        const average = sum / numbers.length;
+    
+        const roundedAverage = Math.ceil(average / 0.5) * 0.5;
+        console.log(roundedAverage);
   
-      const roundedAverage = Math.ceil(average / 0.5) * 0.5;
-      console.log(roundedAverage);
+        validateRPE(roundedAverage, rpeInputs[i]);
+      } else {
+        //do nothing:
+      }
 
-      validateRPE(roundedAverage, rpeInputs[i]);
+
 
     })
 

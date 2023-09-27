@@ -131,14 +131,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /*TRIGGER submit for all weight changes*/
   const weightInputs = document.querySelectorAll(".weight");
+  const setInputs = document.querySelectorAll(".sets");
   const saveAudio = document.getElementById("save-audio");
 
-  weightInputs.forEach((weightInput) => {
+  weightInputs.forEach((weightInput, index) => {
     weightInput.addEventListener("change", () => {
 
-      saveAudio.play();
+      let input = weightInput.value;
+      if (input === "" || input === 0) { //new value is not valid
+        weightInput.value = "";
+        return;
+      }
+      input = input.replace(/,/g, "."); //replace commas with points
+      let numbers = input.split(";").map(Number);
+      numbers.forEach((number) => {
+        if (isNaN(number)) { //on of the given weight values is not a number return empty string
+          weightInput.value = "";
+          return;
+        }
+      })
 
-      form.dispatchEvent(new Event("submit"));
+      if (numbers.length == setInputs[index].value || number.length === 1) {
+
+        const sum = numbers.reduce((acc, num) => acc + num + 0);
+        const average = sum / numbers.length;
+
+        const roundedAverage = Math.round(average / 2.5) * 2.5;
+        // Ensure that the rounded average is always a multiple of 2.5
+        if (roundedAverage % 2.5 !== 0) {
+            roundedAverage = Math.round(roundedAverage / 2.5) * 2.5;
+        }
+        weightInput.value = roundedAverage;
+
+        saveAudio.play();
+        form.dispatchEvent(new Event("submit"));
+      } else {
+        //do nothing:
+      }
+
+
+
     });
   });
 });

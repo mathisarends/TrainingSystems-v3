@@ -1,5 +1,5 @@
 // service-worker.js
-const version = 23;
+const version = 24;
 
 const staticCache = `static-assets-${version}-new`; //html files etc.
 const dynamicCache = `dynamic-assets-${version}`;
@@ -74,7 +74,6 @@ const assets = [
   "/javascripts/trainingPage/pauseTimer.js",
   "/javascripts/trainingPage/removePlaceholder.js",
   "/javascripts/trainingPage/rpeInput.js",
-  "/javascripts/trainingPage/weightInput.js",
   "/javascripts/trainingPage/changeTitleAjax.js",
 
   "/javascripts/volume/calcVolume.js",
@@ -82,7 +81,6 @@ const assets = [
 
   "/javascripts/session/pauseTimer.js",
   "/offline",
-  "/welcome",
 
 ];
 
@@ -131,6 +129,9 @@ self.addEventListener("install", (ev) => {
           (err) => {
             console.warn(`failed to update ${staticCache}`);
             console.error(err);
+            // Hier können Sie den Inhalt von 'assets' loggen, um festzustellen,
+            // welche Datei das Problem verursacht hat
+            console.log('Failed to add these assets to the cache:', assets);
           }
         );
       })

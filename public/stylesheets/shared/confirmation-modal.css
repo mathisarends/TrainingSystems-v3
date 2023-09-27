@@ -16,7 +16,7 @@
   z-index: 1;
   left: auto;
   right: auto;
-  top: 10vh;
+  top: auto;
   width: 100%;
   height: fit-content;
   background: inherit;
@@ -25,6 +25,7 @@
   align-items: center;
   font-size: 1.2em;
 }
+
 
 #installModal {
   top: 35vh;
@@ -37,12 +38,21 @@
     margin: 0;
     background-color: hsl(var(--clr-dark));
     padding: 1.5em;
+    padding-bottom: 0.5em;
     border: 1px solid hsl(var(--clr-white) / 0.25);
     width: 100%;
     max-width: 400px; /* Maximale Breite des Modals */
     text-align: center;
     font-size: 1.1em;
     backdrop-filter: none;
+  }
+
+  .modal-content div:nth-child(2) {
+    margin-top: 0.5rem;
+  }
+
+  .modal-content div:nth-child(3) {
+    margin-top: 0.75rem;
   }
 
   .modal-content p {

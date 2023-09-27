@@ -30,7 +30,7 @@ export function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
 
   export function extractDataOfTrainingDay(trainingPlan, week, day) {
 
-    // if input is valid
+    // validate input
     if (trainingPlan && trainingPlan.trainingWeeks[week] && trainingPlan.trainingWeeks[week].trainingDays[day]) {
       
       const exercises = [];
@@ -111,7 +111,7 @@ export function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
       };
   }
 
-  // updates volume markers if there are changed
+  // updates volume markers if there are changed - for patching training pages
 export function updateVolumeMarkers(updatedData, trainingWeek) {
 
     if (trainingWeek.squatSetsDone != updatedData[`squat_sets_done`]) {
@@ -190,6 +190,8 @@ export function updateVolumeMarkers(updatedData, trainingWeek) {
     }
   }
 
+  /* regards rendering training plan view with or without additional data */
+  // used to display max amount of trainingplans etc.
   export function renderTrainingPlansView(res, user, additionalData = {}) {
     const defaultData = {
       user,
