@@ -7,8 +7,7 @@ const templates = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]; //template U
 const customTemplateLetters = ["A", "B", "C", "D"]; //customURL-Endings
 const maxWeeks = 6; 
 
-import { 
-  getTrainingIndexPage, 
+import {
   getCreateTrainingPlan, 
   postCreateTrainingPlan, 
   handleDeleteTrainingPlan, 
@@ -16,11 +15,16 @@ import {
   getCustomTraining, 
   getCustomEditPage,
   patchCustomEditPage,
+  getCustomStatisticPage
+} from "../controller/trainingControllers/customPlanController.js";
 
+import {
   getTemplateTraining,
   patchTemplateTraining,
   deleteTemplateTraining,
+} from "../controller/trainingControllers/templatePlanController.js";
 
+import {
   getCreateTraining,  
   postCreateTraining,
   handleDeleteSession,
@@ -28,8 +32,11 @@ import {
   patchSessionEdit,
   getTrainingSession,
   patchTrainingSession,
-  getCustomStatisticPage
-} from "../controller/trainingController.js";
+} from "../controller/trainingControllers/trainingSessionController.js";
+
+import { 
+  getTrainingIndexPage, 
+} from "../controller/trainingControllers/trainingController.js";
 
 //regular custom training plans (standart)
 router.get("/", checkAuthenticated, getTrainingIndexPage);

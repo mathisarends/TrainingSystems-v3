@@ -596,6 +596,7 @@ select {
 /* ----------------------------- */
 .home {
     background-size: contain;
+    background-repeat: repeat;
     background-position: center top;
     background-image: url("../../images/backgrounds/background-technology-mobile.jpg");
 }
@@ -609,7 +610,9 @@ select {
 
 @media (min-width: 35rem) {
     .home {
+        background-size: cover;
         background-position: center center;
+        background-repeat: no-repeat;
         background-image: url("../../images/backgrounds/background-technology-tablet.jpg");
     }
 
@@ -621,7 +624,9 @@ select {
 
 @media (min-width: 45rem) {
     .home {
+        background-size: cover;
         background-position: center center;
+        background-repeat: no-repeat;
         background-image: url("../../images/backgrounds/background-technology-desktop.jpg");
     }
 
