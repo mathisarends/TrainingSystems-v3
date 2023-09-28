@@ -197,8 +197,13 @@ self.addEventListener("fetch", async (event) => {
     }
     
   } else {
-    console.log("sonstiges fetch event:", event.request.url);
-    event.respondWith(staleWhileRevalidate(event));
+    console.log("sosntiges fetch event")
+    if (defaultNetworkMode) {
+      event.respondWith(staleWhileRevalidate(event));
+    } else {
+      event.respondWith(staleNoRevalidate(event));
+    }
+
   }
 });
 

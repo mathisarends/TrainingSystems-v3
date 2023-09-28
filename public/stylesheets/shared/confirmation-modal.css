@@ -19,6 +19,7 @@
   top: auto;
   width: 100%;
   height: fit-content;
+  min-height: 12vh; /* appropriate? */ 
   background: inherit;
   justify-content: center;
   backdrop-filter: blur(1px); /* Hinzufügen von Unschärfe für Glasvermorphismus */

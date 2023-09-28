@@ -36,6 +36,9 @@ function initializeApp(registration) {
     "category-pause-time-input"
   );
 
+  let currentPauseTime = 0;
+  let currentWeightIndex = undefined;
+
   // exercise categories from backend
   const exerciseCategorys = [
     "- Bitte Auswählen -",
@@ -54,6 +57,7 @@ function initializeApp(registration) {
 
 
   // show timer through clicking on headline, another clicks hides it and disables the timer
+
   pageHeadlines.forEach((pageHeadline, index) => {
     pageHeadline.addEventListener("click", e => {
       e.preventDefault();
@@ -96,6 +100,8 @@ function initializeApp(registration) {
   let clickCount = 0;
   let clickTimeout;
 
+  const workoutNotes = document.querySelectorAll(".workout-notes");
+
   restPauseContainers.forEach((restPauseContainer, index) => {
     restPauseContainer.addEventListener("click", e => {
       e.preventDefault();
@@ -120,6 +126,32 @@ function initializeApp(registration) {
             registration.active.postMessage({
               command: "addRestTime",
             })
+
+            let currentNotes = workoutNotes[currentWeightIndex].value;
+
+            if (currentNotes.includes("+30s pause")) {
+              const regex = /\+30s pause/g;
+              currentNotes = currentNotes.replace(regex, "+60s pause");
+            } else if (currentNotes.includes("+60s pause")) {
+              const regex = /\+60s pause/g;
+              currentNotes = currentNotes.replace(regex, "+90s pause");
+            } else if (currentNotes.includes("+90s pause")) {
+              const regex = /\+90s pause/g;
+              currentNotes = currentNotes.replace(regex, "+120s pause");
+            } else if (currentNotes.includes("+120s pause")) {
+              const regex = /\+120s pause/g;
+              currentNotes = currentNotes.replace(regex, "+150s pause");
+            } else if (currentNotes.includes("+150s pause")) {
+              const regex = /\+150s pause/g;
+              currentNotes = currentNotes.replace(regex, "+180s pause");
+            } else {
+              currentNotes = currentNotes + " +30s pause";
+            }
+
+            workoutNotes[currentWeightIndex].value = currentNotes;
+            currentPauseTime = parseInt(currentPauseTime) + 30;
+
+
           }
           clickCount = 0;
         }, 350); // time in which the second klick has to follow in order to detect the double klick event:
@@ -172,7 +204,7 @@ function initializeApp(registration) {
       currentTimerDisplay.textContent = formattedTime;
 
       const progress =
-        (currentTime / getPauseTimeByExerciseCategory(lastCategory)) * 100;
+        (currentTime / currentPauseTime) * 100;
 
       //fehler konsolenausgabe verhinder wenn die seite neu geladen wird:
       if (!isNaN(progress) && isFinite(progress)) {
@@ -227,6 +259,11 @@ function initializeApp(registration) {
           command: "start",
           duration: getPauseTimeByExerciseCategory(category) * 1000, // Timerdauer in Millisekunden
         });
+
+        currentPauseTime = getPauseTimeByExerciseCategory(category);
+        currentWeightIndex = index;
+        console.log("currentWeightIndex", currentWeightIndex);
+
       });
     });
   }

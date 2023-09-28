@@ -1,5 +1,6 @@
 form { /*works as a wrapper*/
     margin-inline: 2.5%;
+    overflow-x: hidden;
 }
 
 input {

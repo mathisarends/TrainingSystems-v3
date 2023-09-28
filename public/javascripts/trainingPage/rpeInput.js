@@ -19,8 +19,13 @@ for (let i = 0; i < targetRPEInputs.length; i++) {
       }
     });
   }
-
   
+
+  const planedRPEs = document.querySelectorAll(".targetRPE");
+  const workoutNotes = document.querySelectorAll(".workout-notes");
+
+  //refactor this shit and make it bulletproof. e.g. check if something bad happens if there is no input to be read or some shit:
+
   for (let i = 0; i < rpeInputs.length; i++) {
 
     rpeInputs[i].addEventListener("change", () => {
@@ -35,12 +40,15 @@ for (let i = 0; i < targetRPEInputs.length; i++) {
 
       let numbers = rpe.split(";").map(Number);
 
-      for (let k = 0; k < numbers.length; k++) {
-        console.log(numbers[k])
-      }
-
       if (numbers.length === 1 && !isNaN(rpe)) { //eine zahl direkt eingeben
         validateRPE(numbers[0], rpeInputs[i]);
+        const rpeDiff = parseFloat(planedRPEs[i].value) - numbers[0];
+        console.log(rpeDiff);
+        if (rpeDiff < -1) { 
+          workoutNotes[i].value = `overshoot` + workoutNotes[i].value + " ";
+        } else if (rpeDiff > 1) {
+          workoutNotes[i].value = `undershoot` + workoutNotes[i].value + " ";
+        } 
         return;
       }
   
@@ -55,8 +63,14 @@ for (let i = 0; i < targetRPEInputs.length; i++) {
         const average = sum / numbers.length;
     
         const roundedAverage = Math.ceil(average / 0.5) * 0.5;
-        console.log(roundedAverage);
   
+        const rpeDiff = parseFloat(planedRPEs[i].value) - roundedAverage;
+        if (rpeDiff < -1) { 
+          workoutNotes[i].value = `overshoot` + workoutNotes[i].value + " ";
+        } else if (rpeDiff > 1) {
+          workoutNotes[i].value = `undershoot` + workoutNotes[i].value+ " ";
+        } 
+
         validateRPE(roundedAverage, rpeInputs[i]);
       } else {
         //do nothing:

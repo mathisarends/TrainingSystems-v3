@@ -20,25 +20,25 @@
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>">
                         <h1 class="numbered-title" style="padding-left: 0.65em; padding-top: 0.5em;"><span
-                                aria-hidden="true">W<%= week %>D<%= i + 1 %></span>
-                            <%= workoutName %>
-                        </h1>
-                        <div class="rest-pause-container" style="display: none;">
-                            <div class="rest-pause-timer">
-                                00:00
-                            </div>
-                            <div>
-                                <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
-                            </div>
+                            aria-hidden="true">W<%= week %>D<%= i + 1 %></span>
+                        <%= workoutName %>
+                    </h1>
+                    <div class="rest-pause-container" style="display: none;">
+                        <div class="rest-pause-timer">
+                            00:00
                         </div>
-                        <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
-                            style="margin-top: 1em; padding-left: 1em;">
-                            Daten erfolgreich gespeichert
+                        <div>
+                            <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
                         </div>
-                        <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
-                            style="margin-top: 1em; padding-left: 1em;">
-                            Fehler beim speichern der Daten
-                        </div>
+                    </div>
+                    <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+                        style="margin-top: 1em; padding-left: 1em;">
+                        Daten erfolgreich gespeichert
+                    </div>
+                    <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+                        style="margin-top: 1em; padding-left: 1em;">
+                        Fehler beim speichern der Daten
+                    </div>
                         <table class="workout-table">
 
                             <thead>
@@ -59,14 +59,14 @@
 
                                 <!--9 ist die max Amount an exercises-->
                                 <% for (let k=0; k < 9; k++) { %>
-                                    <% const selectedCategory=trainingWeekData[i].exercises[k]?.category || 
+                                    <% const selectedCategory=trainingWeekData[i].exercises[k]?.category ||
                                         previousTrainingWeekData[i]?.exercises[k]?.category ||
-                                            firstTrainingWeekData[i].exercises[k]?.category || "" ; %>
+                                        firstTrainingWeekData[i].exercises[k]?.category || "" ; %>
                                         <% const selectedExercise=trainingWeekData[i].exercises[k]?.exercise ||
-                                                previousTrainingWeekData[i]?.exercises[k]?.exercise ||
+                                            previousTrainingWeekData[i]?.exercises[k]?.exercise ||
                                             firstTrainingWeekData[i].exercises[k]?.exercise || "" ; %>
                                             <% const selectedSets=trainingWeekData[i].exercises[k]?.sets ||
-                                                    previousTrainingWeekData[i]?.exercises[k]?.sets ||
+                                                previousTrainingWeekData[i]?.exercises[k]?.sets ||
                                                 firstTrainingWeekData[i].exercises[k]?.sets || "" ; %>
                                                 <% const selectedReps=trainingWeekData[i].exercises[k]?.reps ||
                                                     previousTrainingWeekData[i]?.exercises[k]?.reps ||
@@ -75,8 +75,8 @@
                                                         || "" ; %>
                                                         <% const
                                                             selectedTargetRPE=trainingWeekData[i].exercises[k]?.targetRPE
-                                                            || previousTrainingWeekData[i]?.exercises[k]?.targetRPE || firstTrainingWeekData[i].exercises[k]?.targetRPE || "" ;
-                                                            %>
+                                                            || previousTrainingWeekData[i]?.exercises[k]?.targetRPE ||
+                                                            firstTrainingWeekData[i].exercises[k]?.targetRPE || "" ; %>
                                                             <% const
                                                                 selectedActualRPE=trainingWeekData[i].exercises[k]?.actualRPE
                                                                 || "" ; %>
@@ -212,11 +212,11 @@
                             </div>
                         </div>
 
-                            <%- include("../../partials/trainingPage/trainingNavigationBar", {beforePage: beforePage ,
-                                nextPage: afterPage , week: week}) %>
+                        <%- include("../../partials/trainingPage/trainingNavigationBar", {beforePage: beforePage ,
+                            nextPage: afterPage , week: week}) %>
 
-                                <%- include("../../partials/trainingPage/volumeRecommandations") %>
-                                <%- include("../../partials/trainingPage/javascripts") %> 
-                                
+                            <%- include("../../partials/trainingPage/volumeRecommandations") %>
+                                <%- include("../../partials/trainingPage/javascripts") %>
+
 
 </form>

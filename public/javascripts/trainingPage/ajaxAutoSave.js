@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       })
 
-      if (numbers.length == setInputs[index].value || number.length === 1) {
+      if (numbers.length == setInputs[index].value || numbers.length === 1) {
 
         const sum = numbers.reduce((acc, num) => acc + num + 0);
         const average = sum / numbers.length;
@@ -169,8 +169,25 @@ document.addEventListener("DOMContentLoaded", () => {
         //do nothing:
       }
 
-
-
     });
   });
+
+/*   window.addEventListener("beforeunload", e => {
+    e.preventDefault();
+    weightInputs.forEach((weightInput) => {
+      let input = weightInput.value;
+      input = input.replace(/,/g, "."); //replace commas with points
+      let numbers = input.split(";").map(Number);
+      numbers.forEach((number) => {
+        if (isNaN(number)) { //on of the given weight values is not a number return empty string
+          weightInput.value = "";
+          return;
+        }
+      })
+
+
+
+    })
+  }) */
+
 });
