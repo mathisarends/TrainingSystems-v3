@@ -151,6 +151,7 @@ export async function getCreateTrainingPlan(req, res) {
       res.render("trainingPlans/custom/trainingPlan", {
   
         userID: user.id,
+        user: user,
   
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,

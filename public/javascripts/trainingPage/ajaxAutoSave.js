@@ -172,22 +172,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-/*   window.addEventListener("beforeunload", e => {
-    e.preventDefault();
-    weightInputs.forEach((weightInput) => {
-      let input = weightInput.value;
-      input = input.replace(/,/g, "."); //replace commas with points
-      let numbers = input.split(";").map(Number);
-      numbers.forEach((number) => {
-        if (isNaN(number)) { //on of the given weight values is not a number return empty string
-          weightInput.value = "";
-          return;
-        }
-      })
+  //weight recommandations:
+  const exerciseCategorySelectors = document.querySelectorAll(".exercise-category-selector");
+  const repInputs = document.querySelectorAll(".reps");
+  const planedRPEs = document.querySelectorAll(".targetRPE");
 
 
+  exerciseCategorySelectors.forEach((categorySelector, index) => {
+    const category = categorySelector.value;
+    if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInputs[index].value) { //create placehodler weight recommandation if no weight is selected
+      console.log("main category sbd ohne weight input");
 
-    })
-  }) */
+      const reps = repInputs[index].value;
+      const planedRPE = planedRPEs[index].value;
+
+      if (reps && planedRPE) { //if both are defined
+        const totalReps = parseInt(reps) +  (10 - parseFloat(planedRPE)); //reps + reps in reserve = totalreps
+        let percentage = //regression forumula
+        (0.484472 * totalReps * totalReps -
+          33.891 * totalReps +
+          1023.67) *
+          0.001;
+
+          const estMaxByCategory = getMaxByCategory(category);
+          let result = estMaxByCategory * percentage;
+
+          result = Math.ceil(result / 2.5) * 2.5;
+
+          const lowerLimit = result - 2.5;
+          const upperLimit = result + 2.5;
+
+          const resultString = lowerLimit + "-" + upperLimit;
+          console.log(resultString);
+          weightInputs[index].placeholder = resultString;
+
+      }
+    }
+  })
+
+  function getMaxByCategory(category) {
+    if (category === "Squat") {
+      return document.getElementById("userMaxSquat").value;
+    } else if (category === "Bench") {
+      return document.getElementById("userMaxBench").value;
+    } else if (category === "Deadlift") {
+      return document.getElementById("userMaxDeadlift").value;
+    }
+  }
+
 
 });

@@ -202,6 +202,7 @@ export async function getCreateTraining(req, res) {
       res.render("trainingPlans/scratch/trainAgain", {
   
         userID: user.id,
+        user: user,
   
         exerciseCategories,
         categoryPauseTimes,

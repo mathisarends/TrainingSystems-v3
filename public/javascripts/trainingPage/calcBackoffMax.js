@@ -27,15 +27,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (visibleSelectors.length === 1 && (category === "Squat" || category === "Bench" || category === "Deadlift")) { //exercise selected input change from estMax through calc-max Script
             rpeInputs[i].addEventListener("change", () => {
-                console.log("changed 1RM of main Exercise");
+                 handleChangeEvent(i, visibleSelectors, visibleSelectorsNextRow , category);
 
-                 handleChangeEvent(i, visibleSelectors, visibleSelectorsNextRow);
+            })
 
+            weightInputs[i].addEventListener("change", () => {
+                handleChangeEvent(i, visibleSelectors, visibleSelectorsNextRow , category);
             })
         }
     }
 
-    function handleChangeEvent(index, visibleSelectors, visibleSelectorsNextRow) {
+    const workoutNoteInputs = document.querySelectorAll(".workout-notes");
+
+    function handleChangeEvent(index, visibleSelectors, visibleSelectorsNextRow, category) {
         const weight = parseFloat(weightInputs[index].value) || "undefined";
         const reps = parseInt(repInputs[index].value) || "undefined";
         const rpe = parseFloat(rpeInputs[index].value) || "undefined";
@@ -45,7 +49,16 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             const actualReps = reps + (10 - rpe);
             const unroundedValue = weight * (1 + 0.0333 * actualReps);
+            
             const roundedValue = Math.ceil(unroundedValue / 2.5) * 2.5;
+            const allTimeBestEstMax = getMaxByCategory(category);
+
+            if (roundedValue - allTimeBestEstMax > 5) {
+                if (!workoutNoteInputs[index].value.includes("uptrend")) {
+                    workoutNoteInputs[index].value = "uptrend " + workoutNoteInputs[index].value;
+                }
+            }
+
             estMaxInputs[index].value = parseInt(roundedValue); //we have to change the 1RM here
 
             if (visibleSelectorsNextRow.length === 1 && visibleSelectors[0].value === visibleSelectorsNextRow[0].value) {
@@ -67,4 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+
+    function getMaxByCategory(category) {
+        if (category === "Squat") {
+          return document.getElementById("userMaxSquat").value;
+        } else if (category === "Bench") {
+          return document.getElementById("userMaxBench").value;
+        } else if (category === "Deadlift") {
+          return document.getElementById("userMaxDeadlift").value;
+        }
+      }
 })

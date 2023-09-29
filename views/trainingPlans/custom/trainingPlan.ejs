@@ -6,6 +6,10 @@
 
     <input id="userID" type="hidden" name="userIdentification" value="<%= userID %>">
 
+    <input id="userMaxSquat" type="hidden" name="maxSquat" value="<%= user.maxSquat %>">
+    <input id="userMaxBench" type="hidden" name="maxBench" value="<%= user.maxBench %>">
+    <input id="userMaxDeadlift" type="hidden" name="maxDeadlift" value="<%= user.maxDeadlift %>">
+
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>
             <input class="category-pause-time-input" type="hidden" value="<%= categoryPauseTimes[category] %>">
@@ -20,25 +24,25 @@
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>">
                         <h1 class="numbered-title" style="padding-left: 0.65em; padding-top: 0.5em;"><span
-                            aria-hidden="true">W<%= week %>D<%= i + 1 %></span>
-                        <%= workoutName %>
-                    </h1>
-                    <div class="rest-pause-container" style="display: none;">
-                        <div class="rest-pause-timer">
-                            00:00
+                                aria-hidden="true">W<%= week %>D<%= i + 1 %></span>
+                            <%= workoutName %>
+                        </h1>
+                        <div class="rest-pause-container" style="display: none;">
+                            <div class="rest-pause-timer">
+                                00:00
+                            </div>
+                            <div>
+                                <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+                            </div>
                         </div>
-                        <div>
-                            <progress class="rest-pause-progress-bar" max="100" value="100"></progress>
+                        <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+                            style="margin-top: 1em; padding-left: 1em;">
+                            Daten erfolgreich gespeichert
                         </div>
-                    </div>
-                    <div class="save-status-sucess hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
-                        style="margin-top: 1em; padding-left: 1em;">
-                        Daten erfolgreich gespeichert
-                    </div>
-                    <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
-                        style="margin-top: 1em; padding-left: 1em;">
-                        Fehler beim speichern der Daten
-                    </div>
+                        <div class="save-status-failure hidden ff-sans-serif fs-500 letter-spacing-4 text-accent"
+                            style="margin-top: 1em; padding-left: 1em;">
+                            Fehler beim speichern der Daten
+                        </div>
                         <table class="workout-table">
 
                             <thead>
@@ -217,6 +221,5 @@
 
                             <%- include("../../partials/trainingPage/volumeRecommandations") %>
                                 <%- include("../../partials/trainingPage/javascripts") %>
-
 
 </form>

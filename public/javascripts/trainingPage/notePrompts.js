@@ -83,6 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         }
 
+                    } else if (currentNoteInputs[i].value.toLowerCase().includes("clear")) {
+                        currentNoteInputs[i].value = "";
                     }
                 })
             }

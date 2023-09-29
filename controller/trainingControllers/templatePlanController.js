@@ -36,7 +36,6 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
         for (let j = 0; j < amountOfTrainingDays; j++) {
           previousTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, weekIndex - 1, j));
         }
-        console.log(previousTrainingWeekData[0].exercises);
       }
   
       let firstTrainingWeekData = []; //fallback option firstTrainingWeek
@@ -67,6 +66,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       res.render("trainingPlans/template/trainingPlan", {
   
         userID: user.id,
+        user: user,
   
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,

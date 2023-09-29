@@ -52,8 +52,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 ::placeholder {
-    color: hsl( var(--clr-light) / 1);
-    letter-spacing: 1.5px;
+    color: hsl(var(--clr-white) / 0.625);
 }
 
 table {

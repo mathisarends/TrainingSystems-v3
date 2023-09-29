@@ -148,7 +148,7 @@ function initializeApp(registration) {
               currentNotes = currentNotes + " +30s pause";
             }
 
-            workoutNotes[currentWeightIndex].value = currentNotes;
+            workoutNotes[currentWeightIndex].value = currentNotes + " "
             currentPauseTime = parseInt(currentPauseTime) + 30;
 
 
