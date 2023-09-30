@@ -99,8 +99,8 @@ function initializeApp(registration) {
   let isTimerPaused = false;
   let clickCount = 0;
   let clickTimeout;
+  let workoutNotes;
 
-  const workoutNotes = document.querySelectorAll(".workout-notes");
 
   restPauseContainers.forEach((restPauseContainer, index) => {
     restPauseContainer.addEventListener("click", e => {
@@ -127,7 +127,7 @@ function initializeApp(registration) {
               command: "addRestTime",
             })
 
-            let currentNotes = workoutNotes[currentWeightIndex].value;
+            let currentNotes = workoutNotes[index - 1].value; //offset bei 1 verstehe ich in diesem fall auch nicht so gazn
 
             if (currentNotes.includes("+30s pause")) {
               const regex = /\+30s pause/g;
@@ -147,8 +147,8 @@ function initializeApp(registration) {
             } else {
               currentNotes = currentNotes + " +30s pause";
             }
-
-            workoutNotes[currentWeightIndex].value = currentNotes + " "
+;
+            workoutNotes[index - 1].value = currentNotes;
             currentPauseTime = parseInt(currentPauseTime) + 30;
 
 
@@ -249,6 +249,7 @@ function initializeApp(registration) {
     const categorySelectors = currentWorkoutTable.querySelectorAll(
       ".exercise-category-selector"
     );
+    workoutNotes = currentWorkoutTable.querySelectorAll(".workout-notes");
 
     weightInputs.forEach((weightInput, index) => {
       weightInput.addEventListener("change", () => {

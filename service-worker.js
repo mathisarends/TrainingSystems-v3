@@ -79,6 +79,10 @@ const assets = [
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
 
+  "/javascripts/statsPage/illustrateStats.js",
+  "/javascripts/statsPage/navigate.js",
+  "/javascripts/statsPage/showStatsTab.js",
+
   "/javascripts/session/pauseTimer.js",
   "/offline",
 

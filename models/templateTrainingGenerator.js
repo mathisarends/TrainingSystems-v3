@@ -263,32 +263,56 @@ const placeholderExercise = {
       placeholderExercise,
       placeholderExercise
     ];
+
+    const day1Exercises2 = day1Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
+    
+    const day2Exercises2 = day2Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
+    
+    const day3Exercises2 = day3Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
+    
+    const day4Exercises2 = day4Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
   
       // define each day of the training Week
       for (let day = 0; day < daysPerWeek; day++) {
         // Rotate through exercise arrays based on index
   
         let exercises;
-        switch (day) {
-          case 0:
+        if (week === 0) {
+          if (day === 0) {
             exercises = day1Exercises;
-            break;
-          case 1:
+          } else if (day === 1) {
             exercises = day2Exercises;
-            break;
-          case 2: 
+          } else if (day === 2) {
             exercises = day3Exercises;
-            break;
-          case 3:
+          } else if (day === 3) {
             exercises = day4Exercises;
-            break;
-          default:
-              exercises = day1Exercises;
+          } else {
+            exercises = day1Exercises;
+          }
+        } else {
+          if (day === 0) {
+            exercises = day1Exercises2;
+          } else if (day === 1) {
+            exercises = day2Exercises2;
+          } else if (day === 2) {
+            exercises = day3Exercises2;
+          } else if (day === 3) {
+            exercises = day4Exercises2;
+          } else {
+            exercises = day1Exercises2;
+          }
         }
   
         const trainingDay = {
           exercises: exercises,
-          trainingDayNotes: "",
         }
         trainingDays.push(trainingDay);
       }
@@ -524,32 +548,56 @@ const placeholderExercise = {
       },
       placeholderExercise,
     ];
+
+    const day1Exercises2 = day1Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
+    
+    const day2Exercises2 = day2Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
+    
+    const day3Exercises2 = day3Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
+    
+    const day4Exercises2 = day4Exercises.map((exercise) => ({
+      targetRPE: exercise.targetRPE,
+    }));
   
       // define each day of the training Week
       for (let day = 0; day < daysPerWeek; day++) {
         // Rotate through exercise arrays based on index
   
         let exercises;
-        switch (day) {
-          case 0:
+        if (week === 0) {
+          if (day === 0) {
             exercises = day1Exercises;
-            break;
-          case 1:
+          } else if (day === 1) {
             exercises = day2Exercises;
-            break;
-          case 2: 
+          } else if (day === 2) {
             exercises = day3Exercises;
-            break;
-          case 3:
+          } else if (day === 3) {
             exercises = day4Exercises;
-            break;
-          default:
-              exercises = day1Exercises;
+          } else {
+            exercises = day1Exercises;
+          }
+        } else {
+          if (day === 0) {
+            exercises = day1Exercises2;
+          } else if (day === 1) {
+            exercises = day2Exercises2;
+          } else if (day === 2) {
+            exercises = day3Exercises2;
+          } else if (day === 3) {
+            exercises = day4Exercises2;
+          } else {
+            exercises = day1Exercises2;
+          }
         }
   
         const trainingDay = {
           exercises: exercises,
-          trainingDayNotes: "",
         }
         trainingDays.push(trainingDay);
       }

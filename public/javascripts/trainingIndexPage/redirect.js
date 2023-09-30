@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
   )[0]; // for pulse effect = shows the user that there was not selected a training prior
 
   const moreTrainingOptionsCustom = document.getElementsByClassName("more-training-options")[0];
-  const archiveCustomPlansForm = document.getElementsByClassName("archive-custom-form");
+
 
   const navToStatsButtons = document.querySelectorAll(".stats-page-button");
 
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
   moreTrainingOptionsCustom.addEventListener("click", e => {
     e.preventDefault();
     moreTrainingOptionsCustom.style.display = "none";
-    navToStatsButtons[0].style.display = "block";
+    editCustomTrainingBTN.style.display = "block";
     deleteCustomTrainingForms[lastSelectedLinkIndex].style.display = "block";
   })
 

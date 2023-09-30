@@ -181,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
   exerciseCategorySelectors.forEach((categorySelector, index) => {
     const category = categorySelector.value;
     if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInputs[index].value) { //create placehodler weight recommandation if no weight is selected
-      console.log("main category sbd ohne weight input");
 
       const reps = repInputs[index].value;
       const planedRPE = planedRPEs[index].value;
@@ -203,7 +202,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const upperLimit = result + 2.5;
 
           const resultString = lowerLimit + "-" + upperLimit;
-          console.log(resultString);
           weightInputs[index].placeholder = resultString;
 
       }

@@ -14,7 +14,8 @@
     flex-direction: column;
 }
 
-.custom-training-container {
+.custom-training-container,
+.stats-container {
     border: 1px solid hsl( var(--clr-light) / 0.35 );
     padding: 2rem 0.5rem 0.5rem;
     flex-grow: 1;
@@ -29,6 +30,25 @@
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.4) !important; 
     border-width: 4px; 
     transition: box-shadow 0.3s, border-width 0.3s; 
+}
+
+.stats-container {
+    color: white;
+    border-color: white;
+    padding: 1.5rem 0.5rem 0.5rem;
+}
+
+.stats-container:nth-of-type(3n + 1) {
+    background-color: hsl( var(--clr-white) / 0.75);
+
+}
+
+.stats-container:nth-of-type(3n + 2) {
+    background-color: hsl( var(--clr-white) / 0.5);
+}
+
+.stats-container:nth-of-type(3n + 3) {
+    background-color: hsl( var(--clr-white) / 0.25);
 }
 
 
