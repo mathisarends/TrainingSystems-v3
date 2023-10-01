@@ -187,20 +187,9 @@
                             <button class="main-page-button save-training-button uppercase ff-sans-normal" type="submit">Save</button>
                         </div>
 
-                        <audio id="timerAudio">
-                            <source src="/audio/newTimer.mp3" type="audio/mpeg">
-                        Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
-                        </audio>
 
-                        <audio id="save-audio">
-                            <source src="/audio/save_sound.mp3" type="audio/mpeg">     
-                            Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
-                        </audio>
-
-
-                    
-
-
+                        <audio id="timerAudio" preload="auto" crossorigin="anonymous" src="/audio/newTimer.mp3"></audio>
+                        <audio id="save_audio" preload="auto" crossorigin="anonymous" src="/audio/save_sound.mp3"></audio>
 
                         <div id="confirmationModal" class="modal" style="display: none">
                             <div class="modal-content">
