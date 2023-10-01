@@ -10,6 +10,9 @@ const trainingPlanSchema = new mongoose.Schema({
   trainingFrequency: Number,
   trainingPhase: String,
   lastUpdated: Date,
+  lastWeekDeload: Boolean,
+  automaticIncrementRPE: Boolean,
+  exercisesPerDay: Number, //dunno wheter ill use it
   trainingWeeks: [
     {
       trainingDays: [
@@ -27,6 +30,10 @@ const trainingPlanSchema = new mongoose.Schema({
               notes: String,
             },
           ],
+          fatiqueLevel: { //newly added in order to track fatique level and make automatic volume changes:
+            type: String,
+            enum: ["niedrig", "mittel", "hoch"]
+          }
         },
       ],
       squatSetsDone: Number,

@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import passport from "passport";
 import transporter from "../mailerConfig.js";
+import { customLoginMiddleware } from "../passport-config.js";
 
 export function getLoginPage(req, res) {
   res.render("login/index", { layout: false });
@@ -9,11 +10,12 @@ export function getLoginPage(req, res) {
 
 // uses passport middleware
 export function postLoginPage(req, res, next) {
-  passport.authenticate("local", {
+/*   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/login",
     failureFlash: true,
-  })(req, res, next);
+  })(req, res, next); */
+  customLoginMiddleware(passport)(req, res, next);
 }
 
 export function getRequestNewPasswordPage(req, res) {

@@ -27,4 +27,45 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  //swipe logic
+  const allSections = document.querySelectorAll("section");
+
+  allSections.forEach((section, index) => {
+    
+    section.addEventListener("touchstart", e => {
+      startX = e.touches[0].clientX;
+    });
+
+    section.addEventListener("touchend", e => {
+      const endX = e.changedTouches[0].clientX;
+
+      const swipeThreshold = 110;
+
+      if (startX - endX > swipeThreshold) {
+          navigateToNextDay();             // Swipe left, navigate to the next day
+      } else if (endX - startX > swipeThreshold) {
+          navigateToPreviousDay();             // Swipe right, navigate to the previous day
+      }
+    })
+
+    function navigateToNextDay() {
+      const selectedButton = document.querySelector(".tab-list button[aria-selected='true']");
+      const nextButton = selectedButton.nextElementSibling || tabs[0];
+
+      if (nextButton) {
+          nextButton.click();
+      }
+  }
+
+  function navigateToPreviousDay() {
+      const selectedButton = document.querySelector(".tab-list button[aria-selected='true']");
+      const previousButton = selectedButton.previousElementSibling || tabs[tabs.length - 1];
+
+      if (previousButton) {
+          previousButton.click();
+      }
+  }
+
+  })
 });

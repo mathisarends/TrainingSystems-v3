@@ -74,6 +74,7 @@ const assets = [
   "/javascripts/trainingPage/pauseTimer.js",
   "/javascripts/trainingPage/removePlaceholder.js",
   "/javascripts/trainingPage/rpeInput.js",
+  "/javascripts/trainingPage/handleDeloadWeek.js",
   "/javascripts/trainingPage/changeTitleAjax.js",
 
   "/javascripts/volume/calcVolume.js",
@@ -82,6 +83,8 @@ const assets = [
   "/javascripts/statsPage/illustrateStats.js",
   "/javascripts/statsPage/navigate.js",
   "/javascripts/statsPage/showStatsTab.js",
+
+  "/javascripts/login/handleLogin.js",
 
   "/javascripts/session/pauseTimer.js",
   "/offline",

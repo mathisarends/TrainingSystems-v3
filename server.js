@@ -16,7 +16,7 @@ import bodyParser from 'body-parser';
 import passport from "passport";
 import expressLayouts from "express-ejs-layouts";
 import methodOverride from "method-override";
-import initializePassport from "./passport-config.js";
+import { initialize as initializePassport} from "./passport-config.js";
 
 import indexRouter from "./routes/index.js";
 import trainingRouter from "./routes/training.js";

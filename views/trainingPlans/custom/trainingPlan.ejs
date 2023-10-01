@@ -10,6 +10,8 @@
     <input id="userMaxBench" type="hidden" name="maxBench" value="<%= user.maxBench %>">
     <input id="userMaxDeadlift" type="hidden" name="maxDeadlift" value="<%= user.maxDeadlift %>">
 
+    <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
+
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>
             <input class="category-pause-time-input" type="hidden" value="<%= categoryPauseTimes[category] %>">

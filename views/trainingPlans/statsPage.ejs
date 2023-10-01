@@ -9,13 +9,18 @@
             class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Bench</button>
         <button id="deadlift-tab" aria-selected="false" role="tab" aria-controls="template-tab"
             class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Deadlift</button>
+
     </div>
 
     <input id="userIdentification" type="hidden" name="userIdentification" value="<%= userID %>">
+    
     <input id="squatTonnageArray" type="hidden" value="<%= squatTonnage %>">
     <input id="benchTonnageArray" type="hidden" value="<%= benchTonnage %>">
     <input id="deadliftTonnageArray" type="hidden" value="<%= deadliftTonnage %>">
 
+    <input id="bestSquatSets" type="hidden" value="<%= bestSquatSets %>">
+    <input id="bestBenchSets" type="hidden" value="<%= bestBenchSets %>">
+    <input id="bestDeadliftSets" type="hidden" value="<%= bestDeadliftSets %>">
 
 
     <section class="custom-view-container flow" style="--flow-space: 2em;">
@@ -36,6 +41,37 @@
                 <% } %>
 
                 <% } %>
+
+        </div>
+
+        <div class="alternative-stats-container flex" style="--gap: 1rem; display: none;">
+            <% for (let i=0; i < squatSetsDone.length; i++) { %>
+
+                <% if (squatTonnage[i]) { %>
+                    <div class="stats-container">
+    
+                            <div class="training-plan-title uppercase">
+                                Heaviest set
+                            </div>
+                            <% if (Object.keys(bestSquatSets[i]).length !== 0) { %>
+                                <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                    <%= bestSquatSets[i].sets %> x <%= bestSquatSets[i].reps %> | <%= bestSquatSets[i].weight  %>KG @<%= bestSquatSets[i].actualRPE  %>
+                                   
+                                </div>
+                                <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                     <%= bestSquatSets[i].exercise %>
+                                </div>
+                            <% } else { %>
+                                <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                    Kein Satz verfübar
+                                </div>
+                                <% } %>
+
+                    </div>
+                <% } %>
+
+                <% } %>
+
         </div>
 
         
@@ -50,6 +86,7 @@
                 id="edit-custom-training-button">BACK</button>
 
         </div>
+
 
     </section>
 
@@ -72,6 +109,36 @@
                 <% } %>
         </div>
 
+        <div class="alternative-stats-container flex" style="--gap: 1rem; display: none;">
+            <% for (let i=0; i < benchSetsDone.length; i++) { %>
+
+                <% if (benchTonnage[i]) { %>
+                    <div class="stats-container">
+    
+                        <div class="training-plan-title uppercase">
+                            Heaviest set
+                        </div>
+                        <% if (Object.keys(bestBenchSets[i]).length !== 0) { %>
+                            <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                <%= bestBenchSets[i].sets %> x <%= bestBenchSets[i].reps %> | <%= bestBenchSets[i].weight  %>KG @<%= bestBenchSets[i].actualRPE  %>
+                               
+                            </div>
+                            <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                 <%= bestBenchSets[i].exercise %>
+                            </div>
+                        <% } else { %>
+                            <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                Kein Satz verfübar
+                            </div>
+                                <% } %>
+
+                    </div>
+                <% } %>
+
+                <% } %>
+
+        </div>
+
 
             <div class="training-button-container">
                 <button class="main-page-button training-plan-button uppercase"
@@ -89,7 +156,7 @@
 
     <section class="custom-view-container flow" style="--flow-space: 2em;" hidden>
 
-        <div class="training-plan-container flex" style="--gap: 1rem;">
+        <div class="training-plan-container flex" style="--gap: 1rem; display: none;">
             <% for (let i=0; i < deadliftSetsDone.length; i++) { %>
 
                 <% if (deadliftTonnage[i]) { %>
@@ -106,6 +173,35 @@
                 <% } %>
         </div>
 
+        <div class="alternative-stats-container flex" style="--gap: 1rem;">
+            <% for (let i=0; i < deadliftSetsDone.length; i++) { %>
+
+                <% if (deadliftTonnage[i]) { %>
+                    <div class="stats-container">
+    
+                        <div class="training-plan-title uppercase">
+                            Heaviest set
+                        </div>
+                        <% if (Object.keys(bestDeadliftSets[i]).length !== 0) { %>
+                            <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                <%= bestDeadliftSets[i].sets %> x <%= bestDeadliftSets[i].reps %> | <%= bestDeadliftSets[i].weight  %>KG @<%= bestDeadliftSets[i].actualRPE  %>
+                               
+                            </div>
+                            <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                 <%= bestDeadliftSets[i].exercise %>
+                            </div>
+                        <% } else { %>
+                            <div class="ff-sans-cond fs-400 letter-spacing-4">
+                                Kein Satz verfübar
+                            </div>
+                        <% } %>
+
+                    </div>
+                <% } %>
+
+                <% } %>
+
+        </div>
 
 
             <div class="training-button-container">
@@ -129,3 +225,24 @@
 <script src="/javascripts/statsPage/illustrateStats.js"></script>
 <script src="/javascripts/statsPage/navigate.js"></script>
 <script src="/javascripts/statsPage/showStatsTab.js"></script>
+
+<script>
+
+    //switchViews.js
+    const allTonnageContainers = document.querySelectorAll(".training-plan-container");
+    const allBestSetContainers = document.querySelectorAll(".alternative-stats-container")
+
+    allTonnageContainers.forEach((container, index) => {
+        container.addEventListener("click", () => {
+            allTonnageContainers[index].style.display = "none";
+            allBestSetContainers[index].style.display = "flex";
+        })
+    })
+
+    allBestSetContainers.forEach((container, index) => {
+        container.addEventListener("click", () => {
+            allTonnageContainers[index].style.display = "flex";
+            allBestSetContainers[index].style.display = "none";
+        })
+    })
+</script>

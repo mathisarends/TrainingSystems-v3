@@ -19,11 +19,11 @@
 <body class="home">
         <form action="/login" method="POST">
             <h3 class="text-white ff-serif fs-700 letter-spacing-1" style="font-weight: 500">TYR</h3>
-            <% if (messages.error) { %>
-                <div class="ff-sans-normal letter-spacing-4 text-white fs-400" style="text-align: center;">
+
+                <div class="ff-sans-normal letter-spacing-4 text-white fs-400" id="error-message" style="text-align: center; display: none">
                         <%= messages.error %>
                 </div>
-                <% } %>
+
     
             <label class="ff-sans-normal letter-spacing-4 text-accent fs-400" for="username">Username/Email</label>
             <input type="text" placeholder="Enter username or email" id="username" name="username" required autofocus>
@@ -62,13 +62,6 @@
 
 </body>
 
-<script>
-    const googleBTN = document.getElementById("google-btn");
-
-    googleBTN.addEventListener("click", e => {
-        e.preventDefault();
-        window.location.href = "/auth/google";
-    })
-</script>
+<script src="/javascripts/login/handleLogin.js"></script>
 
 </html>

@@ -47,6 +47,8 @@ export async function getCreateTrainingPlan(req, res) {
       const trainingPlanPhase = trainingPlanData.training_phase;
       const trainingPlanFrequency = trainingPlanData.training_frequency;
       const trainingPlanWeeks = trainingPlanData.training_weeks;
+      const lastWeekDeload = trainingPlanData.isLastWeekDeload;
+      const automaticIncrementRPE = trainingPlanData.automaticIncrementRPE;
   
       const lastUpdated = new Date();
   
@@ -61,6 +63,8 @@ export async function getCreateTrainingPlan(req, res) {
         trainingFrequency: trainingPlanFrequency,
         trainingPhase: trainingPlanPhase,
         lastUpdated: lastUpdated,
+        lastWeekDeload: lastWeekDeload,
+        automaticIncrementRPE: automaticIncrementRPE, //TODO: implement logic for this
         trainingWeeks: trainingWeeks,
       });
   
@@ -112,6 +116,15 @@ export async function getCreateTrainingPlan(req, res) {
       if (week > trainingPlan.trainingWeeks.length) {
         return res.status(404).send("Ungültige Woche");
       }
+
+      let isDeloadWeek = false;
+      if (week === trainingPlan.trainingWeeks.length) {
+        if (trainingPlan.lastWeekDeload === undefined || !trainingPlan.lastWeekDeload) {
+          isDeloadWeek = false;
+        } else {
+          isDeloadWeek = true;
+        }
+      }
   
       const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
   
@@ -156,6 +169,8 @@ export async function getCreateTrainingPlan(req, res) {
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,
         firstTrainingWeekData: firstTrainingWeekData,
+
+        isDeloadWeek: isDeloadWeek,
   
         amountOfTrainingDays: amountOfTrainingDays,
         workoutName: trainingTitle,
@@ -355,10 +370,6 @@ export async function getCustomStatisticPage(req, res, index) {
           bestDeadliftSets.push(bestDeadliftSetInWeek);
         }
       });
-/*       console.log(bestSquatSets);
-      console.log(bestBenchSets);
-      console.log(bestDeadliftSets); */
-
       // TODO: CustomPlanController
 
       // es werden die richtigen sets übergeben => diese können nachher mit den bestleistungen und aneinadner verglichen werden
@@ -377,7 +388,11 @@ export async function getCustomStatisticPage(req, res, index) {
         benchSetsDone,
         benchTonnage,
         deadliftSetsDone,
-        deadliftTonnage
+        deadliftTonnage,
+
+        bestSquatSets,
+        bestBenchSets,
+        bestDeadliftSets,
       })
   
     } catch (error) {
