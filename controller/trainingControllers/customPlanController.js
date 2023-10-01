@@ -218,7 +218,7 @@ export async function getCreateTrainingPlan(req, res) {
   
       const updatedData = req.body;
       const trainingPlan = user.trainingPlansCustomNew[i];
-      const exericsesPerTrainingDay = trainingPlan.exercisesPerDay;
+      const exericsesPerTrainingDay = trainingPlan.exercisesPerDay || 9; //lass ich noch für meinen alten plan drinne: TODO: langfristig das fallback entfernen
   
       trainingPlan.lastUpdated = new Date(); //save timestamp
   
