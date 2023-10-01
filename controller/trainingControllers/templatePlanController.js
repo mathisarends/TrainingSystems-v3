@@ -21,7 +21,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
         return res.status(404).send("Benutzer nicht gefunden");
       }
       const trainingPlan = user.trainingPlanTemplate[templateType];
-      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, amountOfExercises } = getTrainingPlanInfo(trainingPlan);
       console.log(trainingTitle);
       const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, weekIndex);
   
@@ -42,6 +42,16 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       if (weekIndex !== 0) {
         for (let j = 0; j < amountOfTrainingDays; j++) {
           firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
+        }
+      }
+
+      let isDeloadWeek = false;
+      if (weekIndex === trainingPlan.trainingWeeks.length) {
+        if (trainingPlan.lastWeekDeload === undefined || !trainingPlan.lastWeekDeload) {
+          isDeloadWeek = false;
+        } else {
+          console.log("Delaod")
+          isDeloadWeek = true;
         }
       }
   
@@ -67,6 +77,9 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
   
         userID: user.id,
         user: user,
+
+        isDeloadWeek, isDeloadWeek,
+        amountOfExercises: amountOfExercises,
   
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,
@@ -118,6 +131,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       const templateIndex = isTemplateA ? 0 : 1; // 0 for A templates, 1 for B templates
      
       const trainingPlan = user.trainingPlanTemplate[templateIndex];
+      const amountOfExercises = trainingPlan.exercisesPerDay;
       trainingPlan.lastUpdated = new Date();
       const weekSuffix = parseInt(templateName.slice(1)); // Extract week suffix (1, 2, ...)
       const trainingWeek = trainingPlan.trainingWeeks[weekSuffix - 1]; // Adjust index
@@ -127,7 +141,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
         const trainingDay = trainingWeek.trainingDays[i];
         
-        for (let j = 0; j < trainingDay.exercises.length; j++) {
+        for (let j = 0; j < amountOfExercises; j++) {
           const exercise = trainingDay.exercises[j];
           updateExerciseDetails(trainingDay, exercise, updatedData, i, j);
         }

@@ -19,6 +19,7 @@
             <input id="userMaxBench" type="hidden" name="maxBench" value="<%= user.maxBench %>">
             <input id="userMaxDeadlift" type="hidden" name="maxDeadlift" value="<%= user.maxDeadlift %>">
 
+            <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
 
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>" >
@@ -57,7 +58,7 @@
                                 <!--nur für Abstand kriege das anders nicht hin-->
 
                                 <!--9 ist die max Amount an exercises-->
-                                <% for (let k=0; k < 9; k++) { %>
+                                <% for (let k=0; k < amountOfExercises; k++) { %>
 
                                     <!--Das problem liegt daran dass für alle wochen schon eigene werte im template plan generator festgelegt werden! deshalb zieht die previous week data nicht finx !-->
 

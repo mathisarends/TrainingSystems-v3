@@ -45,6 +45,7 @@
                             style="margin-top: 1em; padding-left: 1em;">
                             Fehler beim speichern der Daten
                         </div>
+
                         <table class="workout-table">
 
                             <thead>
@@ -63,8 +64,10 @@
                             <tbody>
                                 <!--nur für Abstand kriege das anders nicht hin-->
 
+                                <% const numberOfExercises = amountOfExercises || 9 %>
+
                                 <!--9 ist die max Amount an exercises-->
-                                <% for (let k=0; k < 9; k++) { %>
+                                <% for (let k=0; k < numberOfExercises; k++) { %>
                                     <% const selectedCategory=trainingWeekData[i].exercises[k]?.category ||
                                         previousTrainingWeekData[i]?.exercises[k]?.category ||
                                         firstTrainingWeekData[i].exercises[k]?.category || "" ; %>
@@ -180,7 +183,14 @@
                             </tbody>
                         </table>
 
+                        <select name="day<%= i + 1 %>_fatiqueLevel" class="fatiqueLevelSelector uppercase ff-sans-normal letter-spacing-4" required>
+                            <option <%= currentTrainingWeekFatique[i] === "hoch" ? "selected" : "" %> value="hoch">FATIQUE = hoch</option>
+                            <option <%= currentTrainingWeekFatique[i] === "mittel" || !currentTrainingWeekFatique[i] ? "selected" : "" %> value="mittel">FATIQUE = mittel</option>
+                            <option <%= currentTrainingWeekFatique[i] === "niedrig" ? "selected" : "" %> value="niedrig">FATIQUE = niedrig</option>
+                    </select>
+
                     </div>
+
                     <% } %>
 
                         <div class="dot-indicators flex" style="justify-content: center; margin-top: 1.5rem;">
@@ -223,5 +233,6 @@
 
                             <%- include("../../partials/trainingPage/volumeRecommandations") %>
                                 <%- include("../../partials/trainingPage/javascripts") %>
+
 
 </form>

@@ -4,12 +4,16 @@ export function getTrainingPlanInfo(trainingPlan) {
     const trainingFrequency = trainingPlan.trainingFrequency;
     const trainingPhase = trainingPlan.trainingPhase;
     const amountOfTrainingDays = trainingPlan.trainingWeeks[0].trainingDays.length;
+    const amountOfExercises = trainingPlan.exercisesPerDay;
+    const lastWeekDeload = trainingPlan.lastWeekDeload;
     
     return {
       trainingTitle,
       trainingFrequency,
       trainingPhase,
-      amountOfTrainingDays
+      amountOfTrainingDays,
+      amountOfExercises,
+      lastWeekDeload
     };
   }
 

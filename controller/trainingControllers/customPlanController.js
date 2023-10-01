@@ -47,8 +47,8 @@ export async function getCreateTrainingPlan(req, res) {
       const trainingPlanPhase = trainingPlanData.training_phase;
       const trainingPlanFrequency = trainingPlanData.training_frequency;
       const trainingPlanWeeks = trainingPlanData.training_weeks;
+      const exercisesPerDay = trainingPlanData.exercisesPerTraining;
       const lastWeekDeload = trainingPlanData.isLastWeekDeload;
-      const automaticIncrementRPE = trainingPlanData.automaticIncrementRPE;
   
       const lastUpdated = new Date();
   
@@ -64,7 +64,7 @@ export async function getCreateTrainingPlan(req, res) {
         trainingPhase: trainingPlanPhase,
         lastUpdated: lastUpdated,
         lastWeekDeload: lastWeekDeload,
-        automaticIncrementRPE: automaticIncrementRPE, //TODO: implement logic for this
+        exercisesPerDay: exercisesPerDay,
         trainingWeeks: trainingWeeks,
       });
   
@@ -126,14 +126,17 @@ export async function getCreateTrainingPlan(req, res) {
         }
       }
   
-      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, amountOfExercises } = getTrainingPlanInfo(trainingPlan);
   
+      // redirect directly to the page
       const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, week - 1);
   
       /* the most recent data is displayed then the data from last week and as a fallback the data from the first week*/ /* week starts with 1 so - 1 everytime */
       const trainingWeekData = [];
+      const currentTrainingWeekFatique = [];
       for (let j = 0; j < amountOfTrainingDays; j++) {
         trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 1, j));
+        currentTrainingWeekFatique.push(extractFatiqueLevelOfTrainingDay(trainingPlan, week - 1, j));
       }
 
       const previousTrainingWeekData = [];
@@ -169,8 +172,10 @@ export async function getCreateTrainingPlan(req, res) {
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,
         firstTrainingWeekData: firstTrainingWeekData,
+        currentTrainingWeekFatique: currentTrainingWeekFatique || [], //current training week
 
         isDeloadWeek: isDeloadWeek,
+        amountOfExercises: amountOfExercises,
   
         amountOfTrainingDays: amountOfTrainingDays,
         workoutName: trainingTitle,
@@ -213,6 +218,7 @@ export async function getCreateTrainingPlan(req, res) {
   
       const updatedData = req.body;
       const trainingPlan = user.trainingPlansCustomNew[i];
+      const exericsesPerTrainingDay = trainingPlan.exercisesPerDay;
   
       trainingPlan.lastUpdated = new Date(); //save timestamp
   
@@ -222,9 +228,10 @@ export async function getCreateTrainingPlan(req, res) {
   
       for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
         const trainingDay = trainingWeek.trainingDays[i];
+        updateFatiqueLevels(trainingWeek, i, updatedData);
   
         // 9 Exercise Felder damit in for loop
-        for (let j = 0; j < 9; j++) {
+        for (let j = 0; j < exericsesPerTrainingDay; j++) {
           const exercise = trainingDay.exercises[j];
           updateExerciseDetails(trainingDay, exercise, updatedData, i, j);
         }
@@ -253,7 +260,7 @@ export async function getCreateTrainingPlan(req, res) {
         return res.status(404).send("Training nicht gefunden!");
       }
   
-      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
+      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, lastWeekDeload } = getTrainingPlanInfo(trainingPlan);
   
       const blockLength = getAmountOfTrainingWeeks(trainingPlan);
   
@@ -265,6 +272,7 @@ export async function getCreateTrainingPlan(req, res) {
         workoutName: trainingTitle,
         trainingFrequency: trainingFrequency,
         trainingPhase: trainingPhase,
+        lastWeekDeload: lastWeekDeload,
         blockLength: blockLength,
         templatePlanName: `${letter}`, //for posting to the right path
       });
@@ -289,8 +297,9 @@ export async function getCreateTrainingPlan(req, res) {
   
       //Neue übergebene Daten
       const newTitle = req.body.training_title;
-      const newTrainingPhase = req.body.training_phase;
       const newTrainingFrequency = req.body.training_frequency;
+      const newTrainingPhase = req.body.training_phase;
+      const isLastWeekDeload = req.body.isLastWeekDeload;
   
       // wenn es änderungen gibt dann aktualiseren
       if (trainingPlan.title !== newTitle) {
@@ -301,6 +310,10 @@ export async function getCreateTrainingPlan(req, res) {
       }
       if (trainingPlan.trainingFrequency !== newTrainingFrequency) {
         trainingPlan.trainingFrequency = newTrainingFrequency;
+      }
+
+      if (trainingPlan.lastWeekDeload !== isLastWeekDeload) {
+        trainingPlan.lastWeekDeload = isLastWeekDeload;
       }
   
       console.log("patched training metadata")
@@ -444,5 +457,20 @@ function createNewTrainingPlanWithPlaceholders(weeks, daysPerWeek) {
 function getAmountOfTrainingWeeks(trainingPlan) {
     const trainingWeeks = trainingPlan.trainingWeeks.length;
     return trainingWeeks;
+  }
+
+  function extractFatiqueLevelOfTrainingDay(trainingPlan, weekIndex, dayIndex) {
+    const trainingWeek = trainingPlan.trainingWeeks[weekIndex];
+    const trainingDay = trainingWeek.trainingDays[dayIndex];
+    return trainingDay.fatiqueLevel;
+  }
+
+  function updateFatiqueLevels(trainingWeek, dayIndex, updatedData) {
+
+    const trainingDay = trainingWeek.trainingDays[dayIndex];
+
+    if (trainingDay.fatiqueLevel !== updatedData[`day${dayIndex + 1}_fatiqueLevel`]) {
+      trainingDay.fatiqueLevel = updatedData[`day${dayIndex + 1}_fatiqueLevel`];
+    }
   }
   

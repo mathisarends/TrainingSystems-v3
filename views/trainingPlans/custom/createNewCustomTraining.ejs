@@ -22,13 +22,15 @@
 
         <h3 class="text-white ff-serif fs-7 00 letter-spacing-1 uppercase">Training</h3>
 
+        <!--First section-->
+
         <section>
             <label for="training_title" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Titel</label>
             <input type="text" id="training-title" class="create-training-plan-input" name="training_title" required>
 
-            <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainings /
+            <label for="training_frequency" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainings /
                 Woche</label>
-            <select name="training_frequency" class="generic-selector" required>
+            <select name="training_frequency" id="training_frequency" class="generic-selector" required>
                 <option value="" disabled selected hidden></option>
                 <option value="3">3</option>
                 <option value="4">4</option>
@@ -46,24 +48,31 @@
                 <option value="6">6</option>
             </select>
 
-         <!--            // Übungen pro Trainingstag? -->
-
+            <button type="button" class="form-button uppercase" style="margin-top: 1.5rem;">weiter</button>
         </section>
 
+        <!--Second section-->
+
         <section style="display: none">
+
             <label for="training-mode-selector"
                 class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainingsphase</label>
-            <select name="training_phase" class="generic-selector" required>
+            <select name="training_phase" id="training-mode-selector" class="generic-selector" required>
                 <option selected value="hypertrophie">Hypertrophie</option>
                 <option value="kraft">Kraft</option>
                 <option value="peaking">Peaking</option>
             </select>
 
-
-            <label for="automaticIncrementRPE" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Automatische Week RPE Progression?</label>
-            <select name="automaticIncrementRPE" class="generic-selector" required>
-                <option selected value="true">Ja</option>
-                <option value="false">Nein</option>
+            <label for="exercisesPerTraining"
+            class="ff-sans-normal letter-spacing-4 text-accent fs-400">Übungen pro Trainingstag</label>
+            <select name="exercisesPerTraining" id="exercisesPerTraining" class="generic-selector" required>
+                <option value="" disabled selected hidden></option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8" selected>8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
             </select>
 
             <label for="isLastWeekDeload" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Letzte Woche als
@@ -73,31 +82,32 @@
                 <option value="false">Nein</option>
             </select>
 
+            <button type="submit" class="form-button uppercase" style="margin-top: 1.5rem;">Create</button>
+
 
         </section>
 
 
-        <div class="dot-indicators flex" style="justify-content: center; --gap: 1.5rem; margin-top: 1.5rem;">
+        <div class="dot-indicators flex" style="justify-content: center; --gap: 1.5rem; margin-top: 2rem;">
             <button aria-selected="true"><span class="sr-only">Slide Create Page</span></button>
             <button aria-selected="false"><span class="sr-only">Slide Create Page</span></button>
         </div>
 
-        <button type="submit" class="form-button-2 uppercase">Create</button>
-        <button class="form-button uppercase fs-500" id="cancel-button" style="border: none;">Back</button>
 
 
     </form>
 
     <script>
-        const cancelButton = document.getElementById("cancel-button");
-
-        cancelButton.addEventListener("click", e => {
-            e.preventDefault();
-            window.location.href = "/training";
-        })
-
         const navButtons = document.querySelectorAll(".dot-indicators button");
         const sections = document.querySelectorAll("section");
+
+        const nextButton = document.querySelectorAll("button")[0];
+        nextButton.addEventListener("click", e => {
+            e.preventDefault();
+            navButtons[navButtons.length - 1].click();
+        })
+
+
 
         navButtons.forEach((navButton, index) => {
             navButton.addEventListener("click", e => {

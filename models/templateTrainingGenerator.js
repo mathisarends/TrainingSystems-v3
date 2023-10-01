@@ -23,6 +23,8 @@ const placeholderExercise = {
       trainingFrequency: 4,
       trainingPhase: "hypertrophie",
       lastUpdated: curDate,
+      lastWeekDeload: true,
+      exercisesPerDay: 8,
       trainingWeeks: trainingWeeks,
   
     })
@@ -39,6 +41,8 @@ const placeholderExercise = {
       trainingFrequency: 4,
       trainingPhase: "kraft",
       lastUpdated: curDate,
+      lastWeekDeload: true,
+      exercisesPerDay: 8,
       trainingWeeks: trainingWeeks
     })
     return templateTrainingPlan;
@@ -48,7 +52,7 @@ const placeholderExercise = {
   // helper function to create the weeks and the associated exercises:
   function createExerciseWeeksAndDaysTemplateA() {
     const trainingWeeks = [];
-    const weeksCount = 4; // Number of weeks
+    const weeksCount = 5; // Number of weeks
     const daysPerWeek = 4; // Number of training days per week
   
     //rpe and backoff rpe are incremented each week
@@ -332,7 +336,7 @@ const placeholderExercise = {
   
   function createExerciseWeeksAndDaysTemplateB() {
     const trainingWeeks = [];
-    const weeksCount = 4; // Number of weeks
+    const weeksCount = 5; // Number of weeks
     const daysPerWeek = 4; // Number of training days per week
   
     //rpe and backoff rpe are incremented each week
