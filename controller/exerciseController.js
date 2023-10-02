@@ -15,6 +15,7 @@ export async function showUserExercises (req, res) {
         res.render("exercises/userExercises", exercisesData);
       } catch (err) {
         console.log("Ein Fehler beim Laden der Exercise-Seite ist aufgetreten. " + err);
+      }
       
 }
 
