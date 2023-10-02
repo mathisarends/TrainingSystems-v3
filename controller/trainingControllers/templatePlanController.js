@@ -56,7 +56,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       }
   
   
-      const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
+      const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory, maxFactors } = categorizeExercises(user.exercises);
   
       const trainingData = user.trainingData.length > 0 ? user.trainingData[0] : {}; //volume recomandations
   
@@ -94,6 +94,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
         categorizedExercises: categorizedExercises,
         categoryPauseTimes: categoryPauseTimes,
         defaultRepSchemeByCategory: defaultRepSchemeByCategory,
+        maxFactors: maxFactors,
   
         trainingData: trainingData,
         squatmev: trainingData.minimumSetsSquat || "",

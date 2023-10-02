@@ -178,6 +178,19 @@ table .table-row td:last-of-type {
     padding: 0.75em 0.925em;
 }
 
+.category-input {
+    font-size: 1em;
+    font-weight: 400;
+}
+
+.max-factor-label {
+    color: hsl(var(--clr-white) / .625);
+}
+
+.max-factor {
+    color: hsl(var(--clr-white) / .75) !important;
+}
+
 /* responsive mobile table */
 @media (max-width: 1154px) {
 

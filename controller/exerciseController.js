@@ -83,6 +83,10 @@ export async function patchUserExercises(req, res) {
       
                 if (exerciseData[`exercise_${i}_${k}`] != user.exercises[effectiveLoops].name) {
                   user.exercises[effectiveLoops].name = exerciseData[`exercise_${i}_${k}`];
+                } 
+                if (exerciseData[`exercise_${i}_${k}_max_factor`] != user.exercises[effectiveLoops].maxFactor) {
+                  console.log("max factor hat sich geändert");
+                  user.exercises[effectiveLoops].maxFactor = exerciseData[`exercise_${i}_${k}_max_factor`];
                 }
                 if (exerciseCategoryPauseTimes[i] != user.exercises[effectiveLoops].category.pauseTime) {
                   user.exercises[effectiveLoops].category.pauseTime = exerciseCategoryPauseTimes[i];
@@ -111,6 +115,7 @@ export async function patchUserExercises(req, res) {
                 exercises.push(
                   createUserExerciseObject(
                     exerciseData[`exercise_${i}_${k}`],
+                    exerciseData[`exercise_${i}_${k}_max_factor`],
                     i,
                     exerciseCategoryPauseTimes,
                     exerciseCategorySets,
@@ -153,10 +158,11 @@ function getNumberOfRequestedExercises(exerciseCategoriesLength, maxAmountOfExer
   }
   
   
-  function createUserExerciseObject(exerciseName, index, exerciseCategoryPauseTimes, exerciseCategorySets, exerciseCategoryReps, exerciseCategoryRPE) {
+  function createUserExerciseObject(exerciseName, exerciseMaxFactor, index, exerciseCategoryPauseTimes, exerciseCategorySets, exerciseCategoryReps, exerciseCategoryRPE) {
         
       const object = {
         name: exerciseName,
+        maxFactor: exerciseMaxFactor,
         category: {
           name: getAssociatedCategoryByIndex(index), 
           pauseTime: exerciseCategoryPauseTimes[index],
@@ -209,12 +215,15 @@ function prepareExercisesData(user) {
     ];
   
     const categoryPauseTimes = {};
+    const maxFactors = {};
+
     predefinedExercises.forEach((exercise) => {
       const categoryName = exercise.category.name;
       const pauseTime = exercise.category.pauseTime;
       if (!categoryPauseTimes[categoryName]) {
         categoryPauseTimes[categoryName] = pauseTime;
       }
+      maxFactors[exercise.name] = exercise.maxFactor;
     });
   
     const defaultRepSchemeByCategory = {};
@@ -248,5 +257,6 @@ function prepareExercisesData(user) {
       categoryPauseTimes: categoryPauseTimes,
       categorizedExercises: categorizedExercises,
       defaultRepSchemeByCategory: defaultRepSchemeByCategory,
+      maxFactors: maxFactors,
     };
   }

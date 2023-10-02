@@ -84,22 +84,27 @@ const standartExerciseCatalog = [
         },
         {
           name: "Paused Squat",
+          maxFactor: 0.875,
           category: Squat
         },
         {
           name: "Tempo Squat (3:1:0)",
+          maxFactor: 0.875,
           category: Squat
         },
         {
           name: "Hack-Squat",
+          maxFactor: 1.5,
           category: Squat
         },
         {
           name: "Bulgurian Split Squats",
+          maxFactor: 0,
           category: Squat
         },
         {
           name: "Legpress",
+          maxFactor: 2,
           category: Squat
         },
         {
@@ -108,10 +113,12 @@ const standartExerciseCatalog = [
         },
         {
           name: "Larsen Press",
+          maxFactor: 0.95,
           category: Bench
         },
         {
           name: "Close Grip Bench",
+          maxFactor: 0.95,
           category: Bench
         },
         {
@@ -120,18 +127,22 @@ const standartExerciseCatalog = [
         },
         {
           name: "Tempo Bench",
+          maxFactor: 0.95,
           category: Bench
         },
         {
           name: "3ct Pause Bench",
+          maxFactor: 0.95,
           category: Bench
         },
         {
           name: "Chestpress",
+          maxFactor: 1.1,
           category: Bench
         },
         {
           name: "Incline Press",
+          maxFactor: 1.1,
           category: Bench
         },
         {
@@ -144,22 +155,27 @@ const standartExerciseCatalog = [
         },
         {
           name: "Paused Deadlift",
+          maxFactor: 0.9,
           category: Deadlift
         },
         {
           name: "Deficit Deadlift",
+          maxFactor: 0.9,
           category: Deadlift
         },
         {
           name: "RDLs",
+          maxFactor: 0.825,
           category: Deadlift
         },
         {
           name: "B-Stance RDLs",
+          maxFactor: 0,
           category: Deadlift
         },
         {
           name: "Stiff-Leg DL",
+          maxFactor: 0.825,
           category: Deadlift
         },
         {

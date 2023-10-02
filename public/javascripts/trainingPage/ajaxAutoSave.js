@@ -176,11 +176,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const exerciseCategorySelectors = document.querySelectorAll(".exercise-category-selector");
   const repInputs = document.querySelectorAll(".reps");
   const planedRPEs = document.querySelectorAll(".targetRPE");
+  const exerciseNameSelectors = document.querySelectorAll('.exercise-name-selector:not([style*="display: none"])');
 
+  const maxFactorsInput = document.getElementById('maxFactors');
 
+  // Den Wert des Input-Elements von JSON-String in ein JavaScript-Objekt umwandeln
+  const maxFactors = JSON.parse(maxFactorsInput.value);
+
+  //weight recommandations:
   exerciseCategorySelectors.forEach((categorySelector, index) => {
     const category = categorySelector.value;
     if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInputs[index].value) { //create placehodler weight recommandation if no weight is selected
+
+      const exerciseName = exerciseNameSelectors[index].value;
+      const maxAdjustmentFactor = maxFactors[exerciseName];
 
       const reps = repInputs[index].value;
       const planedRPE = planedRPEs[index].value;
@@ -193,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
           1023.67) *
           0.001;
 
-          const estMaxByCategory = getMaxByCategory(category);
+          const estMaxByCategory = getMaxByCategory(category) * maxAdjustmentFactor;
           let result = estMaxByCategory * percentage;
 
           result = Math.ceil(result / 2.5) * 2.5;

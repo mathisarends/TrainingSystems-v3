@@ -73,6 +73,7 @@ export function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
     const exerciseCategories = [...new Set(exercises.map((exercise) => exercise.category.name))];
   
       const categoryPauseTimes = {};
+      const maxFactors = {};
       
       exercises.forEach((exercise) => {
           const categoryName = exercise.category.name;
@@ -80,6 +81,7 @@ export function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
           if (!categoryPauseTimes[categoryName]) {
               categoryPauseTimes[categoryName] = pauseTime;
           }
+          maxFactors[exercise.name] = exercise.maxFactor;
       });
   
       const defaultRepSchemeByCategory = {};
@@ -112,6 +114,7 @@ export function getLastTrainingDayOfWeek(trainingPlan, weekIndex) {
           categoryPauseTimes,
           categorizedExercises,
           defaultRepSchemeByCategory,
+          maxFactors,
       };
   }
 

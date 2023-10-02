@@ -16,7 +16,7 @@
   z-index: 1;
   left: auto;
   right: auto;
-  top: auto;
+  top: 0;
   width: 100%;
   height: fit-content;
   min-height: 12vh; /* appropriate? */ 

@@ -11,6 +11,7 @@
     <input id="userMaxDeadlift" type="hidden" name="maxDeadlift" value="<%= user.maxDeadlift %>">
 
     <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
+    <input id="maxFactors" type="hidden" value="<%= JSON.stringify(maxFactors) %> %>">
 
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>

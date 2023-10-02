@@ -20,6 +20,7 @@
             <input id="userMaxDeadlift" type="hidden" name="maxDeadlift" value="<%= user.maxDeadlift %>">
 
             <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
+            <input id="maxFactors" type="hidden" value="<%= JSON.stringify(maxFactors) %> %>">
 
                 <% for (let i=0; i < amountOfTrainingDays; i++) { %>
                     <div class="table-section" style="display: <%= i === 0 ? 'block' : 'none' %>" >

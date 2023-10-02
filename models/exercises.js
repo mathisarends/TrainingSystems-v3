@@ -5,6 +5,10 @@ const exerciseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    maxFactor: {
+        type: Number,
+        default: 1,
+    },
     category: {
         name: {
             type: String,

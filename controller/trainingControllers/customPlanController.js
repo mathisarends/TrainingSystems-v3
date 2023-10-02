@@ -151,7 +151,7 @@ export async function getCreateTrainingPlan(req, res) {
         firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
       }
   
-      const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory } = categorizeExercises(user.exercises);
+      const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory, maxFactors } = categorizeExercises(user.exercises);
   
       const trainingData = user.trainingData.length > 0 ? user.trainingData[0] : {};
   
@@ -186,6 +186,7 @@ export async function getCreateTrainingPlan(req, res) {
         categorizedExercises: categorizedExercises,
         categoryPauseTimes: categoryPauseTimes,
         defaultRepSchemeByCategory: defaultRepSchemeByCategory,
+        maxFactors: maxFactors,
   
         trainingData: trainingData,
         squatmev: trainingData.minimumSetsSquat || "",
