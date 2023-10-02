@@ -172,49 +172,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  //weight recommandations:
-  const exerciseCategorySelectors = document.querySelectorAll(".exercise-category-selector");
-  const repInputs = document.querySelectorAll(".reps");
-  const planedRPEs = document.querySelectorAll(".targetRPE");
-  const exerciseNameSelectors = document.querySelectorAll('.exercise-name-selector:not([style*="display: none"])');
-
   const maxFactorsInput = document.getElementById('maxFactors');
 
   // Den Wert des Input-Elements von JSON-String in ein JavaScript-Objekt umwandeln
   const maxFactors = JSON.parse(maxFactorsInput.value);
+  const exerciseTableRows = document.querySelectorAll(".table-row.mainExercise");
 
-  //weight recommandations:
-  exerciseCategorySelectors.forEach((categorySelector, index) => {
-    const category = categorySelector.value;
-    if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInputs[index].value) { //create placehodler weight recommandation if no weight is selected
+  exerciseTableRows.forEach((tableRow, index) => {
+    const exerciseNameSelector = tableRow.querySelector('.exercise-name-selector:not([style*="display: none"])');
 
-      const exerciseName = exerciseNameSelectors[index].value;
-      const maxAdjustmentFactor = maxFactors[exerciseName];
+    if (exerciseNameSelector) {
+      const categorySelector = tableRow.querySelector(".exercise-category-selector");
+      const category = categorySelector.value;
+      const weightInput = tableRow.querySelector(".weight");
 
-      const reps = repInputs[index].value;
-      const planedRPE = planedRPEs[index].value;
+      // if there is no weight -> make a weight recommandataion
+      if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInput.value) {
+        const exerciseName = exerciseNameSelector.value;
+        const maxAdjustmentFactor = maxFactors[exerciseName];
 
-      if (reps && planedRPE) { //if both are defined
-        const totalReps = parseInt(reps) +  (10 - parseFloat(planedRPE)); //reps + reps in reserve = totalreps
-        let percentage = //regression forumula
-        (0.484472 * totalReps * totalReps -
-          33.891 * totalReps +
-          1023.67) *
-          0.001;
+        const reps = tableRow.querySelector(".reps").value;
+        const planedRPE = tableRow.querySelector(".targetRPE").value;
 
-          const estMaxByCategory = getMaxByCategory(category) * maxAdjustmentFactor;
-          let result = estMaxByCategory * percentage;
+        if (reps && planedRPE) { //if both are defined
+          const totalReps = parseInt(reps) +  (10 - parseFloat(planedRPE)); //reps + reps in reserve = totalreps
+          let percentage = //regression forumula
+          (0.484472 * totalReps * totalReps -
+            33.891 * totalReps +
+            1023.67) *
+            0.001;
+  
+            const estMaxByCategory = getMaxByCategory(category) * maxAdjustmentFactor;
+            let result = estMaxByCategory * percentage;
 
-          result = Math.ceil(result / 2.5) * 2.5;
-
-          const lowerLimit = result - 2.5;
-          const upperLimit = result + 2.5;
-
-          const resultString = lowerLimit + "-" + upperLimit;
-          weightInputs[index].placeholder = resultString;
+            result = Math.ceil(result / 2.5) * 2.5;
+  
+            const lowerLimit = result - 2.5;
+            const upperLimit = result + 2.5;
+  
+            const resultString = lowerLimit + "-" + upperLimit;
+            weightInputs[index].placeholder = resultString;
+  
+        }
 
       }
+
     }
+
   })
 
   function getMaxByCategory(category) {

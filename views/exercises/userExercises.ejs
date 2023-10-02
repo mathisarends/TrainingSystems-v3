@@ -59,7 +59,7 @@
                             <label class="max-factor-label" for="maxFactorInput_<%= categoryIndex %>_<%= exerciseIndex %>">Faktor vom Max</label>
                             <input class="max-factor" name="exercise_<%= categoryIndex %>_<%= exerciseIndex %>_max_factor"
                                id="maxFactorInput_<%= categoryIndex %>_<%= exerciseIndex %>" type="number"
-                                min="0" max="3" step="0.05" value="<%= maxFactors[exercises[exerciseIndex]] || "0" %>">
+                                min="0" step="0.025" max="3" value="<%= maxFactors[exercises[exerciseIndex]] || "0" %>">
                           </div>
                           <% } %>
                       </td>

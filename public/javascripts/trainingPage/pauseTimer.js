@@ -127,7 +127,7 @@ function initializeApp(registration) {
               command: "addRestTime",
             })
 
-            let currentNotes = workoutNotes[index - 1].value; //offset bei 1 verstehe ich in diesem fall auch nicht so gazn
+            let currentNotes = workoutNotes[index].value; //offset bei 1 verstehe ich in diesem fall auch nicht so gazn
 
             if (currentNotes.includes("+30s pause")) {
               const regex = /\+30s pause/g;
@@ -147,8 +147,8 @@ function initializeApp(registration) {
             } else {
               currentNotes = currentNotes + " +30s pause";
             }
-;
-            workoutNotes[index - 1].value = currentNotes;
+
+            workoutNotes[index].value = currentNotes;
             currentPauseTime = parseInt(currentPauseTime) + 30;
 
 
