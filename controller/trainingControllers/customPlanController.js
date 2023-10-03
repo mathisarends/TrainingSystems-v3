@@ -424,7 +424,8 @@ export async function getCustomStatisticPage(req, res, index) {
   
       if (categorySets.length > 0) {
         categorySets.forEach((categorySet) => {
-          if (!bestSet || categorySet.estMax > bestSet.estMax) {
+          const adjustedMax = categorySet.estMax / categorySet.maxFactor;
+          if (!bestSet || adjustedMax > bestSet.estMax) {
             bestSet = categorySet;
           }
         });

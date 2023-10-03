@@ -26,6 +26,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         })
 
-        
+        const trainingDayTables = document.querySelectorAll(".workout-table");
+
+        trainingDayTables.forEach((table) => {
+            const firstNoteInputOfDay = table.querySelector(".workout-notes");
+    
+            firstNoteInputOfDay.value = "DELOAD";
+    
+        })
+
     }
+
+
 })

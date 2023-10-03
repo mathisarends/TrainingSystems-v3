@@ -86,7 +86,6 @@ export async function patchUserExercises(req, res) {
                   user.exercises[effectiveLoops].name = exerciseData[`exercise_${i}_${k}`];
                 } 
                 if (exerciseData[`exercise_${i}_${k}_max_factor`] != user.exercises[effectiveLoops].maxFactor) {
-                  console.log("max factor hat sich geändert");
                   user.exercises[effectiveLoops].maxFactor = exerciseData[`exercise_${i}_${k}_max_factor`];
                 }
                 if (exerciseCategoryPauseTimes[i] != user.exercises[effectiveLoops].category.pauseTime) {
@@ -129,6 +128,8 @@ export async function patchUserExercises(req, res) {
               }
             }
           }
+          
+          console.log("neuer max ", exerciseData[`exercise_${1}_${7}_max_factor`])
     
           user.exercises = exercises;
         }

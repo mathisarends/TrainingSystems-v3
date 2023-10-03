@@ -27,8 +27,10 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
   
   
       const trainingWeekData = []; //this training week
+      const currentTrainingWeekFatique = [];
       for (let j = 0; j < amountOfTrainingDays; j++) {
         trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, weekIndex, j));
+        currentTrainingWeekFatique.push(extractFatiqueLevelOfTrainingDay(trainingPlan, weekIndex, j));
       }
 
       const previousTrainingWeekData = [];
@@ -46,11 +48,10 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       }
 
       let isDeloadWeek = false;
-      if (weekIndex === trainingPlan.trainingWeeks.length) {
+      if (weekIndex === trainingPlan.trainingWeeks.length - 1) {
         if (trainingPlan.lastWeekDeload === undefined || !trainingPlan.lastWeekDeload) {
           isDeloadWeek = false;
         } else {
-          console.log("Delaod")
           isDeloadWeek = true;
         }
       }
@@ -84,6 +85,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,
         firstTrainingWeekData: firstTrainingWeekData.length > 0 ? firstTrainingWeekData : trainingWeekData,
+        currentTrainingWeekFatique: currentTrainingWeekFatique,
   
         amountOfTrainingDays: amountOfTrainingDays,
         workoutName: trainingTitle,
@@ -141,21 +143,12 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
   
       for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
         const trainingDay = trainingWeek.trainingDays[i];
+        updateFatiqueLevels(trainingWeek, i, updatedData);
         
         for (let j = 0; j < amountOfExercises; j++) {
           const exercise = trainingDay.exercises[j];
           updateExerciseDetails(trainingDay, exercise, updatedData, i, j);
         }
-      }
-  
-      //update Title and Training Phase
-      const reqTrainingTitle = updatedData["workout_name"];
-      if (reqTrainingTitle !== trainingPlan.title) {
-        trainingPlan.title = reqTrainingTitle;
-      }
-      const reqTrainingPhase = updatedData["volumePhase"];
-      if (reqTrainingPhase !== trainingPlan.trainingPhase) {
-        trainingPlan.trainingPhase = reqTrainingPhase;
       }
     
       await user.save();
@@ -186,6 +179,22 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
   
     } catch (err) {
       console.log("A error occured while resetting the template training", err);
+    }
+  }
+
+  // now duplicate
+  function extractFatiqueLevelOfTrainingDay(trainingPlan, weekIndex, dayIndex) {
+    const trainingWeek = trainingPlan.trainingWeeks[weekIndex];
+    const trainingDay = trainingWeek.trainingDays[dayIndex];
+    return trainingDay.fatiqueLevel;
+  }
+
+  function updateFatiqueLevels(trainingWeek, dayIndex, updatedData) {
+
+    const trainingDay = trainingWeek.trainingDays[dayIndex];
+
+    if (trainingDay.fatiqueLevel !== updatedData[`day${dayIndex + 1}_fatiqueLevel`]) {
+      trainingDay.fatiqueLevel = updatedData[`day${dayIndex + 1}_fatiqueLevel`];
     }
   }
 

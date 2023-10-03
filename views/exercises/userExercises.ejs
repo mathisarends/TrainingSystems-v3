@@ -53,7 +53,6 @@
                           name="exercise_<%= categoryIndex %>_<%= exerciseIndex %>"
                           value="<%= exercises[exerciseIndex] || '' %>" style="text-align: left; padding: 0;">
 
-                        <!--Style this shit-->
                         <% if (maxFactors[exercises[exerciseIndex]] || maxFactors[exercises[exerciseIndex]] === 0) { %>
                           <div class="max-factor-input flex" style="display: none">
                             <label class="max-factor-label" for="maxFactorInput_<%= categoryIndex %>_<%= exerciseIndex %>">Faktor vom Max</label>
@@ -231,51 +230,102 @@
 <script src="/javascripts/exercises/ajaxSave.js"></script>
 
 <script>
+  
+  document.addEventListener("DOMContentLoaded", () => {
+  const tables = [
+    document.querySelectorAll("table")[1],
+    document.querySelectorAll("table")[2],
+    document.querySelectorAll("table")[3]
+  ];
 
-  const exerciseRows = document.querySelectorAll(".exercise-table-row");
-  console.log(exerciseRows);
+  tables.forEach((table) => {
+    const exerciseRows = table.querySelectorAll(".exercise-table-row");
 
-  const filteredRows = Array.from(exerciseRows).filter((row) => { // for focus and blur event
-    const firstInput = row.querySelector("input[type='text']");
-    return firstInput.value.trim() !== ""; // Filtern nach nicht-leerem Wert
-  });
-
-  const maxFactorContainers = document.querySelectorAll(".max-factor-input");
-
-  let lastIndex = 0;
-
-  filteredRows.forEach((row, index) => {
-
-    const firstInput = row.querySelector("input[type='text']");
-
-    firstInput.addEventListener("focus", () => {
-      maxFactorContainers[lastIndex].style.display = "none";
-      lastIndex = index;
-
-      maxFactorContainers[index].style.display = "flex";
+    const filteredRows = Array.from(exerciseRows).filter((row) => {
+      const firstInput = row.querySelector("input[type='text']");
+      return firstInput.value.trim() !== "";
     });
-    maxFactorContainers[index].addEventListener("focus", () => {
-      maxFactorContainers[index].style.display = "flex";
-    })
 
-    maxFactorContainers[index].addEventListener("blur", () => {
-      maxFactorContainers[index].style.display = "none";
-    })
-  })
+    const maxFactorContainers = table.querySelectorAll(".max-factor-input");
+
+    let lastIndex = 0;
+
+    filteredRows.forEach((row, index) => {
+      const firstInput = row.querySelector("input[type='text']");
+
+      firstInput.addEventListener("focus", () => {
+        maxFactorContainers[lastIndex].style.display = "none";
+        lastIndex = index;
+
+        maxFactorContainers[index].style.display = "flex";
+      });
+
+      maxFactorContainers[index].addEventListener("focus", () => {
+        maxFactorContainers[index].style.display = "flex";
+      });
+
+      maxFactorContainers[index].addEventListener("blur", () => {
+        maxFactorContainers[index].style.display = "none";
+      });
+    });
+
+    const maxFactorInputs = table.querySelectorAll(".max-factor");
+
+    maxFactorInputs.forEach((maxFactorInput) => {
+      maxFactorInput.addEventListener("change", () => {
+        let inputValue = maxFactorInput.value;
+
+        if (inputValue < 0) {
+          maxFactorInput.value = 0;
+        } else if (inputValue > 3) {
+          maxFactorInput.value = 3;
+        }
+      });
+    });
+
+    const emptyRows = Array.from(exerciseRows).filter((row) => {
+      const firstInput = row.querySelector("input[type='text']");
+      return firstInput.value.trim() === "";
+    });
+
+    emptyRows.forEach((row) => {
+      const firstInput = row.querySelector("input");
+
+      firstInput.addEventListener("focus", () => {
+        const inputName = firstInput.name;
+        const exerciseIndex = inputName.charAt(inputName.length - 1);
+        const categoryIndex = inputName.charAt(inputName.length - 3);
+
+        if (!row.innerHTML.includes(`exercise_${categoryIndex}_${exerciseIndex}_max_factor`)) {
+          const maxFactorInputHTML = `
+            <div class="max-factor-input flex" style="display: flex">
+            <label class="max-factor-label" for="maxFactorInput_${categoryIndex}_${exerciseIndex}">Faktor vom Max</label>
+            <input class="max-factor" name="exercise_${categoryIndex}_${exerciseIndex}_max_factor"
+              id="maxFactorInput_${categoryIndex}_${exerciseIndex}" type="number"
+              min="0" step="0.025" max="3" value="1">
+            </div>
+          `;
+          row.querySelector("td").insertAdjacentHTML("beforeend", maxFactorInputHTML);
+        }
+      });
+
+      firstInput.addEventListener("blur", () => {
+        const newExerciseName = firstInput.value;
+
+        if (!newExerciseName) {
+          const maxFactorInputContainer = row.querySelector(".max-factor-input");
+
+          if (maxFactorInputContainer) {
+            maxFactorInputContainer.style.display = "none";
+            const maxFactorInput = maxFactorInputContainer.querySelector(".max-factor");
+            maxFactorInput.disabled = true;
+          }
+        }
+      });
+    });
+  });
+});
 
 
-  const maxFactorInputs = document.querySelectorAll(".max-factor");
-
-  maxFactorInputs.forEach((maxFactorInput) => {
-    maxFactorInput.addEventListener("change", () => {
-      let inputValue = maxFactorInput.value;
-
-      if (inputValue < 0) {
-        maxFactorInput.value = 0;
-      } else if (inputValue > 3) {
-        maxFactorInput.value = 3;
-      }
-    })
-  })
 
 </script>

@@ -217,6 +217,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       }
 
+    } else {
+
+      // clear out trash data if there is any
+      const setInput = tableRow.querySelector(".sets");
+      const repsInput = tableRow.querySelector(".reps");
+      const planedRPEInput = tableRow.querySelector(".targetRPE");
+
+      setInput.value = "";
+      repsInput.value = "";
+      planedRPEInput.value = "";
     }
 
   })

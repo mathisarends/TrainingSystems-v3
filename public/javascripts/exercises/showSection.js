@@ -26,6 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
           showTables(accesoireTables);
           hideTables(mainTables);
         }
+
+        window.scrollTo(0, 0); //jump to start of the page
+
       })
     })
 
@@ -40,4 +43,44 @@ document.addEventListener("DOMContentLoaded", () => {
         table.setAttribute("hidden", true);
       })
     }
+
+    //swipe logic
+    const swipeBody = document.querySelector("form");
+    let startX;
+    let endX;
+  
+    swipeBody.addEventListener("touchstart", e => {
+      startX = e.touches[0].clientX;
+    })
+  
+    swipeBody.addEventListener("touchend", e => {
+      endX = e.changedTouches[0].clientX;
+  
+      const swipeThreshold = 110;
+  
+      if (startX - endX > swipeThreshold) {
+                  navigateToNextDay();             // Swipe left, navigate to the next day
+      } else if (endX - startX > swipeThreshold) {
+                  navigateToPreviousDay();             // Swipe right, navigate to the previous day
+      }
+
+      function navigateToNextDay() {
+        const selectedButton = document.querySelector(".tab-list button[aria-selected='true']");
+        const nextButton = selectedButton.nextElementSibling || navButtons[0];
+
+        if (nextButton) {
+            nextButton.click();
+        }
+      }
+
+      function navigateToPreviousDay() {
+          const selectedButton = document.querySelector(".tab-list button[aria-selected='true']");
+          const previousButton = selectedButton.previousElementSibling || navButtons[navButtons.length - 1];
+
+          if (previousButton) {
+              previousButton.click();
+          }
+      }
+  
+    })
 })

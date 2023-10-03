@@ -38,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const workoutNoteInputs = document.querySelectorAll(".workout-notes");
+    
+    const maxFactorsInput = document.getElementById('maxFactors');
+    const maxFactors = JSON.parse(maxFactorsInput.value);
 
     function handleChangeEvent(index, visibleSelectors, visibleSelectorsNextRow, category) {
         const weight = parseFloat(weightInputs[index].value) || "undefined";

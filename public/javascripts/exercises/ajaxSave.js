@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const resetExercisesButton = document.getElementById("reset-exercises-button"); // this button triggers a delete confirmation modal
   const confirmationModal = document.getElementById("confirmationModal");
-  console.log(confirmationModal);
   const confirmResetButton = document.getElementById("confirmResetButton"); // this button sends the form
   const cancelResetButton = document.getElementById("cancelResetButton"); // this button cancels th event
 
