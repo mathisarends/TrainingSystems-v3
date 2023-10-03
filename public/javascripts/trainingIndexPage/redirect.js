@@ -412,6 +412,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ".training-plan-container"
   )[2];
 
+  const moreTrainingOptionsTemplateTraining = document.getElementsByClassName("more-training-options")[1];
+
+
   // Variablen zur Verfolgung der Auswahl
   let lastSelectedLinkIndexTemplate = null;
   let lastSelectNextTrainingWeek = null;
@@ -429,6 +432,13 @@ document.addEventListener("DOMContentLoaded", () => {
       pulseEffect(templateTrainingPlanContainer);
     }
   });
+
+  moreTrainingOptionsTemplateTraining.addEventListener("click", e => {
+    e.preventDefault();
+    moreTrainingOptionsTemplateTraining.style.display = "none"; // hide itself
+    editTemplateTrainingBTN.style.display = "block";
+    resetTemplateTrainingForm[lastSelectedLinkIndexTemplate].style.display = "block";
+  })
 
   editTemplateTrainingBTN.addEventListener("click", () => {
     if (lastSelectedLinkIndexTemplate !== null) {
@@ -459,11 +469,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Aktualisieren der aktuellen Auswahl
       link.classList.add("selected");
-      resetTemplateTrainingForm[index].style.display = "block";
       lastSelectedLinkIndexTemplate = linkIndex;
+      editTemplateTrainingBTN.style.display = "none";
       lastSelectNextTrainingWeek = templateNextTrainingWeeks[index].value;
+      moreTrainingOptionsTemplateTraining.style.display = "block"; //blende die more options ein
     });
   });
+
+    // the first on is for custom training plans
+    navToStatsButtons[2].addEventListener("click", e => {
+
+      e.preventDefault();
+      if (lastSelectedLinkIndexTemplate !== null) {
+        const alphaValue = String.fromCharCode(65 + lastSelectedLinkIndexTemplate);
+        const redirectPage = `training/template-${alphaValue}-stats`;
+        window.location.href = redirectPage;
+      }
+     })
 
   // Event-Handler für das Zurücksetzen des Template-Trainings
   const resetTemplateTrainingBTNs = document.querySelectorAll(

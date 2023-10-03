@@ -15,7 +15,6 @@ import {
   getCustomTraining, 
   getCustomEditPage,
   patchCustomEditPage,
-  getCustomStatisticPage
 } from "../controller/trainingControllers/customPlanController.js";
 
 import {
@@ -33,6 +32,10 @@ import {
   getTrainingSession,
   patchTrainingSession,
 } from "../controller/trainingControllers/trainingSessionController.js";
+
+import {
+  getStatisticPage
+} from "../controller/trainingControllers/sharedFunctionality.js"
 
 import { 
   getTrainingIndexPage, 
@@ -77,8 +80,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) { //patch custom edit pag
 for (let i = 0; i < customTemplateLetters.length; i++) {
   const letter = customTemplateLetters[i];
   const routePath = `/custom-${letter}-stats`;
-  router.get(routePath, checkAuthenticated, (req, res) => getCustomStatisticPage(req, res, i)) //TODO:
-
+  router.get(routePath, checkAuthenticated, (req, res) => getStatisticPage(req, res, i)) //TODO:
 }
 
 /* TEMPLATE PLANS */
@@ -92,6 +94,11 @@ for (let i = 0; i < templates.length; i++) {
 for (let i = 0; i < templates.length; i++) {
   const templateName = templates[i];
   router.patch(`/template-${templateName}`, checkAuthenticated, (req, res) => patchTemplateTraining(req, res, i, templateName));
+}
+
+for (let i = 0; i < 2; i++) {
+  const templateName = customTemplateLetters[i]; 
+  router.get(`/template-${templateName}-stats`, checkAuthenticated, (req, res) => getStatisticPage(req, res, i));
 }
 
 router.delete("/reset-template-training", checkAuthenticated, deleteTemplateTraining);

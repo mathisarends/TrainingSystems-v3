@@ -38,9 +38,9 @@
 }
 
 .stats-container {
-    color: white;
-    border-color: white;
+    color: hsl( var(--clr-white) / 1 );
     padding: 1.5rem 0.5rem 0.5rem;
+    border: 1px solid hsl( var(--clr-light) / 0.75);
 }
 
 .stats-container:nth-of-type(3n + 1) {

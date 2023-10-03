@@ -180,14 +180,25 @@
         </div>
 
         <div class="training-button-container">
+
             <button class="main-page-button training-plan-button uppercase" id="start-template-training-button">
                 Trainieren
             </button>
-            <button class="main-page-button edit-training-plan-button uppercase" id="edit-template-training-button">
-                Bearbeiten
+
+            <button class="main-page-button stats-page-button uppercase">Statistics</button>
+
+            <button class="more-training-options main-page-button training-page-button uppercase letter-spacing-1" style="display: none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-chevrons-down">
+                    <polyline points="7 13 12 18 17 13"></polyline>
+                    <polyline points="7 6 12 11 17 6"></polyline>
+                </svg>
             </button>
 
-            <button class="main-page-button stats-page-button uppercase" style="display: none">STATS</button>
+            <button class="main-page-button edit-training-plan-button uppercase" id="edit-template-training-button" style="display: none;">
+                Bearbeiten
+            </button>
 
             <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
                 <form action="/training/reset-template-training?_method=DELETE" method="POST"

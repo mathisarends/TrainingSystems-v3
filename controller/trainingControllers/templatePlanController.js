@@ -22,7 +22,6 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       }
       const trainingPlan = user.trainingPlanTemplate[templateType];
       const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, amountOfExercises } = getTrainingPlanInfo(trainingPlan);
-      console.log(trainingTitle);
       const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, weekIndex);
   
   
@@ -159,6 +158,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
     }
   }
 
+  //actually just resets the custom training
   export async function deleteTemplateTraining(req, res) {
     try {
       const user = await User.findById(req.user._id);

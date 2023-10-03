@@ -727,6 +727,21 @@ select {
     /* padding: 1em; */
 }
 
+.grid-container--stats {
+    --flow-space: 2rem;
+    grid-template-areas:
+        'title'
+        'selector'
+        'content';
+    padding: 2em 1.5em;
+    align-items: start;
+}
+
+.grid-container--stats .stats-display-switcher {
+    grid-area: svg;
+    justify-content: center;
+}
+
 .grid-container--training .underline-indicators {
     grid-area: selector;
     justify-self: center;

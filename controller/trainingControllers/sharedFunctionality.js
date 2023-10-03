@@ -1,3 +1,5 @@
+import User from "../../models/user.js";
+
 /* FOR RETRIEVING CUSTOM TRAINING PLAN */
 export function getTrainingPlanInfo(trainingPlan) {
     const trainingTitle = trainingPlan.title;
@@ -377,4 +379,105 @@ function getIndexOfMostRecentTrainingDay(trainingPlan) {
     weekIndex: 0,
     dayIndex: 0,
   };
+}
+
+export async function getStatisticPage(req, res, index) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+    const userID = req.user._id;
+
+    const trainingPlan = user.trainingPlansCustomNew[index];
+    
+    if (!trainingPlan) {
+      return res.status(404).send("Training nicht gefunden!");
+    }
+
+    const { trainingTitle } = getTrainingPlanInfo(trainingPlan);
+
+    const squatSetsDone = [];
+    const squatTonnage = [];
+    const benchSetsDone = [];
+    const benchTonnage = [];
+    const deadliftSetsDone = [];
+    const deadliftTonnage = [];
+
+    trainingPlan.trainingWeeks.forEach((trainingWeek) => {
+      squatSetsDone.push(trainingWeek.squatSetsDone);
+      squatTonnage.push(trainingWeek.squatTonnage);
+      benchSetsDone.push(trainingWeek.benchSetsDone);
+      benchTonnage.push(trainingWeek.benchTonnage);
+      deadliftSetsDone.push(trainingWeek.deadliftSetsDone);
+      deadliftTonnage.push(trainingWeek.deadliftTonnage);
+    })
+
+    //get best squat/bench/deadlift sets
+    const bestSquatSets = [];
+    const bestBenchSets = [];
+    const bestDeadliftSets = [];
+    
+    trainingPlan.trainingWeeks.forEach((trainingWeek) => {
+      const bestSquatSetInWeek = findBestSetInCategory(trainingWeek, 'Squat');
+      const bestBenchSetInWeek = findBestSetInCategory(trainingWeek, 'Bench');
+      const bestDeadliftSetInWeek = findBestSetInCategory(trainingWeek, 'Deadlift');
+    
+      if (bestSquatSetInWeek) {
+        bestSquatSets.push(bestSquatSetInWeek);
+      }
+    
+      if (bestBenchSetInWeek) {
+        bestBenchSets.push(bestBenchSetInWeek);
+      }
+    
+      if (bestDeadliftSetInWeek) {
+        bestDeadliftSets.push(bestDeadliftSetInWeek);
+      }
+    });
+
+    const { weekIndex: lastWeekIndex } = getIndexOfMostRecentTrainingDay(trainingPlan);
+
+    res.render("trainingPlans/statsPage", {
+      trainingTitle, 
+      userID,
+
+      squatSetsDone,
+      squatTonnage,
+      benchSetsDone,
+      benchTonnage,
+      deadliftSetsDone,
+      deadliftTonnage,
+
+      bestSquatSets,
+      bestBenchSets,
+      bestDeadliftSets,
+
+      lastWeekIndex,
+    })
+
+  } catch (error) {
+    console.log("Fehler beim aufrufen der statistic page:");
+  }
+}
+
+function findBestSetInCategory(week, category) {
+  let bestSet = null;
+
+  week.trainingDays.forEach((trainingDay) => {
+    const categorySets = trainingDay.exercises.filter(
+      (exercise) => exercise.category === category && exercise.estMax !== null
+    );
+
+    if (categorySets.length > 0) {
+      categorySets.forEach((categorySet) => {
+        const adjustedMax = categorySet.estMax / categorySet.maxFactor;
+        if (!bestSet || adjustedMax > bestSet.estMax) {
+          bestSet = categorySet;
+        }
+      });
+    }
+  });
+
+  return bestSet || {}; // Falls kein passendes Set gefunden wurde, wird ein leeres Objekt zurückgegeben
 }

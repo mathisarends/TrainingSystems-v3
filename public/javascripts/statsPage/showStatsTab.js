@@ -50,25 +50,43 @@ document.addEventListener("DOMContentLoaded", () => {
         let startX;
         let endX;
 
-        sections.forEach((section, index) => {
+        const totalPage = document.getElementById("main");
 
-          section.addEventListener("touchstart", e => {
-            startX = e.touches[0].clientX;
-          });
-
-          section.addEventListener("touchend", e => {
-            const endX = e.changedTouches[0].clientX;
-
-            const swipeThreshold = 110;
-    
-            if (startX - endX > swipeThreshold) {
-                navigateToNextDay();             // Swipe left, navigate to the next day
-            } else if (endX - startX > swipeThreshold) {
-                navigateToPreviousDay();             // Swipe right, navigate to the previous day
-            }
-          })
-
+        totalPage.addEventListener("touchstart", e => {
+          startX = e.touches[0].clientX;
         })
+
+        totalPage.addEventListener("touchend", e => {
+          const endX = e.changedTouches[0].clientX;
+
+          const swipeThreshold = 110;
+  
+          if (startX - endX > swipeThreshold) {
+              navigateToNextDay();             // Swipe left, navigate to the next day
+          } else if (endX - startX > swipeThreshold) {
+              navigateToPreviousDay();             // Swipe right, navigate to the previous day
+          }
+        })
+
+        // sections.forEach((section, index) => {
+
+        //   totalPage.addEventListener("touchstart", e => {
+        //     startX = e.touches[0].clientX;
+        //   });
+
+        //   section.addEventListener("touchend", e => {
+        //     const endX = e.changedTouches[0].clientX;
+
+        //     const swipeThreshold = 110;
+    
+        //     if (startX - endX > swipeThreshold) {
+        //         navigateToNextDay();             // Swipe left, navigate to the next day
+        //     } else if (endX - startX > swipeThreshold) {
+        //         navigateToPreviousDay();             // Swipe right, navigate to the previous day
+        //     }
+        //   })
+
+        // })
 
         function navigateToNextDay() {
           const selectedButton = document.querySelector(".tab-list button[aria-selected='true']");

@@ -1,4 +1,4 @@
-<main id="main" class="grid-container grid-container--training flow">
+<main id="main" class="grid-container grid-container--training grid-container--stats flow">
     <h1 class="numbered-title"><span aria-hidden="true">STATS</span><%= trainingTitle %></h1>
 
     <div class="tab-list underline-indicators flex" role="tablist" aria-label="destination list"
@@ -10,9 +10,14 @@
         <button id="deadlift-tab" aria-selected="false" role="tab" aria-controls="template-tab"
             class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Deadlift</button>
 
+            <div class="stats-display-switcher text-accent flex" style="padding: 0; align-items: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shuffle"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+            </div>
+
     </div>
 
     <input id="userIdentification" type="hidden" name="userIdentification" value="<%= userID %>">
+    <input id="lastTrainingWeek" type="hidden" value="<%= lastWeekIndex + 1 %>">
     
     <input id="squatTonnageArray" type="hidden" value="<%= squatTonnage %>">
     <input id="benchTonnageArray" type="hidden" value="<%= benchTonnage %>">
@@ -55,7 +60,7 @@
                             </div>
                             <% if (Object.keys(bestSquatSets[i]).length !== 0) { %>
                                 <div class="ff-sans-cond fs-400 letter-spacing-4">
-                                    <%= bestSquatSets[i].sets %> x <%= bestSquatSets[i].reps %> | <%= bestSquatSets[i].weight  %>KG @<%= bestSquatSets[i].actualRPE  %>
+                                    <%= bestSquatSets[i].sets %> x <%= bestSquatSets[i].reps %> | <%= bestSquatSets[i].weight  %>KG @<%= bestSquatSets[i].actualRPE  %> | Est Max = <%= bestSquatSets[i].estMax %>
                                    
                                 </div>
                                 <div class="ff-sans-cond fs-400 letter-spacing-4">
@@ -120,7 +125,7 @@
                         </div>
                         <% if (Object.keys(bestBenchSets[i]).length !== 0) { %>
                             <div class="ff-sans-cond fs-400 letter-spacing-4">
-                                <%= bestBenchSets[i].sets %> x <%= bestBenchSets[i].reps %> | <%= bestBenchSets[i].weight  %>KG @<%= bestBenchSets[i].actualRPE  %>
+                                <%= bestBenchSets[i].sets %> x <%= bestBenchSets[i].reps %> | <%= bestBenchSets[i].weight  %>KG @<%= bestBenchSets[i].actualRPE %> | Est Max = <%= bestBenchSets[i].estMax %>
                                
                             </div>
                             <div class="ff-sans-cond fs-400 letter-spacing-4">
@@ -184,7 +189,7 @@
                         </div>
                         <% if (Object.keys(bestDeadliftSets[i]).length !== 0) { %>
                             <div class="ff-sans-cond fs-400 letter-spacing-4">
-                                <%= bestDeadliftSets[i].sets %> x <%= bestDeadliftSets[i].reps %> | <%= bestDeadliftSets[i].weight  %>KG @<%= bestDeadliftSets[i].actualRPE  %>
+                                <%= bestDeadliftSets[i].sets %> x <%= bestDeadliftSets[i].reps %> | <%= bestDeadliftSets[i].weight  %>KG @<%= bestDeadliftSets[i].actualRPE %> | Est Max = <%= bestDeadliftSets[i].estMax %>
                                
                             </div>
                             <div class="ff-sans-cond fs-400 letter-spacing-4">
@@ -232,17 +237,53 @@
     const allTonnageContainers = document.querySelectorAll(".training-plan-container");
     const allBestSetContainers = document.querySelectorAll(".alternative-stats-container")
 
-    allTonnageContainers.forEach((container, index) => {
-        container.addEventListener("click", () => {
-            allTonnageContainers[index].style.display = "none";
-            allBestSetContainers[index].style.display = "flex";
+    const statsDisplaySwitcher = document.querySelector(".stats-display-switcher");
+    const switchSVG = statsDisplaySwitcher.querySelector("svg");
+
+    let count = 0;
+    let isRotated = false;
+    const duration = 500; // rotate duration
+
+    statsDisplaySwitcher.addEventListener("click", e => {
+        e.preventDefault();
+
+        if (count % 2 === 0) {
+            allTonnageContainers.forEach((container, index) => {
+                allTonnageContainers[index].style.display = "none";
+                allBestSetContainers[index].style.display = "flex";
+            })
+        } else {
+            allTonnageContainers.forEach((container, index) => {
+                allTonnageContainers[index].style.display = "flex";
+                allBestSetContainers[index].style.display = "none";
+            })
+        }
+
+        if (isRotated) {
+            switchSVG.style.transform = "rotate(0deg)";
+            isRotated = false;
+        } else {
+            switchSVG.style.transform = "rotate(180deg)";
+            isRotated = true;
+        }
+
+        count++;
+    })
+
+    const squatPerformanceStatsCards = allBestSetContainers[0].querySelectorAll(".stats-container");
+    const benchPerformanceStatsCards = allBestSetContainers[1].querySelectorAll(".stats-container");
+    const deadliftPerformanceStatsCards = allBestSetContainers[2].querySelectorAll(".stats-container");
+    console.log(deadliftPerformanceStatsCards);
+
+
+    // das mit der selected klasse funktioniert irgendwie nicht hier was anderes überlegen
+    let lastSelectedSquatIndex = 0;
+    squatPerformanceStatsCards.forEach((statsCard, index) => {
+        statsCard.addEventListener("click", () => {
+            lastSelectedSquatIndex = index;
+            console.log(lastSelectedSquatIndex);
         })
     })
 
-    allBestSetContainers.forEach((container, index) => {
-        container.addEventListener("click", () => {
-            allTonnageContainers[index].style.display = "flex";
-            allBestSetContainers[index].style.display = "none";
-        })
-    })
+
 </script>

@@ -9,7 +9,7 @@ import {
   categorizeExercises,
   updateVolumeMarkers,
   updateExerciseDetails,
-  renderTrainingPlansView
+  renderTrainingPlansView,
 } from "./sharedFunctionality.js";
 
 /* CUSTOM TRAININGS */
@@ -327,112 +327,6 @@ export async function getCreateTrainingPlan(req, res) {
     } catch (err) {
       console.log("Error while patching meta data of customTraining", err);
     }
-  }
-
-  //statistic page
-export async function getCustomStatisticPage(req, res, index) {
-    try {
-      const user = await User.findById(req.user._id);
-      if (!user) {
-        return res.status(404).send("Benutzer nicht gefunden");
-      }
-      const userID = req.user._id;
-  
-      const trainingPlan = user.trainingPlansCustomNew[index];
-      
-      if (!trainingPlan) {
-        return res.status(404).send("Training nicht gefunden!");
-      }
-  
-      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays } = getTrainingPlanInfo(trainingPlan);
-  
-      const squatSetsDone = [];
-      const squatTonnage = [];
-      const benchSetsDone = [];
-      const benchTonnage = [];
-      const deadliftSetsDone = [];
-      const deadliftTonnage = [];
-  
-      trainingPlan.trainingWeeks.forEach((trainingWeek, index) => {
-        squatSetsDone.push(trainingWeek.squatSetsDone);
-        squatTonnage.push(trainingWeek.squatTonnage);
-        benchSetsDone.push(trainingWeek.benchSetsDone);
-        benchTonnage.push(trainingWeek.benchTonnage);
-        deadliftSetsDone.push(trainingWeek.deadliftSetsDone);
-        deadliftTonnage.push(trainingWeek.deadliftTonnage);
-      })
-
-      //get best squat/bench/deadlift sets
-      const bestSquatSets = [];
-      const bestBenchSets = [];
-      const bestDeadliftSets = [];
-      
-      trainingPlan.trainingWeeks.forEach((trainingWeek) => {
-        const bestSquatSetInWeek = findBestSetInCategory(trainingWeek, 'Squat');
-        const bestBenchSetInWeek = findBestSetInCategory(trainingWeek, 'Bench');
-        const bestDeadliftSetInWeek = findBestSetInCategory(trainingWeek, 'Deadlift');
-      
-        if (bestSquatSetInWeek) {
-          bestSquatSets.push(bestSquatSetInWeek);
-        }
-      
-        if (bestBenchSetInWeek) {
-          bestBenchSets.push(bestBenchSetInWeek);
-        }
-      
-        if (bestDeadliftSetInWeek) {
-          bestDeadliftSets.push(bestDeadliftSetInWeek);
-        }
-      });
-      // TODO: CustomPlanController
-
-      // es werden die richtigen sets übergeben => diese können nachher mit den bestleistungen und aneinadner verglichen werden
-      // um eine zweite statistik karte zu erstellen
-
-      // außerdem möchte ich auf die trainingspage noch einen befindlichkeitsselector bauen der wenn die befindlichkeit über einne längeren zeitraum
-      // schlecht ist anpassungen hinsichtlich volumen (rpe, sets) macht:
-
-  
-      res.render("trainingPlans/statsPage", {
-        trainingTitle, 
-        userID,
-  
-        squatSetsDone,
-        squatTonnage,
-        benchSetsDone,
-        benchTonnage,
-        deadliftSetsDone,
-        deadliftTonnage,
-
-        bestSquatSets,
-        bestBenchSets,
-        bestDeadliftSets,
-      })
-  
-    } catch (error) {
-      console.log("Fehler beim aufrufen der custom statistic page:");
-    }
-  }
-
-  function findBestSetInCategory(week, category) {
-    let bestSet = null;
-  
-    week.trainingDays.forEach((trainingDay) => {
-      const categorySets = trainingDay.exercises.filter(
-        (exercise) => exercise.category === category && exercise.estMax !== null
-      );
-  
-      if (categorySets.length > 0) {
-        categorySets.forEach((categorySet) => {
-          const adjustedMax = categorySet.estMax / categorySet.maxFactor;
-          if (!bestSet || adjustedMax > bestSet.estMax) {
-            bestSet = categorySet;
-          }
-        });
-      }
-    });
-  
-    return bestSet || {}; // Falls kein passendes Set gefunden wurde, wird ein leeres Objekt zurückgegeben
   }
 
   /* CREATING NEW CUSTOM TRAINING */
