@@ -18,7 +18,7 @@
 
 <body class="home">
 
-    <form action="/training/<%= templatePlanName %>-edit?_method=PATCH" method="POST">
+    <form action="/training/<%= templatePlanName %>-edit?_method=PATCH" method="POST" style="background: none; border: none">
 
         <input id="userID" type="hidden" name="userIdentification" value="<%= userID %>">
 
@@ -40,14 +40,25 @@
             <input type="text" id="training-title" class="create-training-plan-input" name="training_title"
             value="<%= workoutName %>" required>
 
-            <label for="training-mode-selector" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainings /
+            <label for="training_frequency" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Trainings /
                 Woche</label>
-            <select name="training_frequency" class="generic-selector" required>
+            <select id="training_frequency" name="training_frequency" class="generic-selector" required>
                 <option value="" disabled selected hidden></option>
                 <option <%=trainingFrequency===3 ? "selected" : "" %> value="3">3</option>
                 <option <%=trainingFrequency===4 ? "selected" : "" %> value="4">4</option>
                 <option <%=trainingFrequency===5 ? "selected" : "" %> value="5">5</option>
                 <option <%=trainingFrequency===6 ? "selected" : "" %> value="6">6</option>
+            </select>
+
+            <label for="block_length" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Blocklänge (in Wochen)</label>
+            <select id="block_length" name="block_length" class="generic-selector" required>
+                <option value="" disabled selected hidden></option>
+                <option <%=blockLength ===3 ? "selected" : "" %> value="3">3</option>
+                <option <%=blockLength===4 ? "selected" : "" %> value="4">4</option>
+                <option <%=blockLength===5 ? "selected" : "" %> value="5">5</option>
+                <option <%=blockLength===6 ? "selected" : "" %> value="6">6</option>
+                <option <%=blockLength===7 ? "selected" : "" %> value="7">7</option>
+                <option <%=blockLength===8 ? "selected" : "" %> value="8">8</option>
             </select>
 
             <label for="training-mode-selector"

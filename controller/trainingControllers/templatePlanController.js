@@ -9,6 +9,9 @@ import {
   categorizeExercises,
   updateVolumeMarkers,
   updateExerciseDetails,
+  getAmountOfTrainingWeeks,
+  removeTrainingWeeks,
+  addNewTrainingWeeks,
 } from "./sharedFunctionality.js";
 
 
@@ -173,6 +176,8 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
 
       const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, lastWeekDeload } = getTrainingPlanInfo(trainingPlan);
 
+      const blockLength = getAmountOfTrainingWeeks(trainingPlan);
+
       res.render("trainingPlans/custom/trainingPlanEdit", {
         userID: user.id,
         layout: false,
@@ -181,6 +186,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
         trainingFrequency: trainingFrequency,
         trainingPhase: trainingPhase,
         lastWeekDeload: lastWeekDeload,
+        blockLength: blockLength,
         templatePlanName: `template-${letter}`, //for posting to the right path
       });
 
@@ -207,6 +213,7 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       const newTrainingFrequency = req.body.training_frequency;
       const newTrainingPhase = req.body.training_phase;
       const isLastWeekDeload = req.body.isLastWeekDeload;
+      const newBlockLength = req.body.block_length;
 
       // wenn es änderungen gibt dann aktualiseren
       if (trainingPlan.title !== newTitle) {
@@ -222,6 +229,19 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
       if (trainingPlan.lastWeekDeload !== isLastWeekDeload) {
         trainingPlan.lastWeekDeload = isLastWeekDeload;
       }      
+
+      
+      const currentBlockLength = trainingPlan.trainingWeeks.length
+      if (currentBlockLength !== newBlockLength) {
+        if (newBlockLength > currentBlockLength) {
+          const weekDifference = newBlockLength - currentBlockLength; //get the difference how many sets shall be added
+          addNewTrainingWeeks(trainingPlan.trainingWeeks, trainingPlan.trainingFrequency, weekDifference);
+
+        } else if (newBlockLength < currentBlockLength) {
+          const weekDifference = currentBlockLength - newBlockLength;
+          removeTrainingWeeks(trainingPlan.trainingWeeks, weekDifference);
+        }
+      }
       
       await user.save();
       res.status(200).json({});

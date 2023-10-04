@@ -235,5 +235,50 @@
                             <%- include("../../partials/trainingPage/volumeRecommandations") %>
                                 <%- include("../../partials/trainingPage/javascripts") %>
 
+                                <script> 
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        const tableBody = document.querySelector("tbody");
+                                        const trs = tableBody.querySelectorAll(".table-row.mainExercise");
+                                        const lastTr = trs[trs.length - 1];
+                                        const lastTrInnerHTML = lastTr.innerHTML;
+                                        const newTableRow = increaseExerciseIndex(lastTrInnerHTML);
+                                        console.log(newTableRow);
+    
+                                        //TODO hier weitermachen
+                                        // alle vorkommnisse sollen behandelt werden nicht nur das erste
+                                        function increaseExerciseIndex(html) {
+                                            const matches = html.match(/<select name="day(\d+)_exercise(\d+)_category"/g);
+                                            let newHTML = html;
+
+                                            for (let i = 0; i < matches.length; i++) {
+                                                const match = matches[i];
+                                                const dayIndex = Number(match.match(/day(\d+)/)[1]);
+                                                const exerciseIndex = Number(match.match(/exercise(\d+)/)[1]);
+                                                const newExerciseIndex = exerciseIndex + 1;
+
+                                                newHTML = newHTML.replace(match, `<select name="day${dayIndex}_exercise${newExerciseIndex}_category"`);
+                                            }
+                                            return newHTML;
+                                        }
+
+                                        // function increaseExerciseIndex(html) {
+                                        //     const matches = html.matchAll(/<select name="day(\d+)_exercise(\d+)_category"/g);
+                                        //     let newHTML = html;
+
+                                        //     for (const match of matches) {
+                                        //         const dayIndex = Number(match[1]);
+                                        //         const exerciseIndex = Number(match[2]);
+                                        //         const newExerciseIndex = exerciseIndex + 1;
+
+                                        //         newHTML = newHTML.replace(match, `<select name="day${dayIndex}_exercise${newExerciseIndex}_category"`);
+                                        //     }
+
+                                        //     return newHTML;
+                                        // }
+
+                                    })
+
+                                </script>
+
 
 </form>

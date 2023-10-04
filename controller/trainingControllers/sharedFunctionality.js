@@ -496,3 +496,32 @@ function findBestSetInCategory(week, category, userExercises) {
 
   return bestSet || {}; // Falls kein passendes Set gefunden wurde, wird ein leeres Objekt zurückgegeben
 }
+
+export function removeTrainingWeeks(trainingWeeks, numberOfRemovedTrainingWeeks) {
+  for (let i = 0; i < numberOfRemovedTrainingWeeks; i++) {
+    trainingWeeks.pop();
+  }
+}
+
+export function addNewTrainingWeeks(trainingWeeks, daysPerWeek, trainingWeeksToAdd) {
+
+  const emptyTrainingDay = {
+    exercises: [],
+  }
+  
+  for (let j = 0; j < trainingWeeksToAdd; j++) {
+    const trainingDays = [];
+      for (let i = 0; i < daysPerWeek; i++) {
+        trainingDays.push(emptyTrainingDay);
+      }
+      trainingWeeks.push({ trainingDays });
+  }
+
+}
+
+export function getAmountOfTrainingWeeks(trainingPlan) {
+  const trainingWeeks = trainingPlan.trainingWeeks.length;
+  return trainingWeeks;
+}
+
+// is deload week more generice machen

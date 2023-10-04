@@ -10,6 +10,9 @@ import {
   updateVolumeMarkers,
   updateExerciseDetails,
   renderTrainingPlansView,
+  removeTrainingWeeks,
+  addNewTrainingWeeks,
+  getAmountOfTrainingWeeks
 } from "./sharedFunctionality.js";
 
 /* CUSTOM TRAININGS */
@@ -303,6 +306,7 @@ export async function getCreateTrainingPlan(req, res) {
       const newTrainingFrequency = req.body.training_frequency;
       const newTrainingPhase = req.body.training_phase;
       const isLastWeekDeload = req.body.isLastWeekDeload;
+      const newBlockLength = req.body.block_length;
   
       // wenn es änderungen gibt dann aktualiseren
       if (trainingPlan.title !== newTitle) {
@@ -318,11 +322,20 @@ export async function getCreateTrainingPlan(req, res) {
       if (trainingPlan.lastWeekDeload !== isLastWeekDeload) {
         trainingPlan.lastWeekDeload = isLastWeekDeload;
       }
+
+      const currentBlockLength = trainingPlan.trainingWeeks.length
+      if (currentBlockLength !== newBlockLength) {
+        if (newBlockLength > currentBlockLength) {
+          const weekDifference = newBlockLength - currentBlockLength; //get the difference how many sets shall be added
+          addNewTrainingWeeks(trainingPlan.trainingWeeks, trainingPlan.trainingFrequency, weekDifference);
+
+        } else if (newBlockLength < currentBlockLength) {
+          const weekDifference = currentBlockLength - newBlockLength;
+          removeTrainingWeeks(trainingPlan.trainingWeeks, weekDifference);
+        }
+      }
   
-      console.log("patched training metadata")
       await user.save();
-  
-  
       res.status(200).json({});
   
       
@@ -330,6 +343,8 @@ export async function getCreateTrainingPlan(req, res) {
       console.log("Error while patching meta data of customTraining", err);
     }
   }
+
+
 
   /* CREATING NEW CUSTOM TRAINING */
 function createNewTrainingPlanWithPlaceholders(weeks, daysPerWeek) {
@@ -340,20 +355,12 @@ function createNewTrainingPlanWithPlaceholders(weeks, daysPerWeek) {
       for (let dayIndex = 0; dayIndex < daysPerWeek; dayIndex++) {
         const trainingDay = {
           exercises: [],
-          trainingNotes: "",
         };
         trainingDays.push(trainingDay);
       }
       trainingWeeks.push({ trainingDays });
     }
   
-    return trainingWeeks;
-  }
-
-
-  /* GET EDIT PAGE CUSTOM */
-function getAmountOfTrainingWeeks(trainingPlan) {
-    const trainingWeeks = trainingPlan.trainingWeeks.length;
     return trainingWeeks;
   }
 

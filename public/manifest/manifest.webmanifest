@@ -1,7 +1,7 @@
 {
     "theme_color": "hsl(230 35% 7%)",
     "background_color": "hsl(230 35% 7%)",
-    "display": "standalone",
+    "display": "fullscreen",
     "scope": "/",
     "start_url": "/",
     "name": "Training Systems",

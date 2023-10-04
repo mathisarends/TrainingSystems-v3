@@ -3,10 +3,10 @@ const router = express.Router();
 
 import { checkAuthenticated } from "../authMiddleware.js";
 
-const templates = ["A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5"]; //template ULR-Endings
+const templates = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8"]; //template ULR-Endings
 const templatePrefixes = ["A", "B"];
 const customTemplateLetters = ["A", "B", "C", "D"]; //customURL-Endings
-const maxWeeks = 6; 
+const maxWeeks = 8; 
 
 import {
   getCreateTrainingPlan, 
