@@ -445,8 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const alphaValue = String.fromCharCode(
         65 + lastSelectedLinkIndexTemplate
       );
-      const customPlanPage = `/training/template-${alphaValue}${lastSelectNextTrainingWeek}-edit`;
-      console.log(alphaValue + " alphanumeric value");
+      const customPlanPage = `/training/template-${alphaValue}-edit`;
       window.location.href = customPlanPage;
     } else {
       pulseEffect(templateTrainingPlanContainer);

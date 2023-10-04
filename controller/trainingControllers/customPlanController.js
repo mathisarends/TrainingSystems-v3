@@ -168,6 +168,8 @@ export async function getCreateTrainingPlan(req, res) {
   
         userID: user.id,
         user: user,
+
+        trainingWeek: trainingPlan.trainingWeeks[week - 1], //new generate amount of table colums automatically
   
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,
@@ -275,7 +277,7 @@ export async function getCreateTrainingPlan(req, res) {
         trainingPhase: trainingPhase,
         lastWeekDeload: lastWeekDeload,
         blockLength: blockLength,
-        templatePlanName: `${letter}`, //for posting to the right path
+        templatePlanName: `custom-${letter}`, //for posting to the right path
       });
     } catch (err) {
       console.log("Error while trying to access the edit training page", err);

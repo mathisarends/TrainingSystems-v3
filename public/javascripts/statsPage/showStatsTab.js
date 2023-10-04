@@ -68,26 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         })
 
-        // sections.forEach((section, index) => {
-
-        //   totalPage.addEventListener("touchstart", e => {
-        //     startX = e.touches[0].clientX;
-        //   });
-
-        //   section.addEventListener("touchend", e => {
-        //     const endX = e.changedTouches[0].clientX;
-
-        //     const swipeThreshold = 110;
-    
-        //     if (startX - endX > swipeThreshold) {
-        //         navigateToNextDay();             // Swipe left, navigate to the next day
-        //     } else if (endX - startX > swipeThreshold) {
-        //         navigateToPreviousDay();             // Swipe right, navigate to the previous day
-        //     }
-        //   })
-
-        // })
-
         function navigateToNextDay() {
           const selectedButton = document.querySelector(".tab-list button[aria-selected='true']");
           const nextButton = selectedButton.nextElementSibling || tabs[0];

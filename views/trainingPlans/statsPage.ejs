@@ -56,8 +56,9 @@
                     <div class="stats-container">
     
                             <div class="training-plan-title uppercase">
-                                Heaviest set
+                                Heaviest set W<%= i + 1 %>D<%= bestSquatSets[i].dayIndex + 1 %>
                             </div>
+                            <input type="hidden" value="<%= bestSquatSets[i].dayIndex %>">
                             <% if (Object.keys(bestSquatSets[i]).length !== 0) { %>
                                 <div class="ff-sans-cond fs-400 letter-spacing-4">
                                     <%= bestSquatSets[i].sets %> x <%= bestSquatSets[i].reps %> | <%= bestSquatSets[i].weight  %>KG @<%= bestSquatSets[i].actualRPE  %> | Est Max = <%= bestSquatSets[i].estMax %>
@@ -273,16 +274,37 @@
     const squatPerformanceStatsCards = allBestSetContainers[0].querySelectorAll(".stats-container");
     const benchPerformanceStatsCards = allBestSetContainers[1].querySelectorAll(".stats-container");
     const deadliftPerformanceStatsCards = allBestSetContainers[2].querySelectorAll(".stats-container");
-    console.log(deadliftPerformanceStatsCards);
+
+    const pathName = window.location.pathname;
+    const trainingType = pathName.substring(0, pathName.lastIndexOf("-"));
 
 
     // das mit der selected klasse funktioniert irgendwie nicht hier was anderes überlegen
     let lastSelectedSquatIndex = 0;
     squatPerformanceStatsCards.forEach((statsCard, index) => {
+
+        const selectedBorderStyle = "4px solid rgba(255, 255, 255, 0.85)";
+
         statsCard.addEventListener("click", () => {
+
+            const computedStyle = window.getComputedStyle(statsCard); // Berechneter Stil des Elements
+
+            if (computedStyle.border === selectedBorderStyle) { // if a selected stats card is clicked again navigate to training
+                const dayIndex = statsCard.querySelector("input[type='hidden']").value;
+                window.location.href = `${trainingType}${index + 1}#${dayIndex}`;
+            }
+
+            // all cards to initial state
+            squatPerformanceStatsCards.forEach(card => {
+                card.style.border = "none";
+            });
+
+            statsCard.style.border = selectedBorderStyle
+
             lastSelectedSquatIndex = index;
             console.log(lastSelectedSquatIndex);
         })
+        
     })
 
 

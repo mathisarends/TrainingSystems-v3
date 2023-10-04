@@ -77,6 +77,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    //navigate to right trainin day from statsPage
+    const anchor = window.location.hash.substring(1);
+    console.log(anchor);
+    if (anchor) {
+        const navigateButton = navButtons[anchor];
+    
+        if (navigateButton) {
+            navigateButton.click();
+        }
+    
+    }
+
 
 
 

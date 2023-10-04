@@ -27,6 +27,10 @@
     color: hsl( var(--clr-dark) );
 }
 
+.stats-container {
+    transition: border 300ms ease;
+}
+
 .selected { /*diese klasse wird appended wenn dasd element ausgewählt wird*/
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.4) !important; 
     border-width: 4px; 

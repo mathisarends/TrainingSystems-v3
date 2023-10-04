@@ -419,9 +419,9 @@ export async function getStatisticPage(req, res, index) {
     const bestDeadliftSets = [];
     
     trainingPlan.trainingWeeks.forEach((trainingWeek) => {
-      const bestSquatSetInWeek = findBestSetInCategory(trainingWeek, 'Squat');
-      const bestBenchSetInWeek = findBestSetInCategory(trainingWeek, 'Bench');
-      const bestDeadliftSetInWeek = findBestSetInCategory(trainingWeek, 'Deadlift');
+      const bestSquatSetInWeek = findBestSetInCategory(trainingWeek, 'Squat', user.exercises);
+      const bestBenchSetInWeek = findBestSetInCategory(trainingWeek, 'Bench', user.exercises);
+      const bestDeadliftSetInWeek = findBestSetInCategory(trainingWeek, 'Deadlift', user.exercises);
     
       if (bestSquatSetInWeek) {
         bestSquatSets.push(bestSquatSetInWeek);
@@ -461,23 +461,38 @@ export async function getStatisticPage(req, res, index) {
   }
 }
 
-function findBestSetInCategory(week, category) {
-  let bestSet = null;
+function findBestSetInCategory(week, category, userExercises) {
 
-  week.trainingDays.forEach((trainingDay) => {
+  // get all the relevant exercise in order to get access to maxFactors
+  const usersCategoryExercises = userExercises.filter((exercise) => exercise.category.name === category);
+  
+  const maxFactors = {}; // create an maxFactor Object that allow acces to maxFactors by exercise name
+  usersCategoryExercises.forEach((exercise) => {
+    maxFactors[exercise.name] = exercise.maxFactor;
+  })
+  
+  let bestSet = null;
+  let bestDayIndex = -1;
+
+  week.trainingDays.forEach((trainingDay, dayIndex) => {
     const categorySets = trainingDay.exercises.filter(
       (exercise) => exercise.category === category && exercise.estMax !== null
     );
 
     if (categorySets.length > 0) {
       categorySets.forEach((categorySet) => {
-        const adjustedMax = categorySet.estMax / categorySet.maxFactor;
+        const adjustedMax = categorySet.estMax / maxFactors[categorySet.exercise];
         if (!bestSet || adjustedMax > bestSet.estMax) {
           bestSet = categorySet;
+          bestDayIndex = dayIndex;
         }
       });
     }
   });
+
+  if (bestSet) {
+    bestSet.dayIndex = bestDayIndex;
+  }
 
   return bestSet || {}; // Falls kein passendes Set gefunden wurde, wird ein leeres Objekt zurückgegeben
 }
