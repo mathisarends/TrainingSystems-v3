@@ -4,9 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const defaultRepsByCategory = document.getElementsByClassName("category-default-reps-input");
     const defaultRPEByCategory = document.getElementsByClassName("category-default-rpe-input");
 
-    const exerciseCategorySelectors = document.getElementsByClassName("exercise-category-selector");
-    
-
     const exerciseCategorys = [
         "- Bitte Auswählen -",
         "Squat",
@@ -44,26 +41,34 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
       }
-    const setsInputs = document.getElementsByClassName("sets");
-    const repsInputs = document.getElementsByClassName("reps");
-    const targetRPEInputs = document.getElementsByClassName("targetRPE");
 
-    // if one of the exerciseCategorySelectors changes => display default set and rep and rpe values
-    for (let i = 0; i < exerciseCategorySelectors.length; i++) {
-        exerciseCategorySelectors[i].addEventListener("change", () => {
 
-            const category = exerciseCategorySelectors[i].value;
+      document.addEventListener("change", (e) => {
+        const target = e.target;
 
-            if (category !== "- Bitte Auswählen -") {
-                setsInputs[i].value = getDefaultSetsByExerciseCategory(category);
-                repsInputs[i].value = getDefaultRepsByExerciseCategory(category);
-                targetRPEInputs[i].value = getDefaultRPEByExerciseCategory(category);
-            } else {
-                setsInputs[i].value = "";
-                repsInputs[i].value = "";
-                targetRPEInputs[i].value = "";
+        // Überprüfe, ob das ausgelöste Event von einem .exercise-category-selector stammt
+        if (target && target.classList.contains("exercise-category-selector")) {
+            const category = target.value;
 
+            // Finde das Elternelement (z.B. die Zeile), das die .exercise-category-selector enthält
+            const parentRow = target.closest(".table-row.mainExercise");
+
+            if (parentRow) {
+                // Finde die entsprechenden Elemente in derselben Zeile und aktualisiere sie
+                const setsInput = parentRow.querySelector(".sets");
+                const repsInput = parentRow.querySelector(".reps");
+                const targetRPEInput = parentRow.querySelector(".targetRPE");
+
+                if (category !== "- Bitte Auswählen -") {
+                    setsInput.value = getDefaultSetsByExerciseCategory(category);
+                    repsInput.value = getDefaultRepsByExerciseCategory(category);
+                    targetRPEInput.value = getDefaultRPEByExerciseCategory(category);
+                } else {
+                    setsInput.value = "";
+                    repsInput.value = "";
+                    targetRPEInput.value = "";
+                }
             }
-        })
-    }
-})
+        }
+    });
+});

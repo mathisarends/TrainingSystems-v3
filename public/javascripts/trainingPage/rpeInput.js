@@ -3,12 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const MIN_RPE = 5;
   const MAX_RPE = 10;
 
-  const targetRPEInputs = document.querySelectorAll(".targetRPE");
-  const rpeInputs = document.querySelectorAll(".actualRPE");
-  const setInputs = document.querySelectorAll(".sets");
-
 //so that the user can only enter RPEs that make sense
-
 function validateRPE(rpe, rpeInput) {
   switch (true) {
     case rpe < MIN_RPE:
@@ -31,58 +26,67 @@ function updateWorkoutNotes(workoutNotes, rpeDiff) {
 }
 
 // validate targetRPE inputs
-targetRPEInputs.forEach((targetRPEInput) => {
-  targetRPEInput.addEventListener("change", () => {
+document.addEventListener("change", e => {
+  const targetRPEInput = e.target;
+
+  if (targetRPEInput && targetRPEInput.classList.contains("targetRPE")) {
     const targetRPE = targetRPEInput.value;
-
     validateRPE(targetRPE, targetRPEInput);
-  })
+  }
 })
+
+document.addEventListener("change", e => {
+  const target = e.target;
   
+  if (target && target.classList.contains("actualRPE")) {
+    const rpeInput = target;
+    let rpe = target.value;
 
-  const planedRPEs = document.querySelectorAll(".targetRPE");
-  const workoutNotes = document.querySelectorAll(".workout-notes");
+    if (rpe === "") {
+      rpeInput.value = "";
+      return;
+    }
 
-  //refactor this shit and make it bulletproof. e.g. check if something bad happens if there is no input to be read or some shit:
+    rpe = rpe.replace(/,/g, "."); //replace commas with dots
+    let numbers = rpe.split(";").map(Number);
 
-  rpeInputs.forEach((rpeInput, index) => {
-    rpeInput.addEventListener("change", () => {
-      let rpe = rpeInput.value;
+    if (numbers.length === 1 && !isNaN(rpe)) { //rpe is valid (number) and inputted without further values seperated by ;
+      validateRPE(numbers[0], rpeInput);
 
-      if (rpe === "") {
-        rpeInput.value = "";
-        return;
-      }
+      // finde das zugehörige planedRPE und workoutNotes element
+      const parentRow = rpeInput.closest(".table-row");
+      const planedRPE = parentRow.querySelector(".targetRPE");
+      const workoutNotes = parentRow.querySelector(".workout-notes");
 
-      rpe = rpe.replace(/,/g, "."); //replace commas with dots
-      let numbers = rpe.split(";").map(Number);
+      const rpeDiff = parseFloat(planedRPE.value) - numbers[0];
+      updateWorkoutNotes(workoutNotes, rpeDiff);
+      return;
+    }
 
-      if (numbers.length === 1 && !isNaN(rpe)) { //rpe is valid (number) and inputted without further values seperated by ;
-        validateRPE(numbers[0], rpeInput);
-        const rpeDiff = parseFloat(planedRPEs[index].value) - numbers[0];
+    if (numbers.some(isNaN)) { //if one of the values is not a number
+      rpeInput.value = "";
+      return;
+    }
 
-        updateWorkoutNotes(workoutNotes[index], rpeDiff);
-        return;
-      }
+    const parentRow = rpeInput.closest(".table-row");
+    const setInputs = parentRow.querySelector(".sets");
 
-      if (numbers.some(isNaN)) { // if the input is not valid (not a number)
-        rpeInput.value = "";
-        return;
-      }
+    if (numbers.length == setInputs.value) {
+      const sum = numbers.reduce((acc, num) => acc + num, 0);
+      const average = sum / numbers.length;
 
-      if (numbers.length == setInputs[index].value) {
-        const sum = numbers.reduce((acc, num) => acc + num + 0);
-        const average = sum / numbers.length;
-    
-        const roundedAverage = Math.ceil(average / 0.5) * 0.5;
-  
-        const rpeDiff = parseFloat(planedRPEs[index].value) - roundedAverage;
-        updateWorkoutNotes(workoutNotes[index], rpeDiff);
-        validateRPE(roundedAverage, rpeInput);
-      }
+      const roundedAverage = Math.ceil(average / 0.5) * 0.5;
+      const planedRPE = parentRow.querySelector(".targetRPE");
+      const workoutNotes = parentRow.querySelector(".workout-notes");
 
-    })
-  })
+      const rpeDiff = parseFloat(planedRPE.value) - roundedAverage;
+      updateWorkoutNotes(workoutNotes, rpeDiff);
+      validateRPE(roundedAverage, rpeInput);
+
+    }
+
+  }
+})
 
 })
 

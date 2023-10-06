@@ -17,77 +17,88 @@ import {
 
 
 
-export async function getTemplateTraining(req, res, templateType, templateName, weekIndex, templates) {
+export async function getTemplateTraining(req, res, index, letter, week, typeOfPlan) {
     try {
       const user = await User.findById(req.user._id);
       if (!user) {
         return res.status(404).send("Benutzer nicht gefunden");
       }
-      const trainingPlan = user.trainingPlanTemplate[templateType];
-      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, amountOfExercises } = getTrainingPlanInfo(trainingPlan);
-      const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, weekIndex);
-  
-  
-      const trainingWeekData = []; //this training week
-      const currentTrainingWeekFatique = [];
-      for (let j = 0; j < amountOfTrainingDays; j++) {
-        trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, weekIndex, j));
-        currentTrainingWeekFatique.push(extractFatiqueLevelOfTrainingDay(trainingPlan, weekIndex, j));
+      const trainingPlan = user.trainingPlanTemplate[index];
+
+      if (!trainingPlan) {
+        return res.status(404).send("Training nicht gefunden!");
       }
 
-      const previousTrainingWeekData = [];
-      if (weekIndex >= 1) { // check bounds in order to prevent indexOutOfBounds
-        for (let j = 0; j < amountOfTrainingDays; j++) {
-          previousTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, weekIndex - 1, j));
-        }
-      }
-  
-      let firstTrainingWeekData = []; //fallback option firstTrainingWeek
-      if (weekIndex !== 0) {
-        for (let j = 0; j < amountOfTrainingDays; j++) {
-          firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
-        }
+      if (week > trainingPlan.trainingWeeks.length) {
+        return res.status(404).send("Ungültige Woche");
       }
 
       let isDeloadWeek = false;
-      if (weekIndex === trainingPlan.trainingWeeks.length - 1) {
+      if (week === trainingPlan.trainingWeeks.length) {
         if (trainingPlan.lastWeekDeload === undefined || !trainingPlan.lastWeekDeload) {
           isDeloadWeek = false;
         } else {
           isDeloadWeek = true;
         }
       }
+
+
+
+      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, amountOfExercises } = getTrainingPlanInfo(trainingPlan);
+      const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, week - 1);
   
+  
+      const trainingWeekData = []; //this training week
+      const currentTrainingWeekFatique = [];
+      for (let j = 0; j < amountOfTrainingDays; j++) {
+        trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 1, j));
+        currentTrainingWeekFatique.push(extractFatiqueLevelOfTrainingDay(trainingPlan, week - 1, j));
+      }
+
+      const previousTrainingWeekData = [];
+      if (week >= 2) { // check bounds in order to prevent indexOutOfBounds
+        for (let j = 0; j < amountOfTrainingDays; j++) {
+          previousTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 2, j));
+        }
+      }
+  
+      let firstTrainingWeekData = []; //fallback option firstTrainingWeek
+        for (let j = 0; j < amountOfTrainingDays; j++) {
+          firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
+        }
   
       const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory, maxFactors } = categorizeExercises(user.exercises);
   
       const trainingData = user.trainingData.length > 0 ? user.trainingData[0] : {}; //volume recomandations
+    
+      let afterPageIndex = (week + 1) % trainingPlan.trainingWeeks.length;
+      afterPageIndex = afterPageIndex === 0 ? trainingPlan.trainingWeeks.length : afterPageIndex;
   
-      //navigation to nextTrainingWeek and the week before
-      const templateIndexes = templates
-        .filter(t => (t.startsWith("A") && templateType === 0) || (t.startsWith("B") && templateType === 1))
-        .map(t => parseInt(t.slice(1)));
+      let beforePageIndex = (week - 1) % trainingPlan.trainingWeeks.length;
+      beforePageIndex = beforePageIndex === 0 ? trainingPlan.trainingWeeks.length : beforePageIndex;
   
-      const templateIndex = templateIndexes.indexOf(weekIndex + 1);
+      const beforePage = `/training/template-${letter}${beforePageIndex}`;
+      const afterPage = `/training/template-${letter}${afterPageIndex}`;
+
+      const previousTrainingWeek = (week >= 2) ? trainingPlan.trainingWeeks[week - 2] : {};
   
-      const beforeTemplateIndex = (templateIndex - 1 + templateIndexes.length) % templateIndexes.length;
-      const afterTemplateIndex = (templateIndex + 1) % templateIndexes.length;
-  
-      const beforePage = `/training/template-${templateType === 0 ? "A" : "B"}${templateIndexes[beforeTemplateIndex]}`;
-      const afterPage = `/training/template-${templateType === 0 ? "A" : "B"}${templateIndexes[afterTemplateIndex]}`;
-  
-      res.render("trainingPlans/template/trainingPlan", {
+      res.render("trainingPlans/custom/trainingPlan", {
   
         userID: user.id,
         user: user,
 
-        isDeloadWeek, isDeloadWeek,
-        amountOfExercises: amountOfExercises,
-  
+        trainingWeek: trainingPlan.trainingWeeks[week - 1], //new generate amount of table colums automatically
+        previousTrainingWeek: previousTrainingWeek,
+        firstTrainingWeek: trainingPlan.trainingWeeks[0],
+
+
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,
-        firstTrainingWeekData: firstTrainingWeekData.length > 0 ? firstTrainingWeekData : trainingWeekData,
-        currentTrainingWeekFatique: currentTrainingWeekFatique,
+        firstTrainingWeekData: firstTrainingWeekData,
+        currentTrainingWeekFatique: currentTrainingWeekFatique || [], //current training week
+
+        isDeloadWeek: isDeloadWeek,
+        amountOfExercises: amountOfExercises,
   
         amountOfTrainingDays: amountOfTrainingDays,
         workoutName: trainingTitle,
@@ -110,54 +121,16 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
   
         beforePage: beforePage,
         afterPage: afterPage,
-        week: weekIndex + 1,
+        week: week,
   
         lastTrainingDay: lastTrainingDay,
   
-        templatePlanName: templateName,
-        workoutName: trainingTitle,
+        typeOfPlan: typeOfPlan,
+        templatePlanName: `${letter}${week}`,
       });
   
     } catch (err) {
       console.log(`Fehler beim Aufrufen des Template Plan ${templateName}: ${err}`);
-    }
-  }
-
-  export async function patchTemplateTraining(req, res, i, templateName) {
-    try {
-      const user = await User.findById(req.user._id);
-      if (!user) {
-        return res.status(404).send("Benutzer nicht gefunden");
-      }
-  
-      //hier gibt es schwierigkeitn
-      const updatedData = req.body;
-      const isTemplateA = templateName.startsWith("A");
-      const templateIndex = isTemplateA ? 0 : 1; // 0 for A templates, 1 for B templates
-     
-      const trainingPlan = user.trainingPlanTemplate[templateIndex];
-      const amountOfExercises = trainingPlan.exercisesPerDay;
-      trainingPlan.lastUpdated = new Date();
-      const weekSuffix = parseInt(templateName.slice(1)); // Extract week suffix (1, 2, ...)
-      const trainingWeek = trainingPlan.trainingWeeks[weekSuffix - 1]; // Adjust index
-  
-      updateVolumeMarkers(updatedData, trainingWeek);
-  
-      for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
-        const trainingDay = trainingWeek.trainingDays[i];
-        updateFatiqueLevels(trainingWeek, i, updatedData);
-        
-        for (let j = 0; j < amountOfExercises; j++) {
-          const exercise = trainingDay.exercises[j];
-          updateExerciseDetails(trainingDay, exercise, updatedData, i, j);
-        }
-      }
-    
-      await user.save();
-      res.status(200).json({});
-    } catch (err) {
-      console.log(`Error ocurred while patching the ressource (${templateName}): ${err}`);
-      res.status(500).json({ error: `Error ocurred while patching the ressource  (${templateName}): ${err}` })
     }
   }
 
@@ -281,15 +254,6 @@ export async function getTemplateTraining(req, res, templateType, templateName, 
     const trainingWeek = trainingPlan.trainingWeeks[weekIndex];
     const trainingDay = trainingWeek.trainingDays[dayIndex];
     return trainingDay.fatiqueLevel;
-  }
-
-  function updateFatiqueLevels(trainingWeek, dayIndex, updatedData) {
-
-    const trainingDay = trainingWeek.trainingDays[dayIndex];
-
-    if (trainingDay.fatiqueLevel !== updatedData[`day${dayIndex + 1}_fatiqueLevel`]) {
-      trainingDay.fatiqueLevel = updatedData[`day${dayIndex + 1}_fatiqueLevel`];
-    }
   }
 
   

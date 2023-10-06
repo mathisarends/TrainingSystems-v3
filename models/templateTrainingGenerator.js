@@ -1,16 +1,4 @@
 import NewTrainingPlan from "./trainingPlanSchema.js";
-
-const placeholderExercise = {
-    category: "",
-    exercise: "",
-    sets: null,
-    reps: null,
-    weight: null,
-    targetRPE: null,
-    actualRPE: null,
-    estMax: null,
-    notes: "",
-  };
   
   function createTemplatePlanA(userID) {
   
@@ -24,7 +12,6 @@ const placeholderExercise = {
       trainingPhase: "hypertrophie",
       lastUpdated: curDate,
       lastWeekDeload: true,
-      exercisesPerDay: 8,
       trainingWeeks: trainingWeeks,
   
     })
@@ -42,7 +29,6 @@ const placeholderExercise = {
       trainingPhase: "kraft",
       lastUpdated: curDate,
       lastWeekDeload: true,
-      exercisesPerDay: 8,
       trainingWeeks: trainingWeeks
     })
     return templateTrainingPlan;
@@ -121,7 +107,6 @@ const placeholderExercise = {
         reps: 12,
         targetRPE: 9,
       },
-      placeholderExercise,
     ];
   
     const day2Exercises = [
@@ -167,9 +152,6 @@ const placeholderExercise = {
         reps: 12,
         targetRPE: 9,
       },
-      placeholderExercise,
-      placeholderExercise,
-      placeholderExercise
     ];
   
     const day3Exercises = [
@@ -215,9 +197,6 @@ const placeholderExercise = {
         reps: 12,
         targetRPE: 9,
       },
-      placeholderExercise,
-      placeholderExercise,
-      placeholderExercise
     ];
   
     const day4Exercises = [
@@ -263,9 +242,6 @@ const placeholderExercise = {
         reps: 10,
         targetRPE: 9,
       },
-      placeholderExercise,
-      placeholderExercise,
-      placeholderExercise
     ];
 
     const day1Exercises2 = day1Exercises.map((exercise) => ({
@@ -398,8 +374,6 @@ const placeholderExercise = {
         reps: 12,
         targetRPE: 9,
       },
-      placeholderExercise,
-      placeholderExercise,
     ];
   
     const day2Exercises = [
@@ -438,10 +412,6 @@ const placeholderExercise = {
         reps: 12,
         targetRPE: 9,
       },
-      placeholderExercise,
-      placeholderExercise,
-      placeholderExercise,
-      placeholderExercise,
     ];
   
     const day3Exercises = [
@@ -487,9 +457,6 @@ const placeholderExercise = {
         reps: 12,
         targetRPE: 9,
       },
-      placeholderExercise,
-      placeholderExercise,
-      placeholderExercise
     ];
   
     const day4Exercises = [
@@ -550,7 +517,6 @@ const placeholderExercise = {
         reps: 12,
         targetRPE: 9,
       },
-      placeholderExercise,
     ];
 
     const day1Exercises2 = day1Exercises.map((exercise) => ({

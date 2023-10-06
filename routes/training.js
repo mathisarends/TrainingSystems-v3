@@ -4,7 +4,7 @@ const router = express.Router();
 import { checkAuthenticated } from "../authMiddleware.js";
 
 const templates = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8"]; //template ULR-Endings
-const templatePrefixes = ["A", "B"];
+const templateLetters = ["A", "B"];
 const customTemplateLetters = ["A", "B", "C", "D"]; //customURL-Endings
 const maxWeeks = 8; 
 
@@ -12,7 +12,6 @@ import {
   getCreateTrainingPlan, 
   postCreateTrainingPlan, 
   handleDeleteTrainingPlan, 
-  patchCustomTraining, 
   getCustomTraining, 
   getCustomEditPage,
   patchCustomEditPage,
@@ -20,7 +19,6 @@ import {
 
 import {
   getTemplateTraining,
-  patchTemplateTraining,
   deleteTemplateTraining,
   getTemplateEditPage,
   patchTemplateEditPage
@@ -37,7 +35,8 @@ import {
 } from "../controller/trainingControllers/trainingSessionController.js";
 
 import {
-  getStatisticPage
+  getStatisticPage,
+  patchTrainingPlan,
 } from "../controller/trainingControllers/sharedFunctionality.js"
 
 import { 
@@ -52,11 +51,11 @@ router.get("/create-training-plan", checkAuthenticated, getCreateTrainingPlan);
 router.post("/create-training-plan", checkAuthenticated, postCreateTrainingPlan);
 router.delete("/delete-training-plan", checkAuthenticated, handleDeleteTrainingPlan)
 
-// alle routen so umschreiben?
 customTemplateLetters.forEach((letter, index) => {
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}${week}`;
-    router.get(routePath, checkAuthenticated, (req, res) => getCustomTraining(req, res, index, letter, week));
+    const typeOfPlan = "custom";
+    router.get(routePath, checkAuthenticated, (req, res) => getCustomTraining(req, res, index, letter, week, typeOfPlan));
   }
 })
 
@@ -64,7 +63,7 @@ for (let i = 0; i < customTemplateLetters.length; i++) { //patch custom training
   const letter = customTemplateLetters[i];
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}${week}`;
-    router.patch(routePath, checkAuthenticated, (req, res) => patchCustomTraining(req, res, week, i));
+    router.patch(routePath, checkAuthenticated, (req, res) => patchTrainingPlan(req, res, week, i, true)); //true for custom plan
   }
 }
 
@@ -87,17 +86,21 @@ for (let i = 0; i < customTemplateLetters.length; i++) {
 }
 
 /* TEMPLATE PLANS */
-for (let i = 0; i < templates.length; i++) {
-  const templateName = templates[i]; 
-  const templateType = templateName.startsWith("A") ? 0 : 1; // 0 for A templates, 1 for B templates
-  const weekIndex = parseInt(templateName.slice(1) - 1);
-  router.get(`/template-${templateName}`, checkAuthenticated, (req, res) => getTemplateTraining(req, res, templateType, templateName, weekIndex, templates));
-}
 
-for (let i = 0; i < templates.length; i++) {
-  const templateName = templates[i];
-  router.patch(`/template-${templateName}`, checkAuthenticated, (req, res) => patchTemplateTraining(req, res, i, templateName));
-}
+templateLetters.forEach((letter, index) => {
+  for (let week = 1; week <= maxWeeks; week++) {
+    const routePath = `/template-${letter}${week}`;
+    const typeOfPlan = "template";
+    router.get(routePath, checkAuthenticated, (req, res) => getTemplateTraining(req, res, index, letter, week, typeOfPlan));
+  }
+})
+
+templateLetters.forEach((letter, index) => {
+  for (let week = 1; week <= maxWeeks; week++) {
+    const routePath = `/template-${letter}${week}`;
+    router.patch(routePath, checkAuthenticated, (req, res) => patchTrainingPlan(req, res, week, index, false)); //false wegen !custom
+  }
+})
 
 // edit page get
 for (let i = 0; i < 2; i++) {

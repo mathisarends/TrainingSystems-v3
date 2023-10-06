@@ -143,7 +143,8 @@ export function updateVolumeMarkers(updatedData, trainingWeek) {
     }
   }
 
-  export function updateExerciseDetails(trainingDay, exercise, updatedData, i, j) {
+  //last parameter for deleting i = dayIndex, j = exerciseIndex
+  export function updateExerciseDetails(trainingDay, exercise, updatedData, i, j, trainingDayExercises) {
     const fieldPrefix = `day${i + 1}_exercise${j + 1}_`;
   
     const categoryValue = updatedData[`${fieldPrefix}category`];
@@ -166,8 +167,8 @@ export function updateVolumeMarkers(updatedData, trainingWeek) {
           estMax: updatedData[`${fieldPrefix}estMax`] || "",
           notes: updatedData[`${fieldPrefix}workout_notes`] || "",
         };
-        trainingDay.exercises.push(exercise);
-      } else {
+        trainingDay.exercises[j] = exercise;
+      } else { //update existing data if changed
         exercise.category = categoryValue || exercise.category;
         exercise.exercise = exerciseNameValue || exercise.exercise;
         exercise.sets = updatedData[`${fieldPrefix}sets`] || exercise.sets;
@@ -182,19 +183,13 @@ export function updateVolumeMarkers(updatedData, trainingWeek) {
           updatedData[`${fieldPrefix}workout_notes`] || exercise.notes;
       }
     } else {
-      //wenn die Kategorie die placeholder kategorie ist: bedeutet alle werte die vorher da waren sollen resettet werden -> user entfernt die exercise quasi
-  
+      //neue category ist placeholder - delete  
       if (exercise) {
-        //hier nur etwas machen wenn es eine exercise gibt bzw. gab
-        exercise.category = categoryValue;
-        exercise.exercise = exerciseNameValue;
-        exercise.sets = "";
-        exercise.reps = "";
-        exercise.weight = "";
-        exercise.targetRPE = "";
-        exercise.actualRPE = "";
-        exercise.estMax = "";
-        exercise.notes = "";
+        const index = trainingDayExercises.indexOf(exercise);
+        if (index > -1) {
+          // Das exercise-Objekt im Array entfernen
+          trainingDayExercises.splice(index, 1);
+        }
       }
     }
   }
@@ -523,5 +518,76 @@ export function getAmountOfTrainingWeeks(trainingPlan) {
   const trainingWeeks = trainingPlan.trainingWeeks.length;
   return trainingWeeks;
 }
+
+
+  //patch training
+  export async function patchTrainingPlan(req, res, week, i, isCustom) {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return res.status(404).send("Benutzer nicht gefunden");
+      }
+  
+      const updatedData = req.body;
+      const trainingPlan = isCustom
+      ? user.trainingPlansCustomNew[i]
+      : user.trainingPlanTemplate[i]; // Je nach isCustom den richtigen Trainingsplan auswählen
+
+      trainingPlan.lastUpdated = new Date(); //save timestamp
+  
+      const trainingWeek = trainingPlan.trainingWeeks[week - 1];
+      
+      updateVolumeMarkers(updatedData, trainingWeek);
+  
+      for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
+        const trainingDay = trainingWeek.trainingDays[i];
+        updateFatiqueLevels(trainingWeek, i, updatedData);
+
+        const updatedExercisesPerDay = findMaxExerciseNumber(i + 1, updatedData);
+        
+        // wurde eine neue übung hinzugefügt oder sogar entfernt?
+        const amountOfExercises = updatedExercisesPerDay > trainingDay.exercises.length ? updatedExercisesPerDay - 1 : trainingDay.exercises.length - 1;
+
+        // rückwärts drüber iterieren wegen löschen
+        for (let j = amountOfExercises; j >= 0; j--) {
+          const exercise = trainingDay.exercises[j];
+          updateExerciseDetails(trainingDay, exercise, updatedData, i, j, trainingDay.exercises);
+        }
+      }
+  
+      await user.save();
+      console.log("Trainingsplan Änderungen gespeichert!");
+      res.status(200).json({});
+    } catch (err) {
+      console.log("Error while patching custom page", err);
+      res.status(500).json({ error: `Errro while patching custom page ${err}` });
+    }
+  }
+
+  function updateFatiqueLevels(trainingWeek, dayIndex, updatedData) {
+
+    const trainingDay = trainingWeek.trainingDays[dayIndex];
+
+    if (trainingDay.fatiqueLevel !== updatedData[`day${dayIndex + 1}_fatiqueLevel`]) {
+      trainingDay.fatiqueLevel = updatedData[`day${dayIndex + 1}_fatiqueLevel`];
+    }
+  }
+
+    // 12 ist jetzt die maximale Übungsanzahl
+    function findMaxExerciseNumber(trainingDayNumber, updatedData) {
+      let exerciseCount = 0;
+      for (let i = 1; i <= 12; i++) {
+  
+        const categoryNameKey = `day${trainingDayNumber}_exercise${i}_category`;
+        const category = updatedData[categoryNameKey];
+  
+        if (category) {
+          exerciseCount++;
+        } else {
+          break;
+        }
+      }
+      return exerciseCount;
+    }
 
 // is deload week more generice machen

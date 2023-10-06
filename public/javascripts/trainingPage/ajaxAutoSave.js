@@ -130,105 +130,101 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /*TRIGGER submit for all weight changes*/
-  const weightInputs = document.querySelectorAll(".weight");
-  const setInputs = document.querySelectorAll(".sets");
   const saveAudio = document.getElementById("save-audio");
 
-  weightInputs.forEach((weightInput, index) => {
-    weightInput.addEventListener("change", () => {
+  form.addEventListener("change", e => {
+    const target = e.target;
+    if (target && target.classList.contains("weight")) {
+      handleWeightInputChange(target);
+    }
+  })
 
-      let input = weightInput.value;
-      if (input === "" || input === 0) { //new value is not valid
+  function handleWeightInputChange(weightInput) {
+    let input = weightInput.value;
+    if (input === "" || input === 0) {
+      weightInput.value = "";
+      return;
+    }
+  
+    input = input.replace(/,/g, ".");
+    let numbers = input.split(";").map(Number);
+    numbers.forEach((number) => {
+      if (isNaN(number)) {
         weightInput.value = "";
         return;
       }
-      input = input.replace(/,/g, "."); //replace commas with points
-      let numbers = input.split(";").map(Number);
-      numbers.forEach((number) => {
-        if (isNaN(number)) { //on of the given weight values is not a number return empty string
-          weightInput.value = "";
-          return;
-        }
-      })
-
-      if (numbers.length == setInputs[index].value || numbers.length === 1) {
-
-        const sum = numbers.reduce((acc, num) => acc + num + 0);
-        const average = sum / numbers.length;
-
-        const roundedAverage = Math.round(average / 2.5) * 2.5;
-        // Ensure that the rounded average is always a multiple of 2.5
-        if (roundedAverage % 2.5 !== 0) {
-            roundedAverage = Math.round(roundedAverage / 2.5) * 2.5;
-        }
-        weightInput.value = roundedAverage;
-
-        saveAudio.play();
-        form.dispatchEvent(new Event("submit"));
-      } else {
-        //do nothing:
-      }
-
     });
-  });
+
+    const parentRow = weightInput.closest("tr");
+    const setInput = parentRow.querySelector(".sets");
+  
+    if (numbers.length == setInput.value || numbers.length === 1) {
+      const sum = numbers.reduce((acc, num) => acc + num + 0);
+      const average = sum / numbers.length;
+  
+      let roundedAverage = Math.round(average / 2.5) * 2.5;
+      if (roundedAverage % 2.5 !== 0) {
+        roundedAverage = Math.round(roundedAverage / 2.5) * 2.5;
+      }
+      weightInput.value = roundedAverage;
+  
+      saveAudio.play();
+      form.dispatchEvent(new Event("submit"));
+    } else {
+      // Do nothing
+    }
+  }
+
+  const weightInputs = document.querySelectorAll(".weight");
 
   const maxFactorsInput = document.getElementById('maxFactors');
+  const maxFactors = JSON.parse(maxFactorsInput.value);   // Den Wert des Input-Elements von JSON-String in ein JavaScript-Objekt umwandeln
 
-  // Den Wert des Input-Elements von JSON-String in ein JavaScript-Objekt umwandeln
-  const maxFactors = JSON.parse(maxFactorsInput.value);
-  const exerciseTableRows = document.querySelectorAll(".table-row.mainExercise");
+  // get weight recommandations
+  form.addEventListener("change", e => {
+    const target = e.target;
 
-  exerciseTableRows.forEach((tableRow, index) => {
-    const exerciseNameSelector = tableRow.querySelector('.exercise-name-selector:not([style*="display: none"])');
+    if (target && (target.classList.contains("exercise-name-selector")) || target.classList.contains("exercise-category-selector")) {
+      const parentRow = target.closest("tr");
+      getWeightRecommandation(parentRow);
+    }
+  })
 
-    if (exerciseNameSelector) {
-      const categorySelector = tableRow.querySelector(".exercise-category-selector");
-      const category = categorySelector.value;
-      const weightInput = tableRow.querySelector(".weight");
+  function getWeightRecommandation(row) {
+    const category = row.querySelector(".exercise-category-selector").value;
+    const weightInput = row.querySelector(".weight");
 
-      // if there is no weight -> make a weight recommandataion
-      if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInput.value) {
-        const exerciseName = exerciseNameSelector.value;
-        const maxAdjustmentFactor = maxFactors[exerciseName];
+    if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInput.value) {
+      const exerciseName = row.querySelector('.exercise-name-selector:not([style*="display: none"])').value;
+      const maxAdjustmentFactor = maxFactors[exerciseName];
 
-        const reps = tableRow.querySelector(".reps").value;
-        const planedRPE = tableRow.querySelector(".targetRPE").value;
+      const reps = row.querySelector(".reps").value;
+      const planedRPE = row.querySelector(".targetRPE").value;
 
-        if (reps && planedRPE) { //if both are defined
-          const totalReps = parseInt(reps) +  (10 - parseFloat(planedRPE)); //reps + reps in reserve = totalreps
-          let percentage = //regression forumula
-          (0.484472 * totalReps * totalReps -
-            33.891 * totalReps +
-            1023.67) *
-            0.001;
-  
-            const estMaxByCategory = getMaxByCategory(category) * maxAdjustmentFactor;
-            let result = estMaxByCategory * percentage;
+      if (reps && planedRPE) {
+        const totalReps = parseInt(reps) +  (10 - parseFloat(planedRPE)); //reps + reps in reserve = totalreps
+        let percentage = //regression forumula
+        (0.484472 * totalReps * totalReps -
+          33.891 * totalReps +
+          1023.67) *
+          0.001;
 
-            result = Math.ceil(result / 2.5) * 2.5;
-  
-            const lowerLimit = result - 2.5;
-            const upperLimit = result + 2.5;
-  
-            const resultString = lowerLimit + "-" + upperLimit;
-            weightInputs[index].placeholder = resultString;
-  
-        }
+        const estMaxByCategory = getMaxByCategory(category) * maxAdjustmentFactor;
+        let result = estMaxByCategory * percentage;
 
+        result = Math.ceil(result / 2.5) * 2.5;
+        const lowerLimit = result - 2.5;
+        const upperLimit = result + 2.5;
+        const resultString = lowerLimit + "-" + upperLimit;
+        weightInput.placeholder = resultString;
       }
-
-    } else {
-
-      // clear out trash data if there is any
-      const setInput = tableRow.querySelector(".sets");
-      const repsInput = tableRow.querySelector(".reps");
-      const planedRPEInput = tableRow.querySelector(".targetRPE");
-
-      setInput.value = "";
-      repsInput.value = "";
-      planedRPEInput.value = "";
     }
 
+  }
+
+  const exerciseTableRows = document.querySelectorAll(".table-row.mainExercise");
+  exerciseTableRows.forEach((tableRow) => {
+    getWeightRecommandation(tableRow);
   })
 
   function getMaxByCategory(category) {

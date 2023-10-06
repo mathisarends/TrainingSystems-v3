@@ -50,7 +50,6 @@ export async function getCreateTrainingPlan(req, res) {
       const trainingPlanPhase = trainingPlanData.training_phase;
       const trainingPlanFrequency = trainingPlanData.training_frequency;
       const trainingPlanWeeks = trainingPlanData.training_weeks;
-      const exercisesPerDay = trainingPlanData.exercisesPerTraining;
       const lastWeekDeload = trainingPlanData.isLastWeekDeload;
   
       const lastUpdated = new Date();
@@ -67,7 +66,6 @@ export async function getCreateTrainingPlan(req, res) {
         trainingPhase: trainingPlanPhase,
         lastUpdated: lastUpdated,
         lastWeekDeload: lastWeekDeload,
-        exercisesPerDay: exercisesPerDay,
         trainingWeeks: trainingWeeks,
       });
   
@@ -103,7 +101,7 @@ export async function getCreateTrainingPlan(req, res) {
   }
 
   // get training page
-  export async function getCustomTraining(req, res, i, letter, week) {
+  export async function getCustomTraining(req, res, i, letter, week, typeOfPlan) {
     try {
       const user = await User.findById(req.user._id);
       if (!user) {
@@ -166,6 +164,9 @@ export async function getCreateTrainingPlan(req, res) {
   
       const beforePage = `/training/custom-${letter}${beforePageIndex}`;
       const afterPage = `/training/custom-${letter}${afterPageIndex}`;
+
+      const previousTrainingWeek = (week >= 2) ? trainingPlan.trainingWeeks[week - 2] : {};
+
   
       res.render("trainingPlans/custom/trainingPlan", {
   
@@ -173,7 +174,10 @@ export async function getCreateTrainingPlan(req, res) {
         user: user,
 
         trainingWeek: trainingPlan.trainingWeeks[week - 1], //new generate amount of table colums automatically
-  
+        previousTrainingWeek: previousTrainingWeek,
+        firstTrainingWeek: trainingPlan.trainingWeeks[0],
+
+
         trainingWeekData: trainingWeekData,
         previousTrainingWeekData: previousTrainingWeekData,
         firstTrainingWeekData: firstTrainingWeekData,
@@ -207,48 +211,11 @@ export async function getCreateTrainingPlan(req, res) {
   
         lastTrainingDay: lastTrainingDay,
   
+        typeOfPlan: typeOfPlan,
         templatePlanName: `${letter}${week}`,
       });
     } catch (err) {
       console.log("Fehler beim Aufrufen der Trainingsseite: " + err);
-    }
-  }
-
-  //patch training
-  export async function patchCustomTraining(req, res, week, i) {
-    try {
-      const user = await User.findById(req.user._id);
-      if (!user) {
-        return res.status(404).send("Benutzer nicht gefunden");
-      }
-  
-      const updatedData = req.body;
-      const trainingPlan = user.trainingPlansCustomNew[i];
-      const exericsesPerTrainingDay = trainingPlan.exercisesPerDay || 9; //lass ich noch für meinen alten plan drinne: TODO: langfristig das fallback entfernen
-  
-      trainingPlan.lastUpdated = new Date(); //save timestamp
-  
-      const trainingWeek = trainingPlan.trainingWeeks[week - 1];
-      
-      updateVolumeMarkers(updatedData, trainingWeek);
-  
-      for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
-        const trainingDay = trainingWeek.trainingDays[i];
-        updateFatiqueLevels(trainingWeek, i, updatedData);
-  
-        // 9 Exercise Felder damit in for loop
-        for (let j = 0; j < exericsesPerTrainingDay; j++) {
-          const exercise = trainingDay.exercises[j];
-          updateExerciseDetails(trainingDay, exercise, updatedData, i, j);
-        }
-      }
-  
-      await user.save();
-      console.log("Trainingsplan Änderungen gespeichert!");
-      res.status(200).json({});
-    } catch (err) {
-      console.log("Error while patching custom page", err);
-      res.status(500).json({ error: `Errro while patching custom page ${err}` });
     }
   }
 
@@ -368,14 +335,5 @@ function createNewTrainingPlanWithPlaceholders(weeks, daysPerWeek) {
     const trainingWeek = trainingPlan.trainingWeeks[weekIndex];
     const trainingDay = trainingWeek.trainingDays[dayIndex];
     return trainingDay.fatiqueLevel;
-  }
-
-  function updateFatiqueLevels(trainingWeek, dayIndex, updatedData) {
-
-    const trainingDay = trainingWeek.trainingDays[dayIndex];
-
-    if (trainingDay.fatiqueLevel !== updatedData[`day${dayIndex + 1}_fatiqueLevel`]) {
-      trainingDay.fatiqueLevel = updatedData[`day${dayIndex + 1}_fatiqueLevel`];
-    }
   }
   

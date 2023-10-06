@@ -37,7 +37,6 @@ function initializeApp(registration) {
   );
 
   let currentPauseTime = 0;
-  let currentWeightIndex = undefined;
 
   // exercise categories from backend
   const exerciseCategorys = [
@@ -66,14 +65,7 @@ function initializeApp(registration) {
       if (window.innerWidth <= maxScreenWidthToShowTimer) {
         if (restPauseContainers[index].style.display === "block") { // if the display was previously displayed hide it and reset timer
           restPauseContainers[index].style.display = "none";
-
-          registration.active.postMessage({ //send message to sw to stop timer
-            command: "stop",
-          })
-
-          currentProgressBar.value = 100;
-          currentTimerDisplay.textContent = "00:00";
-          currentTimerTime = 0;
+          stopTimer();
   
         } else if (restPauseContainers[index].style.display === "none") { // if the display was previously not display show it 
           restPauseContainers[index].style.display = "block";
@@ -84,7 +76,7 @@ function initializeApp(registration) {
     })
   })
 
-  window.addEventListener("beforeunload", event => {
+  function stopTimer() {
     registration.active.postMessage({
       command: "stop"
     });
@@ -92,6 +84,10 @@ function initializeApp(registration) {
     currentProgressBar.value = 100;
     currentTimerDisplay.textContent = "00:00";
     currentTimerTime = 0
+  }
+
+  window.addEventListener("beforeunload", event => {
+    stopTimer();
   })
 
 
@@ -99,7 +95,26 @@ function initializeApp(registration) {
   let isTimerPaused = false;
   let clickCount = 0;
   let clickTimeout;
-  let workoutNotes;
+
+  function toggleTimerPause() {
+    if (!isTimerPaused) {
+      registration.active.postMessage({
+        command: "pauseTimer",
+      });
+      isTimerPaused = true;
+    } else {
+      registration.active.postMessage({
+        command: "continueTimer",
+      });
+    }
+  }
+
+  function addRestTimeAndNotes(index) {
+    registration.active.postMessage({
+      command: "addRestTime",
+    });
+    currentPauseTime = parseInt(currentPauseTime) + 30;
+  }
 
 
   restPauseContainers.forEach((restPauseContainer, index) => {
@@ -111,47 +126,10 @@ function initializeApp(registration) {
       if (clickCount === 1) {
         clickTimeout = setTimeout(() => { // first click wait for the possible following click
           if (clickCount === 1) {            // single click => pause or continue timer
-            if (!isTimerPaused) {
-              registration.active.postMessage( {
-                command: "pauseTimer",
-              })
-              isTimerPaused = true;
-            } else if (isTimerPaused) {
-              registration.active.postMessage({
-                command: "continueTimer",
-              })
-            }
+            toggleTimerPause();
           }
           else if (clickCount === 2) { // add rest time 30 sekunds per double tap
-            registration.active.postMessage({
-              command: "addRestTime",
-            })
-
-            let currentNotes = workoutNotes[index].value; //offset bei 1 verstehe ich in diesem fall auch nicht so gazn
-
-            if (currentNotes.includes("+30s pause")) {
-              const regex = /\+30s pause/g;
-              currentNotes = currentNotes.replace(regex, "+60s pause");
-            } else if (currentNotes.includes("+60s pause")) {
-              const regex = /\+60s pause/g;
-              currentNotes = currentNotes.replace(regex, "+90s pause");
-            } else if (currentNotes.includes("+90s pause")) {
-              const regex = /\+90s pause/g;
-              currentNotes = currentNotes.replace(regex, "+120s pause");
-            } else if (currentNotes.includes("+120s pause")) {
-              const regex = /\+120s pause/g;
-              currentNotes = currentNotes.replace(regex, "+150s pause");
-            } else if (currentNotes.includes("+150s pause")) {
-              const regex = /\+150s pause/g;
-              currentNotes = currentNotes.replace(regex, "+180s pause");
-            } else {
-              currentNotes = currentNotes + " +30s pause";
-            }
-
-            workoutNotes[index].value = currentNotes;
-            currentPauseTime = parseInt(currentPauseTime) + 30;
-
-
+            addRestTimeAndNotes();
           }
           clickCount = 0;
         }, 350); // time in which the second klick has to follow in order to detect the double klick event:
@@ -244,28 +222,27 @@ function initializeApp(registration) {
     currentProgressBar = progressBars[currentDayIndex];
     currentTimerDisplay = timerDisplays[currentDayIndex];
 
-    // weightInput for triggering timer and category selector in order to retrieve correct pauseTime;
-    const weightInputs = currentWorkoutTable.querySelectorAll(".weight");
-    const categorySelectors = currentWorkoutTable.querySelectorAll(
-      ".exercise-category-selector"
-    );
-    workoutNotes = currentWorkoutTable.querySelectorAll(".workout-notes");
+    const form = document.querySelector("form");
+    form.addEventListener("change", (e) => {
+      const target = e.target;
 
-    weightInputs.forEach((weightInput, index) => {
-      weightInput.addEventListener("change", () => {
-        const category = categorySelectors[index].value; //zugehörig zum weight input die richtige category rausfidnen
+      const weightInputs = currentWorkoutTable.querySelectorAll(".weight");
+      const categorySelectors = currentWorkoutTable.querySelectorAll(
+        ".exercise-category-selector"
+      );
+  
+      if (target && target.classList.contains("weight")) {
+        const index = Array.from(weightInputs).indexOf(target);
+        const category = categorySelectors[index].value; // zugehörige Kategorie auswählen
         lastCategory = category;
-
+  
         registration.active.postMessage({
           command: "start",
           duration: getPauseTimeByExerciseCategory(category) * 1000, // Timerdauer in Millisekunden
         });
-
+  
         currentPauseTime = getPauseTimeByExerciseCategory(category);
-        currentWeightIndex = index;
-        console.log("currentWeightIndex", currentWeightIndex);
-
-      });
+      }
     });
   }
 }

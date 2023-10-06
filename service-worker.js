@@ -76,6 +76,7 @@ const assets = [
   "/javascripts/trainingPage/rpeInput.js",
   "/javascripts/trainingPage/handleDeloadWeek.js",
   "/javascripts/trainingPage/changeTitleAjax.js",
+  "/javascripts/trainingPage/addNewExercise.js",
 
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
@@ -174,7 +175,6 @@ self.addEventListener("fetch", async (event) => {
 
   } else if (isAudio) { //because this isnt found in the cache unfortunatley
     event.respondWith(cacheOnlyAudio(event));
-    console.log(url);
 
   } else if (event.request.method === "POST" && event.request.url.includes("/login")) { //the login post requests always have to go other the network
     defaultNetworkMode = true; //every new login the network mode is set to true;
@@ -840,13 +840,10 @@ function networkOnlyAuthentication(ev) {
 }
 
 function cacheOnlyAudio(ev) {
-  console.log("audio", ev.request);
   return caches.match(ev.request).then((cacheResponse) => {
     if (cacheResponse) {
-      console.log("Audio-Datei aus dem Cache gefunden.");
       return cacheResponse;
     } else {
-      console.error("Audio-Datei nicht im Cache gefunden.");
       // Hier kannst du eine Fehlerbehandlung durchführen, wenn die Ressource nicht im Cache ist.
       return null;
     }

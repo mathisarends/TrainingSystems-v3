@@ -11,31 +11,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const tableRows = document.querySelectorAll(".table-row.mainExercise");
-    const exerciseCatgorySelectorsNew = document.getElementsByClassName("exercise-category-selector");
+    document.addEventListener("change", (e) => {
+      const target = e.target;
+  
+      // Überprüfe, ob das ausgelöste Event von einem exercise-category-selector stammt
+      if (target && target.classList.contains("exercise-category-selector")) {
+          const category = target.value;
+  
+          // Finde die übergeordnete Zeile (tr) des exercise-category-selectors
+          const tableRow = target.closest(".table-row.mainExercise");
+  
+          if (tableRow) {
+              // Suche alle exercise-name-selector in dieser Zeile
+              const exerciseNameSelectors = tableRow.querySelectorAll(".exercise-name-selector");
+  
+              if (category === "- Bitte Auswählen -") {
+                  exerciseNameSelectors.forEach((selector) => {
+                      selector.style.display = "none";
+                      selector.disabled = false; // Zurücksetzen der deaktivierten Attribute
+                  });
+              } else {
+                  exerciseNameSelectors.forEach((selector, index) => {
+                      selector.style.display = index === indexForCategory(category) ? "block" : "none";
+                      selector.disabled = index !== indexForCategory(category);      
 
-    for (let i = 0; i < tableRows.length; i++) {
-      //retrieve all exerciseNameSelectors (10)
-      const exerciseNameSelectors = tableRows[i].querySelectorAll(".exercise-name-selector");
-
-      exerciseCatgorySelectorsNew[i].addEventListener("change", () => {
-        let category = exerciseCatgorySelectorsNew[i].value;
-
-        if (category === "- Bitte Auswählen -") {
-            for (let i = 0; i < exerciseNameSelectors.length; i++) {
-                exerciseNameSelectors[i].style.display = "none"; // display no select
-            }
-        } else {
-          // Loop through all exerciseNameSelectors and apply styles and disabled attribute
-          for (let j = 0; j < exerciseNameSelectors.length; j++) {
-            exerciseNameSelectors[j].style.display = j === indexForCategory(category) ? "block" : "none";
-            exerciseNameSelectors[j].disabled = j !== indexForCategory(category);
+                  });
+              }
           }
-        }
-      });
-}
-
-
+      }
+  });
 })
 
 

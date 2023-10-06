@@ -11,7 +11,6 @@ const trainingPlanSchema = new mongoose.Schema({
   trainingPhase: String,
   lastUpdated: Date,
   lastWeekDeload: Boolean,
-  exercisesPerDay: Number, //dunno wheter ill use it
   trainingWeeks: [
     {
       trainingDays: [
