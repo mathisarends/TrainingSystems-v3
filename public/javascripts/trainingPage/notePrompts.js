@@ -22,73 +22,92 @@ document.addEventListener("DOMContentLoaded", () => {
         return -1;
     }
 
+    const addNewExerciseButtons = document.querySelectorAll(".add-new-exercise-button");
+
+    function handleNewPrompt(noteInput, eventTriggerIndex, dayIndex) {
+        noteInput.value = "";
+
+        const addNewExerciseButtons = document.querySelectorAll(".add-new-exercise-button");
+        addNewExerciseButtons[dayIndex].click(); //triggers event listener and creates a new tr element that we can copy to
+
+        currentTableRows = currentWorkoutTable.querySelectorAll(".table-row.mainExercise");
+        const newTrLength = currentTableRows.length;
+
+        const parentTableRow = noteInput.closest("tr");
+        const nextTableRow = parentTableRow.nextElementSibling;
+
+        // if the note input previously was the last one and is now the second last one because new row was created
+        if (eventTriggerIndex === newTrLength - 2) {
+            const valuesOfCurrentRow = getAllPropertiesOfExerciseRow(parentTableRow);
+            console.log(valuesOfCurrentRow);
+            copyExerciseToAnotherTableRow(valuesOfCurrentRow, parentTableRow, nextTableRow);
+            return;
+        } else {
+            const valuesOfAffectedRows = [];
+
+            for (let k = eventTriggerIndex + 1; k < newTrLength - 1; k++) {
+                valuesOfAffectedRows.push(getAllPropertiesOfExerciseRow(currentTableRows[k]));
+            }
+
+            let offset = 1;
+
+            for (let k = newTrLength - 2; k > eventTriggerIndex; k--) {
+                const exerciseData = valuesOfAffectedRows[valuesOfAffectedRows.length - offset];
+                copyExerciseToAnotherTableRow(exerciseData, currentTableRows[k], currentTableRows[k + 1]);
+                offset++;
+            }
+        }
+    }
+
+    // macht im offline modus noch probleme
+    function handleDeletePropmpt(noteInput, eventTriggerIndex, dayIndex) {
+        noteInput.value = "";
+
+        const trLength = currentTableRows.length;
+
+        //last exercise or the first one with no following exercises => simple delete:
+        if (eventTriggerIndex === trLength - 1 || (eventTriggerIndex === 0 && 1 === trLength)) {
+            clearAllDataFromTableRow(currentTableRows[eventTriggerIndex]);
+        } else {
+            //delete the exercise and the rest of the exercises simply move up one table row
+            clearAllDataFromTableRow(currentTableRows[eventTriggerIndex]);
+
+            for (let k = eventTriggerIndex + 1; k < trLength; k++) {
+                const exerciseDataOfTableRow = getAllPropertiesOfExerciseRow(currentTableRows[k]);
+                copyExerciseToAnotherTableRow(exerciseDataOfTableRow, currentTableRows[k], currentTableRows[k - 1]);
+            }
+
+            //hide last tr that is now empty
+/*             const lastTr = currentWorkoutTable.querySelectorAll(".table-row.mainExercise")[trLength - 1];
+            lastTr.style.display = "none"; */
+        }
+    }
+
     function updateCurrentTable() {
         currentWorkoutTable = workoutTables[currentDayIndex];
+        currentNoteInputs = currentWorkoutTable.querySelectorAll(".workout-notes");
 
+        //refactor
+        currentWorkoutTable = workoutTables[currentDayIndex];
         currentNoteInputs = currentWorkoutTable.querySelectorAll(".workout-notes");
         currentTableRows = currentWorkoutTable.querySelectorAll(".table-row");
 
-        indexOfFirstEmptyTableRow = findIndexOfFirstEmptyExerciseRow(currentTableRows);
+        currentWorkoutTable.addEventListener("change", e => {
+            const target = e.target;
 
-        // jeder aktuell angezeigte input soll auf bestimmte eingaben höeren: delete or new
-        for (let i = 0; i < currentNoteInputs.length; i++) {
-            if (i < currentNoteInputs.length - 1) {
-                currentNoteInputs[i].addEventListener("change", () => {
-                    if (currentNoteInputs[i].value.toLowerCase() === "new" && i < currentNoteInputs.length - 2) {
+            if (target.classList.contains("workout-notes")) {
+                const eventTriggerIndex = Array.from(currentNoteInputs).indexOf(target);
 
-                        currentNoteInputs[i].value = ""; //acts as a prompt so value is removed
-
-
-                        //if it is the last value only move up one row
-                        if (i === indexOfFirstEmptyTableRow - 1) {
-                            const valuesOfCurrentTable = getAllPropertiesOfExerciseRow(currentTableRows[i]);
-                            copyExerciseToAnotherTableRow(valuesOfCurrentTable, currentTableRows[i], currentTableRows[i + 1]);
-                            return;
-                        } else {
-
-                            const valuesOfAffectedRows = [];
-
-                            for (let k = i + 1; k < indexOfFirstEmptyTableRow; k++) {
-                                valuesOfAffectedRows.push(getAllPropertiesOfExerciseRow(currentTableRows[k]));
-                            }
-
-                            let offset = 1;
-
-
-                            for (let k = indexOfFirstEmptyTableRow - 1; k > i; k--) {
-                                const exerciseData = valuesOfAffectedRows[valuesOfAffectedRows.length - offset];
-                                copyExerciseToAnotherTableRow(exerciseData, currentTableRows[k], currentTableRows[k + 1]);
-                                offset++;
-                            }
-                        }
-
-                    } else if (currentNoteInputs[i].value.toLowerCase() === "delete") {
-
-                        currentNoteInputs[i].value = ""; //acts as a prompt so value is removed
-
-                        //last exercise or the first one with no following exercises => simple delete:
-                        if (i === indexOfFirstEmptyTableRow - 1 || (i === 0 && 1 === indexOfFirstEmptyTableRow)) { 
-                            console.log("case 1");
-                            clearAllDataFromTableRow(currentTableRows[i]);
-                        } else {
-                            //delete exercise the rest move up
-                            
-                            clearAllDataFromTableRow(currentTableRows[i]);
-
-                            // all table rows taht have content
-                            for (let k = i + 1; k < indexOfFirstEmptyTableRow; k++) {
-                                const exerciseDataOfTableRow = getAllPropertiesOfExerciseRow(currentTableRows[k]);
-                                copyExerciseToAnotherTableRow(exerciseDataOfTableRow, currentTableRows[k], currentTableRows[k - 1]);
-                            }
-
-                        }
-
-                    } else if (currentNoteInputs[i].value.toLowerCase().includes("clear")) {
-                        currentNoteInputs[i].value = "";
-                    }
-                })
+                const value = target.value.toLowerCase();
+                if (value === "new") {
+                    handleNewPrompt(target, eventTriggerIndex, currentDayIndex);
+                } else if (value === "delete") {
+                    handleDeletePropmpt(target, eventTriggerIndex, currentDayIndex);
+                } else if (value.includes("clear")) {
+                    target.value = "";
+                }
             }
-        }
+        })
     }
 
     function copyExerciseToAnotherTableRow(exerciseData, sourceRow, destRow) {
@@ -96,11 +115,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const exerciseCategorySelector = destRow.querySelector(".exercise-category-selector");
         exerciseCategorySelector.value = exerciseData.category;
         exerciseCategorySelector.dispatchEvent(new Event("change")); // manuell change event so that the display is set acordingly
+        
+        const category = exerciseCategorySelector.value;
+        const categoryIndex = findIndexOfCategory(category);
 
-        const exerciseNameSelector = destRow.querySelector('.exercise-name-selector:not([style*="display: none"])'); //actually displayed selector
 
-        exerciseNameSelector.value = exerciseData.name;
+        const exerciseNameSelector = destRow.querySelectorAll(".exercise-name-selector")[categoryIndex];
+        const placeholderSelect = destRow.querySelector(".exercise-name-selector");
 
+        placeholderSelect.style.display = "none";
+
+        if (exerciseNameSelector) {
+            exerciseNameSelector.style.display = "block";
+            exerciseNameSelector.value = exerciseData.name;
+            exerciseNameSelector.style.opacity = "1";
+        }
+
+        // die neuen exerciseCategorys auch einblenden
+        exerciseCategorySelector.style.opacity = "1";
 
         destRow.querySelector(".sets").value = exerciseData.sets;
         destRow.querySelector(".reps").value = exerciseData.reps;
@@ -118,12 +150,23 @@ document.addEventListener("DOMContentLoaded", () => {
     function clearAllDataFromTableRow(row) {
         const exerciseCategorySelector = row.querySelector(".exercise-category-selector");
 
+        //blende den exerciseCategorySelector aus
         exerciseCategorySelector.value = "- Bitte Auswählen -";
-        exerciseCategorySelector.dispatchEvent(new Event("change")); //manuelles change event für visibility
+        exerciseCategorySelector.style.opacity = "0";
+
+        const previousExerciseNameSelector = row.querySelector('.exercise-name-selector:not([style*="display: none"])');
+        const placeholderExerciseSelector = row.querySelector(".exercise-name-selector");
+
+        previousExerciseNameSelector.style.display = "none"; //blende den vorherigen select aus
+
+        placeholderExerciseSelector.style.display = "block";
+        placeholderExerciseSelector.style.opacity = "0";
+
 
         row.querySelector(".sets").value = "";
         row.querySelector(".reps").value = "";
         row.querySelector(".weight").value = "";
+        row.querySelector(".weight").placeholder = "";
         row.querySelector(".targetRPE").value = "";
         row.querySelector(".actualRPE").value = "";
         row.querySelector(".estMax").value = "";
@@ -162,15 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // the page is rendered with no gaps from the start:
     // that means if (there is not a category selected === "- Bitte Auswählen -") then that is the lastIndex
-    function findIndexOfFirstEmptyExerciseRow(tableRows) {
-        for (let index = 0; index < tableRows.length; index++) {
-            const exerciseCategory = tableRows[index].querySelector(".exercise-category-selector").value;
-            if (exerciseCategory === "- Bitte Auswählen -") {
-                return index;
-            }
-        }
-        return -1; // Tabelle ist vollständig.
-    }
+
 
 
     updateCurrentTable(); // Event Listener für die erste Seite initial einrichten
@@ -182,4 +217,22 @@ document.addEventListener("DOMContentLoaded", () => {
             updateCurrentTable(); // Event Listener für den neuen Table einrichten
         });
     });
+
+    function findIndexOfCategory(categoryToFind) {
+        return exerciseCategorys.indexOf(categoryToFind);
+    }
+
+    const exerciseCategorys = [
+        "- Bitte Auswählen -",
+        "Squat",
+        "Bench",
+        "Deadlift",
+        "Overheadpress",
+        "Chest",
+        "Back",
+        "Shoulder",
+        "Triceps",
+        "Biceps",
+        "Legs"
+    ];
 })

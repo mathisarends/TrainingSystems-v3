@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("display offline data")
+  console.log("display offline data");
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then(function (registration) {
       if (registration.active) {
-
         const userIDInput = document.getElementById("userID");
-        
+
         // then there is a userInput on the page request offline data for url and user
         if (userIDInput) {
           console.log("get offline data request is sent");
@@ -17,8 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
             user: userID,
           });
         }
-
-
       }
     });
 
@@ -39,36 +36,54 @@ document.addEventListener("DOMContentLoaded", () => {
               if (element.value === offlineData[key]) {
                 continue;
               }
-              
+
               if (element) {
                 if (element.tagName === "SELECT") {
+                  let categoryIndex;
 
                   if (element.classList.contains("exercise-name-selector")) {
-
-                    const exerciseNameSelectors = document.querySelectorAll(`[name="${key}"]`); //alle selectors die dieses name attribut haben
+                    const exerciseNameSelectors = document.querySelectorAll(
+                      `[name="${key}"]`
+                    ); //alle selectors die dieses name attribut haben
                     // für jede kategorie einen
 
+                    //aus dem name attribut ausglesen
                     const dayNumber = key[3];
                     const exerciseNumber = key[13];
-                    
-                    const associatedCategory = document.querySelector(`select[name="day${dayNumber}_exercise${exerciseNumber}_category"]`).value;
-                    const categoryIndex = getIndexByCategory(associatedCategory);
 
-                    const actualExerciseSelector = exerciseNameSelectors[categoryIndex];
+                    const associatedCategory = document.querySelector(
+                      `select[name="day${dayNumber}_exercise${exerciseNumber}_category"]`
+                    ).value;
+                    categoryIndex = getIndexByCategory(associatedCategory);
 
-                    const option = actualExerciseSelector.querySelector(`[value="${offlineData[key]}"]`);
+                    const actualExerciseSelector =
+                      exerciseNameSelectors[categoryIndex];
 
-                    option.selected = true;
-                    actualExerciseSelector.dispatchEvent(new Event("change"));
+                    const option = actualExerciseSelector.querySelector(
+                      `[value="${offlineData[key]}"]`
+                    );
+
+                    if (option) {
+                      option.selected = true;
+                      actualExerciseSelector.dispatchEvent(new Event("change"));
+                    }
 
                     continue;
                   }
 
                   // Wenn es sich um ein <select>-Element handelt, suchen Sie die entsprechende Option und setzen Sie sie auf "selected"
-                  const option = element.querySelector(`[value="${offlineData[key]}"]`);
-                  if (option) {
-                    option.selected = true;
-                    element.dispatchEvent(new Event("change"));
+                  if (
+                    !categoryIndex ||
+                    categoryIndex === 0 ||
+                    categoryIndex === -1
+                  ) {
+                    const option = element.querySelector(
+                      `[value="${offlineData[key]}"]`
+                    );
+                    if (option) {
+                      option.selected = true;
+                      element.dispatchEvent(new Event("change"));
+                    }
                   }
                 } else {
                   // Wenn es sich nicht um ein <select>-Element handelt, setzen Sie den Wert wie gewohnt
@@ -77,6 +92,29 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             }
           }
+
+          const workoutTables = document.querySelectorAll(".workout-table");
+
+          // für jeden table row werden die categoryselectors betrachtet der erste bleibt immer als placeholder stehen!
+          workoutTables.forEach((table) => {
+            const exerciseCategorySelectorsOfTable = table.querySelectorAll(
+              ".exercise-category-selector"
+            );
+
+            exerciseCategorySelectorsOfTable.forEach(
+              (categorySelector, index) => {
+                const category = categorySelector.value;
+
+                if (category === "- Bitte Auswählen -" && index !== 0) {
+                  const parentTableRow = categorySelector.closest("tr");
+
+                  if (parentTableRow) {
+                    parentTableRow.style.display = "none";
+                  }
+                }
+              }
+            );
+          });
         } else {
           console.log("Keine Offline-Daten verfügbar");
         }
@@ -108,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (category === "Legs") {
       return 10;
     } else {
-      return 0;
+      return -1;
     }
   }
 });
