@@ -122,8 +122,9 @@
                     <div class="stats-container">
     
                         <div class="training-plan-title uppercase">
-                            Heaviest set
+                            Heaviest set W<%= i + 1 %>D<%= bestBenchSets[i].dayIndex + 1 %>
                         </div>
+                        <input type="hidden" value="<%= bestBenchSets[i].dayIndex %>">
                         <% if (Object.keys(bestBenchSets[i]).length !== 0) { %>
                             <div class="ff-sans-cond fs-400 letter-spacing-4">
                                 <%= bestBenchSets[i].sets %> x <%= bestBenchSets[i].reps %> | <%= bestBenchSets[i].weight  %>KG @<%= bestBenchSets[i].actualRPE %> | Est Max = <%= bestBenchSets[i].estMax %>
@@ -186,8 +187,9 @@
                     <div class="stats-container">
     
                         <div class="training-plan-title uppercase">
-                            Heaviest set
+                            Heaviest set W<%= i + 1 %>D<%= bestDeadliftSets[i].dayIndex + 1 %>
                         </div>
+                        <input type="hidden" value="<%= bestDeadliftSets[i].dayIndex %>">
                         <% if (Object.keys(bestDeadliftSets[i]).length !== 0) { %>
                             <div class="ff-sans-cond fs-400 letter-spacing-4">
                                 <%= bestDeadliftSets[i].sets %> x <%= bestDeadliftSets[i].reps %> | <%= bestDeadliftSets[i].weight  %>KG @<%= bestDeadliftSets[i].actualRPE %> | Est Max = <%= bestDeadliftSets[i].estMax %>
@@ -231,81 +233,5 @@
 <script src="/javascripts/statsPage/illustrateStats.js"></script>
 <script src="/javascripts/statsPage/navigate.js"></script>
 <script src="/javascripts/statsPage/showStatsTab.js"></script>
-
-<script>
-
-    //switchViews.js
-    const allTonnageContainers = document.querySelectorAll(".training-plan-container");
-    const allBestSetContainers = document.querySelectorAll(".alternative-stats-container")
-
-    const statsDisplaySwitcher = document.querySelector(".stats-display-switcher");
-    const switchSVG = statsDisplaySwitcher.querySelector("svg");
-
-    let count = 0;
-    let isRotated = false;
-    const duration = 500; // rotate duration
-
-    statsDisplaySwitcher.addEventListener("click", e => {
-        e.preventDefault();
-
-        if (count % 2 === 0) {
-            allTonnageContainers.forEach((container, index) => {
-                allTonnageContainers[index].style.display = "none";
-                allBestSetContainers[index].style.display = "flex";
-            })
-        } else {
-            allTonnageContainers.forEach((container, index) => {
-                allTonnageContainers[index].style.display = "flex";
-                allBestSetContainers[index].style.display = "none";
-            })
-        }
-
-        if (isRotated) {
-            switchSVG.style.transform = "rotate(0deg)";
-            isRotated = false;
-        } else {
-            switchSVG.style.transform = "rotate(180deg)";
-            isRotated = true;
-        }
-
-        count++;
-    })
-
-    const squatPerformanceStatsCards = allBestSetContainers[0].querySelectorAll(".stats-container");
-    const benchPerformanceStatsCards = allBestSetContainers[1].querySelectorAll(".stats-container");
-    const deadliftPerformanceStatsCards = allBestSetContainers[2].querySelectorAll(".stats-container");
-
-    const pathName = window.location.pathname;
-    const trainingType = pathName.substring(0, pathName.lastIndexOf("-"));
-
-
-    // das mit der selected klasse funktioniert irgendwie nicht hier was anderes überlegen
-    let lastSelectedSquatIndex = 0;
-    squatPerformanceStatsCards.forEach((statsCard, index) => {
-
-        const selectedBorderStyle = "4px solid rgba(255, 255, 255, 0.85)";
-
-        statsCard.addEventListener("click", () => {
-
-            const computedStyle = window.getComputedStyle(statsCard); // Berechneter Stil des Elements
-
-            if (computedStyle.border === selectedBorderStyle) { // if a selected stats card is clicked again navigate to training
-                const dayIndex = statsCard.querySelector("input[type='hidden']").value;
-                window.location.href = `${trainingType}${index + 1}#${dayIndex}`;
-            }
-
-            // all cards to initial state
-            squatPerformanceStatsCards.forEach(card => {
-                card.style.border = "none";
-            });
-
-            statsCard.style.border = selectedBorderStyle
-
-            lastSelectedSquatIndex = index;
-            console.log(lastSelectedSquatIndex);
-        })
-        
-    })
-
-
-</script>
+<script src="/javascripts/statsPage/switchViews.js"></script>
+<script src="/javascripts/statsPage/navigateToWeekHighlight.js"></script>

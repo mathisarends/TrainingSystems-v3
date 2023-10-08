@@ -218,6 +218,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const resultString = lowerLimit + "-" + upperLimit;
         weightInput.placeholder = resultString;
       }
+    } else {
+      weightInput.placeholder = "";
     }
 
   }

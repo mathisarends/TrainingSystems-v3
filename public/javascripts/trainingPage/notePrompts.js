@@ -33,6 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
         currentTableRows = currentWorkoutTable.querySelectorAll(".table-row.mainExercise");
         const newTrLength = currentTableRows.length;
 
+        currentNoteInputs = currentWorkoutTable.querySelectorAll(".workout-notes"); //update this field to
+        console.log(currentNoteInputs);
+
         const parentTableRow = noteInput.closest("tr");
         const nextTableRow = parentTableRow.nextElementSibling;
 
@@ -122,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const exerciseNameSelector = destRow.querySelectorAll(".exercise-name-selector")[categoryIndex];
         const placeholderSelect = destRow.querySelector(".exercise-name-selector");
+        placeholderSelect.disabled = true;
 
         placeholderSelect.style.display = "none";
 
@@ -129,6 +133,18 @@ document.addEventListener("DOMContentLoaded", () => {
             exerciseNameSelector.style.display = "block";
             exerciseNameSelector.value = exerciseData.name;
             exerciseNameSelector.style.opacity = "1";
+            exerciseNameSelector.disabled = false;
+
+            const options = exerciseNameSelector.querySelectorAll("option");
+            const valueToSelect = exerciseData.name;
+
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === valueToSelect) {
+                    exerciseNameSelector.selectedIndex = i;
+                    break;
+                }
+            }
+
         }
 
         // die neuen exerciseCategorys auch einblenden

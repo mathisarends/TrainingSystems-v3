@@ -372,7 +372,7 @@ function getIndexOfMostRecentTrainingDay(trainingPlan) {
     for (let dayIndex = lastDayIndex; dayIndex >= 0; dayIndex--) {
       const day = week.trainingDays[dayIndex];
 
-      if (day.exercises?.some((exercise) => exercise.weight)) {
+      if (day.exercises?.some((exercise) => exercise && exercise.weight)) {
         if (dayIndex === lastDayIndex && weekIndex === lastWeekIndex) {
           return {
             weekIndex: 0,

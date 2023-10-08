@@ -102,6 +102,24 @@ function patchUserData(user, formData) {
         user[property] = value;
       }
     }
+
+     // Überprüfe, ob user.trainingData vorhanden ist, andernfalls initialisiere es
+  if (!user.trainingData || user.trainingData.length === 0) {
+    user.trainingData = [{
+      recentSquatWeight: null,
+      recentSquatReps: null,
+      recentBenchWeight: null,
+      recentBenchReps: null,
+      recentDeadliftWeight: null,
+      recentDeadliftReps: null,
+      minimumSetsSquat: null,
+      maximumSetsSquat: null,
+      minimumSetsBench: null,
+      maximumSetsBench: null,
+      minimumSetsDeadlift: null,
+      maximumSetsDeadlift: null,
+    }];
+  }
   
     const existingTrainingData = user.trainingData[0];
   

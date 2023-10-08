@@ -84,6 +84,8 @@ const assets = [
   "/javascripts/statsPage/illustrateStats.js",
   "/javascripts/statsPage/navigate.js",
   "/javascripts/statsPage/showStatsTab.js",
+  "/javascripts/statsPage/navigateToWeekHighlight.js",
+  "/javascripts/statsPage/switchViews.js",
 
   "/javascripts/login/handleLogin.js",
 
@@ -920,10 +922,9 @@ async function changeThroughNetworkOfflineFallback(ev) {
 
   try {
     const response = await fetch(ev.request);
-
     return response;
   } catch (err) {
-
+    console.log(err);
     const objectStore = determineObjectStoreByMethod(ev.request.method);
 
     await handleOfflineChange(requestClone, objectStore);

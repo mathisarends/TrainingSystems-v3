@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("display offline data");
+  const url = window.location.href;
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then(function (registration) {
@@ -19,6 +20,42 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    function setupNewTableRow(tableRow) {
+
+      const previousExerciseNameSelector = tableRow.querySelector('.exercise-name-selector:not([style*="display: none"])');
+      previousExerciseNameSelector.style.display = "none";
+
+      const placeholderExerciseNameSelector = tableRow.querySelector(".exercise-name-selector");
+      placeholderExerciseNameSelector.style.display = "block";
+
+      const categorySelector = tableRow.querySelector(".exercise-category-selector");
+      categorySelector.value = "- Bitte Auswählen -";
+
+      categorySelector.style.opacity = "0";
+      placeholderExerciseNameSelector.style.opacity = "0"
+
+
+      tableRow.querySelector(".sets").value = "";
+      tableRow.querySelector(".reps").value = "";
+      tableRow.querySelector(".weight").value = "";
+      tableRow.querySelector(".weight").placeholder = "";
+      tableRow.querySelector(".targetRPE").value = "";
+      tableRow.querySelector(".actualRPE").value = "";
+      tableRow.querySelector(".estMax").value = "";
+      tableRow.querySelector(".workout-notes").value = "";
+
+      categorySelector.addEventListener("change", () => {
+
+          const category = categorySelector.value;
+          const allExerciseNameSelectors = tableRow.querySelectorAll(".exercise-name-selector");
+
+
+          const categoryIndex = exerciseCategorys.indexOf(category);
+          const exerciseNameSelector = allExerciseNameSelectors[categoryIndex];
+      })
+
+  }
+
     navigator.serviceWorker.addEventListener("message", (event) => {
       const message = event.data;
 
@@ -31,7 +68,23 @@ document.addEventListener("DOMContentLoaded", () => {
           for (const key in offlineData) {
             if (offlineData.hasOwnProperty(key)) {
               // Suchen Sie das Input- oder Select-Element anhand des "name"-Attributs
-              const element = document.querySelector(`[name="${key}"]`);
+              let element = document.querySelector(`[name="${key}"]`);
+
+              // wenn ein element bereits den richtigen wert hat können wir die restliche logik überspringen
+
+              // wenn es ein solches element nicht gibt und wir auf der richtigen seite sind
+              if (!element && (url.includes("/training/custom") || url.includes("/training/template"))) {
+                //dieses element gibt es nicht und es muss neu auf der seite erstellt werden um angezeigt werden zu können
+
+                //aus dem name den tag ableiten um zugriff auf den workouttable zu haben
+                const dayNumber = key[3];
+                const exerciseNumber = key[13];
+
+                const addNewExerciseBTN = document.querySelectorAll(".add-new-exercise-button")[dayNumber - 1];
+                addNewExerciseBTN.click();
+                element = document.querySelector(`[name="${key}"]`);
+
+              }
 
               if (element.value === offlineData[key]) {
                 continue;
@@ -41,7 +94,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (element.tagName === "SELECT") {
                   let categoryIndex;
 
+                  if (element.classList.contains("exercise-category-selector")) {
+                    element.style.opacity = "1";
+                  }
+
                   if (element.classList.contains("exercise-name-selector")) {
+
                     const exerciseNameSelectors = document.querySelectorAll(
                       `[name="${key}"]`
                     ); //alle selectors die dieses name attribut haben
@@ -56,18 +114,36 @@ document.addEventListener("DOMContentLoaded", () => {
                     ).value;
                     categoryIndex = getIndexByCategory(associatedCategory);
 
-                    const actualExerciseSelector =
-                      exerciseNameSelectors[categoryIndex];
+                    exerciseNameSelectors.forEach((nameSelector, index) => {
+                      if (categoryIndex === index) {
+                        nameSelector.style.display = "block";
+                        nameSelector.style.opacity = "1";
+                        nameSelector.disabled = false;
+                        nameSelector.dispatchEvent(new Event("change"));
+                      } else {
+                        nameSelector.style.display = "none";
+                        nameSelector.style.opacity = "0";
+                        nameSelector.disabled = true;
+                      }
+                    })
+
+                    const parentRow = element.closest("tr");
+                    const actualExerciseSelector = parentRow.querySelector('.exercise-name-selector:not([style*="display: none"])');
 
                     const option = actualExerciseSelector.querySelector(
                       `[value="${offlineData[key]}"]`
                     );
 
+                    console.log("wert aus offline data", offlineData[key], " für ", key);
+                    console.log("option", option);
+                    
+                    actualExerciseSelector.value = offlineData[key];
+
                     if (option) {
                       option.selected = true;
-                      actualExerciseSelector.dispatchEvent(new Event("change"));
                     }
 
+                    /* actualExerciseSelector.dispatchEvent(new Event("change")); */
                     continue;
                   }
 
@@ -104,6 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
             exerciseCategorySelectorsOfTable.forEach(
               (categorySelector, index) => {
                 const category = categorySelector.value;
+                const exerciseRowsLength = table.querySelectorAll(".table-row.mainExercise").length;
 
                 if (category === "- Bitte Auswählen -" && index !== 0) {
                   const parentTableRow = categorySelector.closest("tr");
@@ -111,15 +188,38 @@ document.addEventListener("DOMContentLoaded", () => {
                   if (parentTableRow) {
                     parentTableRow.style.display = "none";
                   }
+                } else if (category === "- Bitte Auswählen -" && exerciseRowsLength === 1) {
+                  categorySelector.style.opacity = "0";
+
+                  const parentRow = categorySelector.closest("tr");
+                  hideTableRow(parentRow);
+
                 }
+
+                if (category === "Squat" || category === "Bench" || category === "Deadlift") {
+                  categorySelector.dispatchEvent(new Event("change"));
+                }
+
               }
             );
           });
+
         } else {
           console.log("Keine Offline-Daten verfügbar");
         }
       }
     });
+  }
+
+  function hideTableRow(row) {
+    row.querySelector(".exercise-name-selector").style.opacity = "0";
+    row.querySelector(".sets").value = "";
+    row.querySelector(".weight").value = "";
+    row.querySelector(".weight").placeholder = "";
+    row.querySelector(".targetRPE").value = "";
+    row.querySelector(".actualRPE").value = "";
+    row.querySelector(".estMax").value = "";
+    row.querySelector(".workout-notes").placeholder = "";
   }
 
   function getIndexByCategory(category) {

@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
               } else {
                   exerciseNameSelectors.forEach((selector, index) => {
                       selector.style.display = index === indexForCategory(category) ? "block" : "none";
+                      selector.style.opacity = index === indexForCategory(category) ? "1" : "0";
                       selector.disabled = index !== indexForCategory(category);      
 
                   });
