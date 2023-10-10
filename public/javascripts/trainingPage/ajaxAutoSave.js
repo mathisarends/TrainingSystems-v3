@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   //implements autosaving after there was a change event to a weight input
   //also after a certain time interval through service worker
+  const url = window.location.href;
 
   const autoSaveIntervall = 10 * 60 * 1000; // 5 minutes (in ms)
 
@@ -64,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return indexOfVisibleSection;
   }
+
 
   function showMessage(element, message, success = true, duration = 5000) {
     const messageElement = document
@@ -169,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       weightInput.value = roundedAverage;
   
       saveAudio.play();
-      form.dispatchEvent(new Event("submit"));
+      form.dispatchEvent(new Event("submit")); //h
     } else {
       // Do nothing
     }
@@ -212,14 +214,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const estMaxByCategory = getMaxByCategory(category) * maxAdjustmentFactor;
         let result = estMaxByCategory * percentage;
 
+        //TOOD: nur wenn kein placeholder gerendert wurde
         result = Math.ceil(result / 2.5) * 2.5;
         const lowerLimit = result - 2.5;
         const upperLimit = result + 2.5;
         const resultString = lowerLimit + "-" + upperLimit;
-        weightInput.placeholder = resultString;
+
+        if (weightInput.placeholder === "") {
+          weightInput.placeholder = resultString;
+        }
+
       }
-    } else {
-      weightInput.placeholder = "";
     }
 
   }
@@ -237,6 +242,74 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (category === "Deadlift") {
       return document.getElementById("userMaxDeadlift").value;
     }
+  }
+
+  //für SESSION ONLY
+  if (url.includes("session-train")) {
+    console.log("dieser code hier exisitert in diesem doluemnt")
+    const finishSessionButton = document.getElementById("finishSessionButton");
+    const modal = document.getElementById("confirmationModal");
+
+    //customSubmit for creating new entry in trainingPlans
+    const customSubmitEvent = new CustomEvent("customSubmit");
+
+    finishSessionButton.addEventListener("click", e => {
+        e.preventDefault();
+        modal.style.display = "block";
+
+        const confirmBTN = modal.querySelectorAll("button")[0];
+        const cancelBTN = modal.querySelectorAll("button")[1];
+
+        confirmBTN.addEventListener("click", e => {
+            e.preventDefault();
+
+            console.log("custom event happening");
+            form.dispatchEvent(new CustomEvent("customSubmit"));
+        })
+
+        cancelBTN.addEventListener("click", e => {
+            e.preventDefault();
+
+            modal.style.display = "none";
+        })
+    })
+
+    // eventlistener for custom submit
+    form.addEventListener("customSubmit", async event => {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        // Wandele die FormData in ein JavaScript-Objekt um
+        const formDataObject = {};
+        formData.forEach((value, key) => {
+        formDataObject[key] = value;
+        });
+
+        formDataObject["isSessionComplete"] = true;
+
+        try {
+            const reponse = await fetch(`${window.location.pathname}`, {
+                method: "PATCH", 
+                body: JSON.stringify(formDataObject),
+                headers: {
+                    "Content-Type": "application/json", // Setze den Content-Type auf application/json
+                },
+            });
+
+            if (response.ok) {
+              showMessage(".save-status-sucess", "Erfolgreich aktualisiert");
+            } else {
+              showMessage(".save-status-sucess", "Fehler beim aktualisieren");
+            }
+          } catch (error) {
+            //aufpassen Netzwerkfehler ist nicht der einzigste Fehler der auftreten kann:
+            showMessage(".save-status-sucess", "Offline Mode: Erfolgreich aktualisert!");
+          } finally {
+            window.location.href = "/training"; //zur trainingsoverview navigieren
+          }
+        
+
+    })
   }
 
 

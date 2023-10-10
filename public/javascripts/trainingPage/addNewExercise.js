@@ -2,32 +2,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //addNewExercise.js
     const addNewExerciseButtons = document.querySelectorAll(".add-new-exercise-button");
-    const removeExerciseButtons = document.querySelectorAll(".remove-exercise-button");
     const exerciseTables = document.querySelectorAll(".workout-table");
 
-    addNewExerciseButtons.forEach((addExerciseBTN, index) => {
-        addExerciseBTN.addEventListener("click", e => {
-            e.preventDefault();
+    const url = window.location.href;
 
-            const tableBody = exerciseTables[index].querySelector("tbody");
-            const tableRows = tableBody.querySelectorAll(".table-row.mainExercise");
-            const lastTr = tableRows[tableRows.length - 1];
+        // TEMPLATE ODER CUSTOM SEITE
+        addNewExerciseButtons.forEach((addExerciseBTN, index) => {
+            addExerciseBTN.addEventListener("click", e => {
+                e.preventDefault();
+    
+                const tableBody = exerciseTables[index].querySelector("tbody");
+                const tableRows = tableBody.querySelectorAll(".table-row.mainExercise");
+                const lastTr = tableRows[tableRows.length - 1];
+    
+                if (tableRows.length >= 12) {
+                    showMaxExercisesReachedModal();
+                } else {
+                    const lastTrInnerHTML = lastTr.innerHTML; //create a new table row for the given table based on the previous last one
+ 
+                    let newTableRowInnerHTML;
 
-            if (tableRows.length >= 12) {
-                showMaxExercisesReachedModal();
-            } else {
-                const lastTrInnerHTML = lastTr.innerHTML; //create a new table row for the given table based on the previous last one
-                const newTableRowInnerHTML = lastTrInnerHTML.replace(/_exercise(\d+)_/g, (match, group) => `_exercise${parseInt(group) + 1}_`);
+                    if (url.includes("session-train")) { //special case with session
+                        newTableRowInnerHTML = lastTrInnerHTML.replace(/exercise_(\d+)_/g, (match, group) => `exercise_${parseInt(group) + 1}_`);
+                    } else { //for template and custom training
+                        newTableRowInnerHTML = lastTrInnerHTML.replace(/_exercise(\d+)_/g, (match, group) => `_exercise${parseInt(group) + 1}_`);
+                    }
 
-                const newRow = document.createElement("tr");
-                newRow.classList.add("table-row", "mainExercise");
-                newRow.innerHTML = newTableRowInnerHTML;
-                tableBody.appendChild(newRow);
-
-                setupNewTableRow(newRow);
-            }
+                    const newRow = document.createElement("tr");
+                    newRow.classList.add("table-row", "mainExercise");
+                    newRow.innerHTML = newTableRowInnerHTML;
+                    tableBody.appendChild(newRow);
+    
+                    setupNewTableRow(newRow);
+                }
+            })
         })
-    })
+
 
     function showMaxExercisesReachedModal() {
         const modal = document.getElementById("offlineModal");
