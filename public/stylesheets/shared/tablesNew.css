@@ -218,7 +218,7 @@ table .table-row td:last-of-type {
     }
 
     form {
-        margin-inline: 2.5%;   
+        margin-inline: 3.5%;   
         max-width: 100%;
     }
 
@@ -251,6 +251,7 @@ table .table-row td:last-of-type {
         text-transform: initial;
     }
 
+    /*after every entry or completed table row*/
     td:nth-of-type(9n) {
         border-bottom: 1px solid hsl( var(--clr-white) / .5)
     }
@@ -316,6 +317,7 @@ table .table-row td:last-of-type {
         margin-top: 2rem;
         border-top: 1.5px solid hsl( var(--clr-white) / 0.5);
     }
+
 
     .dot-indicators {
         --gap: 2rem;

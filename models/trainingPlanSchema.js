@@ -21,7 +21,7 @@ const trainingPlanSchema = new mongoose.Schema({
               exercise: String,
               sets: Number,
               reps: Number,
-              weight: Number,
+              weight: String, //for 100;100 quotation see if it makes trouble:
               targetRPE: Number,
               actualRPE: Number,
               estMax: Number,

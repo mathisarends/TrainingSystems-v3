@@ -13,6 +13,8 @@
     <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
     <input id="maxFactors" type="hidden" value="<%= JSON.stringify(maxFactors) %> %>">
 
+    <input name="areWeightInputsValid" type="hidden" value="">
+
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>
             <input class="category-pause-time-input" type="hidden" value="<%= categoryPauseTimes[category] %>">

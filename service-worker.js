@@ -77,6 +77,7 @@ const assets = [
   "/javascripts/trainingPage/handleDeloadWeek.js",
   "/javascripts/trainingPage/changeTitleAjax.js",
   "/javascripts/trainingPage/addNewExercise.js",
+  "/javascripts/trainingPage/weightInput.js",
 
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
@@ -170,49 +171,42 @@ self.addEventListener("fetch", async (event) => {
   const isManfifest = url.pathname.endsWith(".manifest") || url.pathname.endsWith(".webmanifest");
   const isAudio = url.pathname.endsWith(".mp3");
   const isFont = url.hostname.includes("gstatic") || url.pathname.endsWith("woff2");
-  const isPage = event.request.mode === "navigate"; 
+  const isPage = event.request.mode === "navigate";
 
+  //these responses are always the same wheter in offline or online mode
   if (isCSS | isJS || isManfifest || isImage || isFont) {
     event.respondWith(staleNoRevalidate(event)); 
-
-  } else if (isAudio) { //because this isnt found in the cache unfortunatley
-    event.respondWith(cacheOnlyAudio(event));
-
-  } else if (event.request.method === "POST" && event.request.url.includes("/login")) { //the login post requests always have to go other the network
-    defaultNetworkMode = true; //every new login the network mode is set to true;
-    event.respondWith(changeThroughNetworkOfflineFallback(event));
-
-    // change requests to the page go over the network first and fall back on local storage indexDB
-  } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
-    
-    if (defaultNetworkMode) {
-      event.respondWith(changeThroughNetworkOfflineFallback(event));
-    } else {
-
-      const objectStore = determineObjectStoreByMethod(event.request.method);
-
-      event.respondWith(handleOfflineChange(event.request, objectStore));
-    }
-  }
-  //bestimmte pages sollen auch immer nur über das netzwerk accessed werden wegen authentication und zugriff auf google api
-  else if (isPage && (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))) {
+  } else if (isPage && (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))) {
     event.respondWith(networkOnlyAuthentication(event));
+  } else if (event.request.method === "POST" && event.request.url.includes("/login")) {
+    defaultNetworkMode = true; //every new login the network mode is set to true because of user authorization id which is saved in offline data
+    event.respondWith(changeThroughNetworkOfflineFallback(event));
+  }
 
-  } else if (isPage) {
-    if (defaultNetworkMode) {
+  if (defaultNetworkMode) {
+
+    if (isAudio) {
+      event.respondWith(staleNoRevalidate(event));
+    } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
+      event.respondWith(changeThroughNetworkOfflineFallback(event));
+    } else if (isPage) {
       event.respondWith(networkRevalidateAndCache(event));
     } else {
-      event.respondWith(staleNoRevalidate(event)); //änderungen der seiten sind ja entsprechend in der indexDB datenbank gespeichert:
-    }
-    
-  } else {
-    console.log("sosntiges fetch event")
-    if (defaultNetworkMode) {
       event.respondWith(staleWhileRevalidate(event));
+    }
+
+  } else if (!defaultNetworkMode) { //when in offline mode
+
+    if (isAudio) {
+      event.respondWith(cacheOnly(event))
+    } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
+      const objectStore = determineObjectStoreByMethod(event.request.method);
+      event.respondWith(handleOfflineChange(event.request, objectStore));
+    } else if (isPage) {
+      event.respondWith(staleNoRevalidate(event));
     } else {
       event.respondWith(staleNoRevalidate(event));
     }
-
   }
 });
 
@@ -881,6 +875,10 @@ function staleNoRevalidate(ev) {
       });
     }
   });
+}
+
+function cacheOnly(ev) {
+  return caches.match(ev.request);
 }
 
 function networkRevalidateAndCache(ev) {

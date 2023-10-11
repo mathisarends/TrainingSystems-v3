@@ -1,7 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     // hier jegliche logik aus ajaxAutoSave reintuen die mit den weight inputs und recommandations zu tun hat.
 
+    const url = window.location.href;
+
     const form = document.querySelector("form");
+    const maxFactorsInput = document.getElementById('maxFactors');
+    const maxFactors = JSON.parse(maxFactorsInput.value);   // Den Wert des Input-Elements von JSON-String in ein JavaScript-Objekt umwandeln
 
     form.addEventListener("change", e => {
         const target = e.target;
@@ -13,7 +17,10 @@ document.addEventListener("DOMContentLoaded", () => {
       form.addEventListener("change", e => {
         const target = e.target;
     
-        if (target && (target.classList.contains("exercise-name-selector")) || target.classList.contains("exercise-category-selector")) {
+        if (target && (target.classList.contains("exercise-name-selector")) 
+        || target.classList.contains("exercise-category-selector") 
+        || target.classList.contains("reps") 
+        || target.classList.contains("targetRPE") ) {
           const parentRow = target.closest("tr");
           getWeightRecommandation(parentRow);
         }
@@ -41,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
             const estMaxByCategory = getMaxByCategory(category) * maxAdjustmentFactor;
             let result = estMaxByCategory * percentage;
+            console.log()
     
             //TOOD: nur wenn kein placeholder gerendert wurde
             result = Math.ceil(result / 2.5) * 2.5;
@@ -48,7 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const upperLimit = result + 2.5;
             const resultString = lowerLimit + "-" + upperLimit;
     
-            if (weightInput.placeholder === "") {
+            // wenn wird uns nicht im session mode befinden oder wenn wir uns in diesem befinden der gerenderte weight placeholder aber "" ist
+            if (!url.includes("session-train") || (url.includes("session-train") && weightInput.placeholder === "")) {
               weightInput.placeholder = resultString;
             }
     
@@ -90,12 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
             roundedAverage = Math.round(roundedAverage / 2.5) * 2.5;
           }
           weightInput.value = roundedAverage;
-      
-          saveAudio.play();
-          form.dispatchEvent(new Event("submit")); //hier soll auch nicht immer das submit event dispatched werden sondenr nur wenn alle eingaben valide sind also der input ein int ist. sonst synchro fehler:
-        } else {
-          // Do nothing
         }
+
+        form.dispatchEvent(new Event("submit")); //hier soll auch nicht immer das submit event dispatched werden sondenr nur wenn alle eingaben valide sind also der input ein int ist. sonst synchro fehler:
+        const saveAudio = document.getElementById("save-audio");
+        saveAudio.play();
       }
 
       function getMaxByCategory(category) {
