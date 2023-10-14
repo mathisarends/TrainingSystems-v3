@@ -42,6 +42,7 @@ import {
 import { 
   getTrainingIndexPage, 
 } from "../controller/trainingControllers/trainingController.js";
+import TrainingPlan from "../models/trainingPlanSchema.js";
 
 //regular custom training plans (standart)
 router.get("/", checkAuthenticated, getTrainingIndexPage);
@@ -59,31 +60,44 @@ customTemplateLetters.forEach((letter, index) => {
   }
 })
 
-for (let i = 0; i < customTemplateLetters.length; i++) { //patch custom trainings
-  const letter = customTemplateLetters[i];
+customTemplateLetters.forEach((letter, index) => {
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}${week}`;
-    router.patch(routePath, checkAuthenticated, (req, res) => patchTrainingPlan(req, res, week, i, true)); //true for custom plan
+    router.patch(routePath, checkAuthenticated, (req, res) => patchTrainingPlan(req, res, week, index, true))
   }
-}
+})
 
-for (let i = 0; i < customTemplateLetters.length; i++) { //get custom edit pages
-  const letter = customTemplateLetters[i];
+customTemplateLetters.forEach((letter, index) => {
   const routePath = `/custom-${letter}-edit`;
-  router.get(routePath, checkAuthenticated, (req, res) => getCustomEditPage(req, res, i, letter));
-}
+  router.get(routePath, checkAuthenticated, (req, res) => getCustomEditPage(req, res, index, letter));
+})
 
-for (let i = 0; i < customTemplateLetters.length; i++) { //patch custom edit pages
-  const letter = customTemplateLetters[i];
-    const routePath = `/custom-${letter}-edit`;
-    router.patch(routePath, checkAuthenticated, (req, res) => patchCustomEditPage(req, res, i));
-}
+customTemplateLetters.forEach((letter, index) => {
+  const routePath = `/custom-${letter}-edit`;
+  router.patch(routePath, checkAuthenticated, (req, res) => patchCustomEditPage(req, res, index))
+})
 
-for (let i = 0; i < customTemplateLetters.length; i++) {
-  const letter = customTemplateLetters[i];
+customTemplateLetters.forEach((letter, index) => {
   const routePath = `/custom-${letter}-stats`;
-  router.get(routePath, checkAuthenticated, (req, res) => getStatisticPage(req, res, i)) //TODO:
-}
+  router.get(routePath, checkAuthenticated, (req, res) => getStatisticPage(req, res, index)) //TODO:
+})
+
+router.get("/isLastWeekDeloadHandled/:trainingPlanId", async (req, res) => {
+  try {
+    const trainingPlanId = req.params.trainingPlanId;
+
+    const trainingPlan = await TrainingPlan.findById(trainingPlanId);
+
+    if (!trainingPlan) {
+      return res.status(404).json({ error: "Training plan not found "});
+    }
+
+    const lastWeekDeloadHandled = trainingPlan.lastWeekDeloadHandled;
+    res.status(200).json({ lastWeekDeloadHandled });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+})
 
 /* TEMPLATE PLANS */
 
@@ -102,28 +116,17 @@ templateLetters.forEach((letter, index) => {
   }
 })
 
-// edit page get
-for (let i = 0; i < 2; i++) {
-  const templateName = customTemplateLetters[i]; 
-  router.get(`/template-${templateName}-edit`, checkAuthenticated, (req, res) => getTemplateEditPage(req, res, i, templateName));
-}
+templates.forEach((letter, index) => {
+  router.get(`/template-${letter}-edit`, checkAuthenticated, (req, res) => getTemplateEditPage(req, res, index, letter));
+})
 
-// edit page patch
-for (let i = 0; i < 2; i++) {
-  const templateName = customTemplateLetters[i]; 
-  router.patch(`/template-${templateName}-edit`, checkAuthenticated, (req, res) => patchTemplateEditPage(req, res, i));
-}
+templates.forEach((letter, index) => {
+  router.patch(`/template-${letter}-edit`, checkAuthenticated, (req, res) => patchTemplateEditPage(req, res, index));
+})
 
-for (let i = 0; i < customTemplateLetters.length; i++) { //patch custom edit pages
-  const letter = customTemplateLetters[i];
-    const routePath = `/custom-${letter}-edit`;
-    router.patch(routePath, checkAuthenticated, (req, res) => patchCustomEditPage(req, res, i));
-}
-
-for (let i = 0; i < 2; i++) {
-  const templateName = customTemplateLetters[i]; 
-  router.get(`/template-${templateName}-stats`, checkAuthenticated, (req, res) => getStatisticPage(req, res, i));
-}
+templates.forEach((letter, index) => {
+  router.get(`/template-${letter}-stats`, checkAuthenticated, (req, res) => getStatisticPage(req, res, index));
+})
 
 router.delete("/reset-template-training", checkAuthenticated, deleteTemplateTraining);
 

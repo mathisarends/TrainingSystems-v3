@@ -9,11 +9,10 @@
     <input id="userMaxSquat" type="hidden" name="maxSquat" value="<%= user.maxSquat %>">
     <input id="userMaxBench" type="hidden" name="maxBench" value="<%= user.maxBench %>">
     <input id="userMaxDeadlift" type="hidden" name="maxDeadlift" value="<%= user.maxDeadlift %>">
-
-    <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
     <input id="maxFactors" type="hidden" value="<%= JSON.stringify(maxFactors) %> %>">
 
-    <input name="areWeightInputsValid" type="hidden" value="">
+    <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
+    <input id="isDeloadAlreadyHandled" type="hidden" value=<%= isDeloadAlreadyHandled %>>
 
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>
@@ -291,8 +290,15 @@
                                         <%- include("../../partials/trainingPage/volumeRecommandations") %>
                                             <%- include("../../partials/trainingPage/javascripts") %>
 
+                                            <% if (isDeloadWeek) { %>
+                                                <div class="flex" style="justify-content: center;">
+                                                    <button class="plan-deload-button main-page-button uppercase ff-sans-normal"> Deload Planen</button>
+                                                </div>
+                                            <% } %>
+
+
                                                 <div class="dot-indicators flex"
-                                                    style="justify-content: center; margin-top: 1.5rem; margin-bottom: 1rem;">
+                                                    style="justify-content: center; margin-top: 2rem; margin-bottom: 1rem;">
                                                     <% for (let j=0; j < amountOfTrainingDays; j++) { %>
                                                         <button aria-selected="<%= j + 1 === lastTrainingDay %>"><span
                                                                 class="sr-only">Slide
@@ -300,5 +306,19 @@
                                                         <% } %>
                                                 </div>
 
+        <input id="lastWeekDeloadHandled" name="lastWeekDeloadHandled" type="hidden" value="true" disabled>
+
 
 </form>
+
+<div id="deloadModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
+    <div class="modal-content flow" style="--flow-space: 0.5em;">
+        <input class="fs-700" type="text" readonly value="DELOAD PLANEN">
+        <input class="fs-400" type="text" readonly value="Dein Plan sollte fertig aufgesetzt sein" style="margin-top: 0.75rem;">
+        <input class="fs-400" type="text" readonly value="Satzahlen/RPE werden angepasst!">
+        <div class="modal-buttons">
+            <button class="modal-button text-accent" id="handle-deload-button">PLANEN</button>
+            <button class="modal-button text-accent" id="hide-modal-button" style="display: block;">ABBRECHEN</button>
+        </div>
+    </div>
+</div>

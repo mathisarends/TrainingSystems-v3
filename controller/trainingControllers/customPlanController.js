@@ -51,6 +51,8 @@ export async function getCreateTrainingPlan(req, res) {
       const trainingPlanFrequency = trainingPlanData.training_frequency;
       const trainingPlanWeeks = trainingPlanData.training_weeks;
       const lastWeekDeload = trainingPlanData.isLastWeekDeload;
+      const automaticProgression = trainingPlanData.automaticProgression;
+      const lastWeekDeloadHandled = false;
   
       const lastUpdated = new Date();
   
@@ -66,7 +68,9 @@ export async function getCreateTrainingPlan(req, res) {
         trainingPhase: trainingPlanPhase,
         lastUpdated: lastUpdated,
         lastWeekDeload: lastWeekDeload,
+        lastWeekDeloadHandled: lastWeekDeloadHandled,
         trainingWeeks: trainingWeeks,
+        automaticProgression: automaticProgression,
       });
   
       user.trainingPlansCustomNew.push(newTrainingPlan);
@@ -109,6 +113,8 @@ export async function getCreateTrainingPlan(req, res) {
       }
   
       const trainingPlan = user.trainingPlansCustomNew[i];
+      const isDeloadAlreadyHandled = trainingPlan.lastWeekDeloadHandled;
+      const trainingPlanId = trainingPlan._id.toString();
   
       if(!trainingPlan) { //Routes will hopefully will never be reached
         return res.status(404).send("Training nicht gefunden!");
@@ -196,6 +202,8 @@ export async function getCreateTrainingPlan(req, res) {
         categoryPauseTimes: categoryPauseTimes,
         defaultRepSchemeByCategory: defaultRepSchemeByCategory,
         maxFactors: maxFactors,
+        trainingPlanId: trainingPlanId,
+        isDeloadAlreadyHandled: isDeloadAlreadyHandled,
   
         trainingData: trainingData,
         squatmev: trainingData.minimumSetsSquat || "",
@@ -310,8 +318,6 @@ export async function getCreateTrainingPlan(req, res) {
       console.log("Error while patching meta data of customTraining", err);
     }
   }
-
-
 
   /* CREATING NEW CUSTOM TRAINING */
 function createNewTrainingPlanWithPlaceholders(weeks, daysPerWeek) {

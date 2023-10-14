@@ -58,10 +58,13 @@ const assets = [
   "/javascripts/register/navigation.js",
   "/javascripts/register/volumeCalculations.js",
 
-  "/javascripts/trainingIndexPage/redirect.js",
   "/javascripts/trainingIndexPage/showRightTabFromStart.js",
   "/javascripts/trainingIndexPage/trainingPlanCategorySelector.js",
   "/javascripts/trainingIndexPage/showOfflineEditedTrainingNames.js",
+  "/javascripts/trainingIndexPage/ajaxDelete.js",
+  "/javascripts/trainingIndexPage/handleCustomRedirects.js",
+  "/javascripts/trainingIndexPage/handleTemplateRedirects.js",
+  "/javascripts/trainingIndexPage/handleSessionRedirects.js",
 
   "/javascripts/trainingPage/ajaxAutoSave.js",
   "/javascripts/trainingPage/calcBackoffMax.js",
@@ -173,41 +176,58 @@ self.addEventListener("fetch", async (event) => {
   const isFont = url.hostname.includes("gstatic") || url.pathname.endsWith("woff2");
   const isPage = event.request.mode === "navigate";
 
-  //these responses are always the same wheter in offline or online mode
-  if (isCSS | isJS || isManfifest || isImage || isFont) {
-    event.respondWith(staleNoRevalidate(event)); 
+  let response = undefined;
+  let responseSet = false;
+
+// These responses are always the same whether in offline or online mode
+if (!responseSet) {
+  if (isCSS || isJS || isManfifest || isImage || isFont) {
+    response = staleNoRevalidate(event);
+    responseSet = true;
   } else if (isPage && (url.pathname.includes("/logout") || url.pathname.includes("/login") || url.pathname.includes("/auth/google"))) {
-    event.respondWith(networkOnlyAuthentication(event));
+    response = networkOnlyAuthentication(event);
+    responseSet = true;
   } else if (event.request.method === "POST" && event.request.url.includes("/login")) {
-    defaultNetworkMode = true; //every new login the network mode is set to true because of user authorization id which is saved in offline data
-    event.respondWith(changeThroughNetworkOfflineFallback(event));
+    defaultNetworkMode = true;
+    response = changeThroughNetworkOfflineFallback(event);
+    responseSet = true;
   }
+}
 
-  if (defaultNetworkMode) {
-
-    if (isAudio) {
-      event.respondWith(staleNoRevalidate(event));
-    } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
-      event.respondWith(changeThroughNetworkOfflineFallback(event));
-    } else if (isPage) {
-      event.respondWith(networkRevalidateAndCache(event));
-    } else {
-      event.respondWith(staleWhileRevalidate(event));
-    }
-
-  } else if (!defaultNetworkMode) { //when in offline mode
-
-    if (isAudio) {
-      event.respondWith(cacheOnly(event))
-    } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
-      const objectStore = determineObjectStoreByMethod(event.request.method);
-      event.respondWith(handleOfflineChange(event.request, objectStore));
-    } else if (isPage) {
-      event.respondWith(staleNoRevalidate(event));
-    } else {
-      event.respondWith(staleNoRevalidate(event));
-    }
+if (!responseSet && defaultNetworkMode) {
+  if (isAudio) {
+    response = staleNoRevalidate(event);
+    responseSet = true;
+  } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
+    response = changeThroughNetworkOfflineFallback(event);
+    responseSet = true;
+  } else if (isPage) {
+    response = networkRevalidateAndCache(event);
+    responseSet = true;
+  } else {
+    response = staleWhileRevalidate(event);
+    responseSet = true;
   }
+}
+
+if (!responseSet && !defaultNetworkMode) { // When in offline mode
+  if (isAudio) {
+    response = cacheOnly(event);
+    responseSet = true;
+  } else if (event.request.method === "PATCH" || event.request.method === "POST" || event.request.method === "DELETE") {
+    const objectStore = determineObjectStoreByMethod(event.request.method);
+    response = handleOfflineChange(event.request, objectStore);
+    responseSet = true;
+  } else if (isPage) {
+    response = staleNoRevalidate(event);
+    responseSet = true;
+  } else {
+    response = staleNoRevalidate(event);
+    responseSet = true;
+  }
+}
+
+event.respondWith(response); // Respond with the chosen response
 });
 
 function determineObjectStoreByMethod(method) {

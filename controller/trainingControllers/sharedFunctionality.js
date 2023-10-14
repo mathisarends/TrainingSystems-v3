@@ -576,6 +576,11 @@ export async function patchTrainingPlan(req, res, week, i, isCustom) {
       ? user.trainingPlansCustomNew[i]
       : user.trainingPlanTemplate[i]; // Je nach isCustom den richtigen Trainingsplan auswählen
 
+    // if this was send
+    if (updatedData["lastWeekDeloadHandled"]) {
+      trainingPlan.lastWeekDeloadHandled = true;
+    }
+
     trainingPlan.lastUpdated = new Date(); //save timestamp
 
     const trainingWeek = trainingPlan.trainingWeeks[week - 1];

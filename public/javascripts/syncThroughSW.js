@@ -23,20 +23,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   } else {
-    // if there is no service worker there is no sync process so dont show bar at all
-    document.getElementById("wifi-bar").style.display = "none";
+    document.getElementById("wifi-bar").style.display = "none"; //if there is no service worker dont show the bar @all
   }
 
   async function handleNetworkModeSelector(registration) {
     const registratedUserID =
       document.getElementById("userIdentification").value; //used for syncing data to the right account
 
-    // wifi bar is initially toggled and only shown through user interaction
-    const showWifiBar = document.getElementById("show-wifi-bar");
+    const showWifiBar = document.getElementById("show-wifi-bar");     // wifi bar is initially toggled and only shown through user interaction
     const wifiBar = document.getElementById("wifi-bar");
 
-    // assumption desktop pcs or big tablets always have a network connection
-    const screenWidth =
+
+    const screenWidth =     // assumption desktop pcs or big tablets always have a stable network connection (wifi) so dont show offline mode
       window.innerWidth ||
       document.documentElement.clientWidth ||
       document.body.clientWidth;

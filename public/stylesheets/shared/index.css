@@ -316,7 +316,7 @@ select {
     border: 8px solid hsl(var(--clr-light) / 0.75); /* Leerer Kreis */
     border-top: 8px solid hsl(var(--clr-white) / .95); /* Blaue Farbe für den Fortschritt */
     border-radius: 50%;
-    width: 2.25rem;
+    width: 2rem;
     aspect-ratio: 1;
     animation: spin 1.5s linear infinite; /* Animationsregel: Drehung in 2 Sekunden */
 }

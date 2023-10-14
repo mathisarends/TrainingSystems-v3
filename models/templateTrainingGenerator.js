@@ -12,6 +12,7 @@ import NewTrainingPlan from "./trainingPlanSchema.js";
       trainingPhase: "hypertrophie",
       lastUpdated: curDate,
       lastWeekDeload: true,
+      lastWeekDeloadHandled: false,
       trainingWeeks: trainingWeeks,
   
     })
@@ -29,6 +30,7 @@ import NewTrainingPlan from "./trainingPlanSchema.js";
       trainingPhase: "kraft",
       lastUpdated: curDate,
       lastWeekDeload: true,
+      lastWeekDeloadHandled: false,
       trainingWeeks: trainingWeeks
     })
     return templateTrainingPlan;

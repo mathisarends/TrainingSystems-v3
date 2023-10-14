@@ -10,7 +10,9 @@ const trainingPlanSchema = new mongoose.Schema({
   trainingFrequency: Number,
   trainingPhase: String,
   lastUpdated: Date,
+  automaticProgression: Boolean, //new entry for automatic progression in main exercises over the weeks
   lastWeekDeload: Boolean,
+  lastWeekDeloadHandled: Boolean,
   trainingWeeks: [
     {
       trainingDays: [

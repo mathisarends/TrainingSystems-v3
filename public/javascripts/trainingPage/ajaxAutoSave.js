@@ -133,7 +133,6 @@ document.addEventListener("DOMContentLoaded", () => {
   
   //für SESSION ONLY
   if (url.includes("session-train")) {
-    console.log("dieser code hier exisitert in diesem doluemnt")
     const finishSessionButton = document.getElementById("finishSessionButton");
     const modal = document.getElementById("confirmationModal");
 

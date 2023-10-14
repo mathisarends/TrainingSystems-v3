@@ -13,7 +13,7 @@
 .modal {
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 3000;
   left: auto;
   right: auto;
   top: 0;

@@ -24,6 +24,7 @@ export async function getTemplateTraining(req, res, index, letter, week, typeOfP
         return res.status(404).send("Benutzer nicht gefunden");
       }
       const trainingPlan = user.trainingPlanTemplate[index];
+      const isDeloadAlreadyHandled = trainingPlan.lastWeekDeloadHandled;
 
       if (!trainingPlan) {
         return res.status(404).send("Training nicht gefunden!");
@@ -110,6 +111,7 @@ export async function getTemplateTraining(req, res, index, letter, week, typeOfP
         categoryPauseTimes: categoryPauseTimes,
         defaultRepSchemeByCategory: defaultRepSchemeByCategory,
         maxFactors: maxFactors,
+        isDeloadAlreadyHandled: isDeloadAlreadyHandled,
   
         trainingData: trainingData,
         squatmev: trainingData.minimumSetsSquat || "",

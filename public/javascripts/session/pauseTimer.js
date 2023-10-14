@@ -13,7 +13,6 @@ function initializeSessionTimer(registration) {
 
   let remainingTime = 0; // used in order to send the timer service worker wake up signals
 
-  const weightInputs = document.getElementsByClassName("weight"); //triggers timer
   const categorySelectors = document.querySelectorAll(".exercise-category-selector");
 
   const displayTimerField = document.getElementsByClassName("numbered-title")[0];
@@ -147,18 +146,28 @@ function initializeSessionTimer(registration) {
     }
   }
 
-  for (let i = 0; i < weightInputs.length; i++) {
-    weightInputs[i].addEventListener("change", () => {
 
-      const category = categorySelectors[i].value;
+  const form = document.querySelector("form");  //übergeordnetes element
+
+  form.addEventListener("change", e => {  //event delegation vom übergeordneten element zum weight element
+    const target = e.target;
+
+
+    if (target && target.classList.contains("weight")) {
+
+      console.log("getriggert!")
+
+      const parentRow = target.closest("tr");
+      const category = parentRow.querySelector(".exercise-category-selector").value;
+
       lastCategory = category;
 
       registration.active.postMessage({
         command: "start",
         duration: getPauseTimeByExerciseCategory(category) * 1000,
       })
-    })
-  }
+    }
+  })
 
 
 }
