@@ -12,13 +12,11 @@ import {
   getCreateTrainingPlan, 
   postCreateTrainingPlan, 
   handleDeleteTrainingPlan, 
-  getCustomTraining, 
   getCustomEditPage,
   patchCustomEditPage,
 } from "../controller/trainingControllers/customPlanController.js";
 
 import {
-  getTemplateTraining,
   deleteTemplateTraining,
   getTemplateEditPage,
   patchTemplateEditPage
@@ -38,6 +36,7 @@ import {
   getStatisticPage,
   handleWeeklyProgression,
   patchTrainingPlan,
+  getTrainingPlan,
 } from "../controller/trainingControllers/sharedFunctionality.js"
 
 import { 
@@ -57,7 +56,7 @@ customTemplateLetters.forEach((letter, index) => {
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/custom-${letter}${week}`;
     const typeOfPlan = "custom";
-    router.get(routePath, checkAuthenticated, (req, res) => getCustomTraining(req, res, index, letter, week, typeOfPlan));
+    router.get(routePath, checkAuthenticated, (req, res) => getTrainingPlan(req, res, index, letter, week, typeOfPlan));
   }
 })
 
@@ -103,7 +102,7 @@ templateLetters.forEach((letter, index) => {
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/template-${letter}${week}`;
     const typeOfPlan = "template";
-    router.get(routePath, checkAuthenticated, (req, res) => getTemplateTraining(req, res, index, letter, week, typeOfPlan));
+    router.get(routePath, checkAuthenticated, (req, res) => getTrainingPlan(req, res, index, letter, week, typeOfPlan));
   }
 })
 

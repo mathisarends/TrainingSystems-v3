@@ -563,6 +563,113 @@ export function getAmountOfTrainingWeeks(trainingPlan) {
   return trainingWeeks;
 }
 
+export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+
+    const trainingPlan = getTypeOfPlan(user, typeOfPlan, index);
+
+    if(!trainingPlan) { //Routes will hopefully will never be reached
+      return res.status(404).send("Training nicht gefunden!");
+    }
+
+    if (week > trainingPlan.trainingWeeks.length) {
+      return res.status(404).send("Ungültige Woche");
+    }
+
+    const isDeloadWeek = isWeekDeloadWeek(trainingPlan, week);
+    const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, amountOfExercises } = getTrainingPlanInfo(trainingPlan);
+    const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, week - 1); //in order to always directly navigate to the correct training day:
+
+    //the most recent data is displayed then the data from last week and as a fallback the data from the first week - offset by one because of index
+    const trainingWeekData = [];
+    const currentTrainingWeekFatique = [];
+    for (let j = 0; j < amountOfTrainingDays; j++) {
+      trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 1, j));
+      currentTrainingWeekFatique.push(extractFatiqueLevelOfTrainingDay(trainingPlan, week - 1, j));
+    }
+
+    const previousTrainingWeekData = [];
+    if (week >= 2) { // check bounds in order to prevent indexOutOfBounds
+      for (let j = 0; j < amountOfTrainingDays; j++) {
+        previousTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 2, j));
+      }
+    }
+
+    const firstTrainingWeekData = [];
+    for (let j = 0; j < amountOfTrainingDays; j++) {
+      firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
+    }
+
+    const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory, maxFactors } = categorizeExercises(user.exercises);
+
+    const trainingData = user.trainingData.length > 0 ? user.trainingData[0] : {};
+
+    let afterPageIndex = (week + 1) % trainingPlan.trainingWeeks.length;
+    afterPageIndex = afterPageIndex === 0 ? trainingPlan.trainingWeeks.length : afterPageIndex;
+
+    let beforePageIndex = (week - 1) % trainingPlan.trainingWeeks.length;
+    beforePageIndex = beforePageIndex === 0 ? trainingPlan.trainingWeeks.length : beforePageIndex;
+
+    const beforePage = `/training/${typeOfPlan}-${letter}${beforePageIndex}`;
+    const afterPage = `/training/${typeOfPlan}-${letter}${afterPageIndex}`;
+
+    const previousTrainingWeek = (week >= 2) ? trainingPlan.trainingWeeks[week - 2] : {};
+
+
+    res.render("trainingPlans/custom/trainingPlan", {
+
+      userID: user.id,
+      user: user,
+
+      trainingWeek: trainingPlan.trainingWeeks[week - 1], //new generate amount of table colums automatically
+      previousTrainingWeek: previousTrainingWeek,
+      firstTrainingWeek: trainingPlan.trainingWeeks[0],
+
+      trainingWeekData: trainingWeekData,
+      previousTrainingWeekData: previousTrainingWeekData,
+      firstTrainingWeekData: firstTrainingWeekData,
+      currentTrainingWeekFatique: currentTrainingWeekFatique || [], //current training week
+
+      isDeloadWeek: isDeloadWeek,
+      amountOfExercises: amountOfExercises,
+
+      amountOfTrainingDays: amountOfTrainingDays,
+      workoutName: trainingTitle,
+      trainingFrequency: trainingFrequency,
+      trainingPhase: trainingPhase,
+
+      exerciseCategories: exerciseCategories,
+      categorizedExercises: categorizedExercises,
+      categoryPauseTimes: categoryPauseTimes,
+      defaultRepSchemeByCategory: defaultRepSchemeByCategory,
+      maxFactors: maxFactors,
+
+      trainingData: trainingData,
+      squatmev: trainingData.minimumSetsSquat || "",
+      squatmrv: trainingData.maximumSetsSquat || "",
+      benchmev: trainingData.minimumSetsBench || "",
+      benchmrv: trainingData.maximumSetsBench || "",
+      deadliftmev: trainingData.minimumSetsDeadlift || "",
+      deadliftmrv: trainingData.maximumSetsDeadlift || "",
+
+      beforePage: beforePage,
+      afterPage: afterPage,
+      week: week,
+
+      lastTrainingDay: lastTrainingDay,
+
+      typeOfPlan: typeOfPlan,
+      templatePlanName: `${letter}${week}`,
+    });
+  } catch (err) {
+    console.log("Fehler beim Aufrufen der Trainingsseite: " + err);
+  }
+}
+
 //patch training
 export async function patchTrainingPlan(req, res, week, i, isCustom) {
   try {
@@ -620,6 +727,27 @@ export async function patchTrainingPlan(req, res, week, i, isCustom) {
     console.log("Error while patching custom page", err);
     res.status(500).json({ error: `Errro while patching custom page ${err}` });
   }
+}
+
+function getTypeOfPlan(user, typeOfPlan, index) {
+  if (typeOfPlan === "custom") {
+    return user.trainingPlansCustomNew[index];
+  } else if (typeOfPlan === "template") {
+    return user.trainingPlanTemplate[index];
+  } 
+  return null;
+}
+
+// if it is the last week and the user selected the last week is deload option return true else false
+function isWeekDeloadWeek(trainingPlan, week) {
+  if (week === trainingPlan.trainingWeeks.length) {
+    if (trainingPlan.lastWeekDeload === undefined || !trainingPlan.lastWeekDeload) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  return false;
 }
 
 function updateFatiqueLevels(trainingWeek, dayIndex, updatedData) {
@@ -748,4 +876,10 @@ function handleAutomaticProgressionPerExercise(weekIndex, dayIndex, exercise, up
       && exercise) {
         exercise.targetRPE = Math.min(targetRPE + increment, 9);
   }
+}
+
+function extractFatiqueLevelOfTrainingDay(trainingPlan, weekIndex, dayIndex) {
+  const trainingWeek = trainingPlan.trainingWeeks[weekIndex];
+  const trainingDay = trainingWeek.trainingDays[dayIndex];
+  return trainingDay.fatiqueLevel;
 }
