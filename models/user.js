@@ -75,10 +75,13 @@ const userSchema = new mongoose.Schema({
     gender: {
         type: String,
         enum: ["männlich", "weiblich"]
+    }, 
+    colorTheme: {
+        type: String, 
+        default: "theme-dark",
     },
-
-    trainingPlanTemplate: [TrainingPlan.schema], // works so far
-    trainingPlansCustomNew: [TrainingPlan.schema], //also
+    trainingPlanTemplate: [TrainingPlan.schema],
+    trainingPlansCustomNew: [TrainingPlan.schema],
     trainings: [TrainingSchema.schema],
 
     trainingData: [TrainingData.schema], 

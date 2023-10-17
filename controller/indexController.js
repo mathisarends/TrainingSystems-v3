@@ -23,3 +23,20 @@ export async function getIndexPage(req, res) {
 export async function getOfflinePage(req, res) {
     res.render("offline");
 }
+
+export async function setColorTheme(req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status-(404).send("Benutzer nicht gefunden!");
+    }
+
+    const colorTheme = req.body.colorTheme;
+
+    user.colorTheme = colorTheme;
+    await user.save();
+
+  } catch (error) {
+    console.log("Fehler beim patchen des themes aufgetreten", err);
+  }
+}

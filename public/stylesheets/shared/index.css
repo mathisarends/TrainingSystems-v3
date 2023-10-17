@@ -25,6 +25,31 @@
     --ff-sans-normal: "Barlow", sans-serif;
 }
 
+/*die klassen nur zum initialen wechsel*/
+.theme-dark {
+    --clr-dark: 230 35% 7%;
+    --clr-dark-2: 230 35% 9.5%;
+    --clr-light: 231 77% 90%;
+    --clr-white: 0 0% 100%;
+}
+
+.theme-light {
+    --clr-dark: 51 37% 93%;
+    --clr-dark-2: 49 36% 91%;
+    --clr-light: 246 41% 27%;
+    --clr-white: 0 0% 0%;
+}
+
+.visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
 @media (min-width: 35em) {
     :root {
         --fs-800: 5rem;
@@ -622,6 +647,14 @@ select {
     background-image: url("../../images/backgrounds/background-destination-mobile.jpg");
 }
 
+.home-white {
+    background-image: url("../../images/backgrounds/background-technology-mobile-modified.jpg");
+}
+
+.home-alt-white {
+    background-image: url("../../images//backgrounds//background-destination-mobile-modified.jpg");
+}
+
 @media (min-width: 35rem) {
     .home {
         background-size: cover;
@@ -633,6 +666,14 @@ select {
     .home-alt {
         background-position: center center;
         background-image: url("../../images/backgrounds/background-technology-tablet.jpg");
+    }
+
+    .home-white {
+        background-image: url("../../images/backgrounds/background-technology-tablet-modified.jpg");
+    }
+    
+    .home-alt-white {
+        background-image: url("../../images//backgrounds//background-destination-tablet-modified.jpg");
     }
 }
 
@@ -647,6 +688,14 @@ select {
     .home-alt {
         background-position: center center;
         background-image: url("../../images/backgrounds/background-technology-desktop.jpg");
+    }
+
+    .home-white {
+        background-image: url("../../images/backgrounds/background-technology-desktop-modified.jpg");
+    }
+    
+    .home-alt-white {
+        background-image: url("../../images//backgrounds//background-destination-desktop-modified.jpg");
     }
 }
 

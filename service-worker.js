@@ -56,6 +56,7 @@ const assets = [
 
   //js files
   "/javascripts/displayOfflineData.js",
+  "/javascripts/themeSwitcher.js",
   "/javascripts/pwaBanner.js",
   "/javascripts/syncThroughSW.js",
 
