@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     try {
-      const response = await fetch(`${window.location.pathname}`, {
+      const response = await fetch(`${event.target.action}`, {
         method: "PATCH",
         body: JSON.stringify(formDataObject), // Sende das JSON-Objekt
         headers: {

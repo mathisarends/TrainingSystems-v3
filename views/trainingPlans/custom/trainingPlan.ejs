@@ -12,7 +12,6 @@
     <input id="maxFactors" type="hidden" value="<%= JSON.stringify(maxFactors) %> %>">
 
     <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
-    <input id="isDeloadAlreadyHandled" type="hidden" value=<%= isDeloadAlreadyHandled %>>
 
     <% for (let i=0; i < exerciseCategories.length; i++) { %>
         <% const category=exerciseCategories[i]; %>
@@ -291,10 +290,26 @@
                                             <%- include("../../partials/trainingPage/javascripts") %>
 
                                             <% if (isDeloadWeek) { %>
-                                                <div class="flex" style="justify-content: center;">
+
+                                                <div id="show-deload" class="flex text-accent" style="justify-content: center;">  
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                                                </div>
+                                                
+                                                <div id="auto-deload-container" class="flex" style="justify-content: center; display: none">
                                                     <button class="plan-deload-button main-page-button uppercase ff-sans-normal"> Deload Planen</button>
                                                 </div>
                                             <% } %>
+
+                                            <% if (week === 1) { %>
+                                                <div id="show-autoprogression" class="flex text-accent" style="justify-content: center;">  
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                                                </div>
+
+                                                <div id="auto-progression-container" class="flex" style="justify-content: center; display: none;">
+                                                    <button class="plan-automatic-progression-button main-page-button uppercase ff-sans-normal">Progression planen?</button>
+                                                </div>
+                                                <% } %>
+                                            
 
 
                                                 <div class="dot-indicators flex"
@@ -314,7 +329,7 @@
 <div id="deloadModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
     <div class="modal-content flow" style="--flow-space: 0.5em;">
         <input class="fs-700" type="text" readonly value="DELOAD PLANEN">
-        <input class="fs-400" type="text" readonly value="Dein Plan sollte fertig aufgesetzt sein" style="margin-top: 0.75rem;">
+        <input class="fs-400" type="text" readonly value="Dein Plan sollte fertig aufgesetzt sein!" style="margin-top: 0.75rem;">
         <input class="fs-400" type="text" readonly value="Satzahlen/RPE werden angepasst!">
         <div class="modal-buttons">
             <button class="modal-button text-accent" id="handle-deload-button">PLANEN</button>

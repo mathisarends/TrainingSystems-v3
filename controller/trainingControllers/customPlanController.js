@@ -51,7 +51,6 @@ export async function getCreateTrainingPlan(req, res) {
       const trainingPlanFrequency = trainingPlanData.training_frequency;
       const trainingPlanWeeks = trainingPlanData.training_weeks;
       const lastWeekDeload = trainingPlanData.isLastWeekDeload;
-      const automaticProgression = trainingPlanData.automaticProgression;
       const lastWeekDeloadHandled = false;
   
       const lastUpdated = new Date();
@@ -70,7 +69,6 @@ export async function getCreateTrainingPlan(req, res) {
         lastWeekDeload: lastWeekDeload,
         lastWeekDeloadHandled: lastWeekDeloadHandled,
         trainingWeeks: trainingWeeks,
-        automaticProgression: automaticProgression,
       });
   
       user.trainingPlansCustomNew.push(newTrainingPlan);
@@ -113,7 +111,7 @@ export async function getCreateTrainingPlan(req, res) {
       }
   
       const trainingPlan = user.trainingPlansCustomNew[i];
-      const isDeloadAlreadyHandled = trainingPlan.lastWeekDeloadHandled;
+      const isDeloadWeekHandled = trainingPlan.lastWeekDeloadHandled;
       const trainingPlanId = trainingPlan._id.toString();
   
       if(!trainingPlan) { //Routes will hopefully will never be reached
@@ -190,6 +188,7 @@ export async function getCreateTrainingPlan(req, res) {
         currentTrainingWeekFatique: currentTrainingWeekFatique || [], //current training week
 
         isDeloadWeek: isDeloadWeek,
+        isDeloadWeekHandled: isDeloadWeekHandled,
         amountOfExercises: amountOfExercises,
   
         amountOfTrainingDays: amountOfTrainingDays,
@@ -203,7 +202,6 @@ export async function getCreateTrainingPlan(req, res) {
         defaultRepSchemeByCategory: defaultRepSchemeByCategory,
         maxFactors: maxFactors,
         trainingPlanId: trainingPlanId,
-        isDeloadAlreadyHandled: isDeloadAlreadyHandled,
   
         trainingData: trainingData,
         squatmev: trainingData.minimumSetsSquat || "",

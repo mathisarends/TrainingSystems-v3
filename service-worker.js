@@ -16,12 +16,22 @@ const imageAssets = [
   "/manifest/icon-384x384.png",
   "/manifest/icon-512x512.png",
 
+  //dark mode
   "/images/backgrounds/background-destination-desktop.jpg",
   "/images/backgrounds/background-destination-mobile.jpg",
   "/images/backgrounds/background-destination-tablet.jpg",
   "/images/backgrounds/background-technology-desktop.jpg",
   "/images/backgrounds/background-technology-mobile.jpg",
   "/images/backgrounds/background-technology-tablet.jpg",
+
+  //white mode
+  "/images/backgrounds/background-destination-desktop-modified.jpg",
+  "/images/backgrounds/background-destination-mobile-modified.jpg",
+  "/images/backgrounds/background-destination-tablet-modified.jpg",
+  "/images/backgrounds/background-technology-desktop-modified.jpg",
+  "/images/backgrounds/background-technology-mobile-modified.jpg",
+  "/images/backgrounds/background-technology-tablet-modified.jpg",
+
 ];
 
 const assets = [
@@ -81,6 +91,7 @@ const assets = [
   "/javascripts/trainingPage/changeTitleAjax.js",
   "/javascripts/trainingPage/addNewExercise.js",
   "/javascripts/trainingPage/weightInput.js",
+  "/javascripts/trainingPage/automaticProgression.js",
 
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",

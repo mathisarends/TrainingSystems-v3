@@ -648,4 +648,104 @@ function findMaxExerciseNumber(trainingDayNumber, updatedData) {
   return exerciseCount;
 }
 
-// is deload week more generice machen
+export async function handleWeeklyProgression(req, res, week, index, isCustom) {
+  //typeOfPlan === custom || template
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+
+    const updatedData = req.body;
+    const trainingPlan = isCustom
+      ? user.trainingPlansCustomNew[index]
+      : user.trainingPlanTemplate[index]; // Je nach isCustom den richtigen Trainingsplan auswählen
+
+    trainingPlan.lastUpdated = new Date(); //save timestamp
+
+    const trainingWeek = trainingPlan.trainingWeeks[week - 1];
+
+    updateVolumeMarkers(updatedData, trainingWeek);
+
+    for (let i = 0; i < trainingWeek.trainingDays.length; i++) {
+      const trainingDay = trainingWeek.trainingDays[i];
+      updateFatiqueLevels(trainingWeek, i, updatedData);
+
+      const updatedExercisesPerDay = findMaxExerciseNumber(i + 1, updatedData);
+
+      // wurde eine neue übung hinzugefügt oder sogar entfernt?
+      const amountOfExercises =
+        updatedExercisesPerDay > trainingDay.exercises.length
+          ? updatedExercisesPerDay - 1
+          : trainingDay.exercises.length - 1;
+
+      // rückwärts drüber iterieren wegen löschen
+      for (let j = amountOfExercises; j >= 0; j--) {
+        const exercise = trainingDay.exercises[j];
+        updateExerciseDetails(
+          trainingDay,
+          exercise,
+          updatedData,
+          i,
+          j,
+          trainingDay.exercises
+        );
+      }
+    }
+
+    await user.save();
+    // first part save training data regularly
+
+    trainingPlan.trainingWeeks.forEach((trainingWeek, weekIndex) => {
+      if (weekIndex !== 0) { //erste woche wird nicht weiter betrachtet für die progression
+        trainingWeek.trainingDays.forEach((trainingDay, dayIndex) => {
+          trainingPlan.trainingWeeks[0].trainingDays[dayIndex].exercises.forEach((exercise, exerciseIndex) => { //von der ersten trainingswoche betrachten wir jeden tag eizeln:
+            
+            if (!trainingDay.exercises[exerciseIndex]) { //wenn dieser wert für den trainingstag aus der aktuellen woche nicht definiert ist 
+                                                        // kopiere die relevanten informationen in diese object damit geupdated werden kann
+              trainingDay.exercises[exerciseIndex] = copyRelevantExerciseDetails(exercise);
+            }
+            handleAutomaticProgressionPerExercise(weekIndex, dayIndex, trainingDay.exercises[exerciseIndex], updatedData, exerciseIndex);
+          })
+        });
+      }
+    });
+
+    await user.save();
+
+    res.status(200).json({});
+  } catch (err) {
+    console.log("Error while patching custom page", err);
+    res.status(500).json({ error: `Errro while patching custom page ${err}` });
+  }
+}
+
+function copyRelevantExerciseDetails(exercise) {
+
+  const newExerciseObject = {};
+  
+  newExerciseObject.category = exercise.category;
+  newExerciseObject.exercise = exercise.exercise;
+  newExerciseObject.sets = exercise.sets;
+  newExerciseObject.reps = exercise.reps;
+  newExerciseObject.targetRPE = exercise.targetRPE;
+
+  return newExerciseObject;
+}
+
+function handleAutomaticProgressionPerExercise(weekIndex, dayIndex, exercise, updatedData, exerciseIndex) {
+  const fieldPrefix = `day${dayIndex + 1}_exercise${exerciseIndex + 1}_`;
+
+  let increment = parseFloat(weekIndex * 0.5);
+
+  const categoryValue = updatedData[`${fieldPrefix}category`];
+  const exerciseCategory = exercise.category;
+  const targetRPE = parseFloat(updatedData[`${fieldPrefix}targetRPE`]); //always take it from the data send which is the first week:
+
+
+  if ((categoryValue === exerciseCategory) && 
+      (categoryValue === "Squat" ||categoryValue === "Bench" || categoryValue === "Deadlift") 
+      && exercise) {
+        exercise.targetRPE = Math.min(targetRPE + increment, 9);
+  }
+}

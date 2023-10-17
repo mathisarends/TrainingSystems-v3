@@ -36,6 +36,7 @@ import {
 
 import {
   getStatisticPage,
+  handleWeeklyProgression,
   patchTrainingPlan,
 } from "../controller/trainingControllers/sharedFunctionality.js"
 
@@ -68,6 +69,11 @@ customTemplateLetters.forEach((letter, index) => {
 })
 
 customTemplateLetters.forEach((letter, index) => {
+  const routePath = `/custom-${letter}-automaticProgression`;
+  router.get(routePath, checkAuthenticated, (req, res) => getCustomEditPage(req, res, index, letter));
+})
+
+customTemplateLetters.forEach((letter, index) => {
   const routePath = `/custom-${letter}-edit`;
   router.get(routePath, checkAuthenticated, (req, res) => getCustomEditPage(req, res, index, letter));
 })
@@ -82,25 +88,17 @@ customTemplateLetters.forEach((letter, index) => {
   router.get(routePath, checkAuthenticated, (req, res) => getStatisticPage(req, res, index)) //TODO:
 })
 
-router.get("/isLastWeekDeloadHandled/:trainingPlanId", async (req, res) => {
-  try {
-    const trainingPlanId = req.params.trainingPlanId;
-
-    const trainingPlan = await TrainingPlan.findById(trainingPlanId);
-
-    if (!trainingPlan) {
-      return res.status(404).json({ error: "Training plan not found "});
-    }
-
-    const lastWeekDeloadHandled = trainingPlan.lastWeekDeloadHandled;
-    res.status(200).json({ lastWeekDeloadHandled });
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
+//route ist nur für die erste woche gültig
+customTemplateLetters.forEach((letter, index) => {
+    const week = 1;
+    const routePath = `/custom-${letter}-progression`;
+    const isCustom = true;
+    router.patch(routePath, checkAuthenticated, (req, res) => handleWeeklyProgression(req, res, week, index, isCustom));
 })
 
-/* TEMPLATE PLANS */
 
+
+/* TEMPLATE PLANS */
 templateLetters.forEach((letter, index) => {
   for (let week = 1; week <= maxWeeks; week++) {
     const routePath = `/template-${letter}${week}`;
@@ -114,6 +112,13 @@ templateLetters.forEach((letter, index) => {
     const routePath = `/template-${letter}${week}`;
     router.patch(routePath, checkAuthenticated, (req, res) => patchTrainingPlan(req, res, week, index, false)); //false wegen !custom
   }
+})
+
+customTemplateLetters.forEach((letter, index) => {
+  const week = 1;
+  const routePath = `/template-${letter}-progression`;
+  const isCustom = false;
+  router.patch(routePath, checkAuthenticated, (req, res) => handleWeeklyProgression(req, res, week, index, isCustom));
 })
 
 templates.forEach((letter, index) => {

@@ -38,26 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
     let startX;
     let endX;
 
-    workoutTable.forEach((workoutTable, index) => {
+    const body = document.querySelector("body");
 
-        workoutTable.addEventListener("touchstart", (e) => {
-            startX = e.touches[0].clientX;
-        });
+    body.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+    });
 
-        workoutTable.addEventListener("touchend", e => {
-            endX = e.changedTouches[0].clientX;
-    
-            const swipeThreshold = 110;
-    
-            if (startX - endX > swipeThreshold) {
-                navigateToNextDay();             // Swipe left, navigate to the next day
-            } else if (endX - startX > swipeThreshold) {
-                navigateToPreviousDay();             // Swipe right, navigate to the previous day
-            }
-        })
+    body.addEventListener("touchend", e => {
+        endX = e.changedTouches[0].clientX;
 
+        const swipeThreshold = 100;
+
+        if (startX - endX > swipeThreshold) {
+            navigateToNextDay();             // Swipe left, navigate to the next day
+        } else if (endX - startX > swipeThreshold) {
+            navigateToPreviousDay();             // Swipe right, navigate to the previous day
+        }
     })
-
 
     function navigateToNextDay() {
         const selectedButton = document.querySelector(".dot-indicators button[aria-selected='true']");

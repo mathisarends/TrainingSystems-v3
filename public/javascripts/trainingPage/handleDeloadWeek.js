@@ -1,32 +1,42 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
-    const planDeloadButtons = document.querySelectorAll(".plan-deload-button");
-    planDeloadButtons.forEach((button) => {
-        button.addEventListener("click", e => {
-            e.preventDefault();
-            const deloadModal = document.getElementById("deloadModal");
-
-            const handleDeloadButton = document.getElementById("handle-deload-button");
-            const hideModalButton = document.getElementById("hide-modal-button");
-
-            handleDeloadButton.addEventListener("click", e => {
-                e.preventDefault();
-
-                handleDeloadWeekChanges();
-
-                deloadModal.style.display = "none";
-                window.scrollTo(0, 0);
-
-            })
-
-            hideModalButton.addEventListener("click", e => {
-                e.preventDefault();
-                deloadModal.style.display = "none";
-            })
-
-            deloadModal.style.display = "block";
-        })
+  const showDeloadButton = document.getElementById("show-deload");
+  if (showDeloadButton) {
+    showDeloadButton.addEventListener("click", e => {
+        e.preventDefault();
+        document.getElementById("auto-deload-container").style.display = "flex";
+        showDeloadButton.style.display = "none";
     })
+  }
+
+  const planDeloadButton = document.querySelector(".plan-deload-button");
+  
+  if (planDeloadButton) {
+    planDeloadButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      const deloadModal = document.getElementById("deloadModal");
+  
+      const handleDeloadButton = document.getElementById("handle-deload-button");
+      const hideModalButton = document.getElementById("hide-modal-button");
+  
+      handleDeloadButton.addEventListener("click", (e) => {
+        e.preventDefault();
+  
+        handleDeloadWeekChanges();
+  
+        deloadModal.style.display = "none";
+        window.scrollTo(0, 0);
+      });
+  
+      hideModalButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        deloadModal.style.display = "none";
+      });
+  
+      deloadModal.style.display = "block";
+    });
+  }
+
 
   function handleDeloadWeekChanges() {
     const trainingTableRows = document.querySelectorAll(
@@ -62,15 +72,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!firstNoteInputOfDay.value.includes("DELOAD")) {
         firstNoteInputOfDay.value = "DELOAD";
       }
-
     });
 
     sendDeloadChangesToServer();
   }
 
   function sendDeloadChangesToServer() {
-
-    const lastWeekDeloadHandledInput = document.getElementById("lastWeekDeloadHandled");
+    const lastWeekDeloadHandledInput = document.getElementById(
+      "lastWeekDeloadHandled"
+    );
     lastWeekDeloadHandledInput.disabled = false;
 
     const form = document.querySelector("form");
