@@ -4,10 +4,10 @@
 
 :root {
     /* colors */
-    --clr-dark: 230 35% 7%;
+/*     --clr-dark: 230 35% 7%;
     --clr-dark-2: 230 35% 9.5%;
     --clr-light: 231 77% 90%;
-    --clr-white: 0 0% 100%;
+    --clr-white: 0 0% 100%; */
 
     /* font-sizes */
     --fs-900: clamp(5rem, 8vw + 1rem, 9.375rem);
@@ -25,8 +25,26 @@
     --ff-sans-normal: "Barlow", sans-serif;
 }
 
+html[data-theme="dark"] {
+    --clr-dark: 230 35% 7%;
+    --clr-dark-2: 230 35% 9.5%;
+    --clr-light: 231 77% 90%;
+    --clr-white: 0 0% 100%;
+}
+
+html[data-theme="light"] {
+    --clr-dark: 51 37% 93%;
+    --clr-dark-2: 49 36% 91%;
+    --clr-light: 246 41% 27%;
+    --clr-white: 0 0% 0%;
+}
+
+html {
+    background-color: hsl(var(--clr-dark));
+}
+
 /*die klassen nur zum initialen wechsel*/
-.theme-dark {
+/* .theme-dark {
     --clr-dark: 230 35% 7%;
     --clr-dark-2: 230 35% 9.5%;
     --clr-light: 231 77% 90%;
@@ -38,7 +56,7 @@
     --clr-dark-2: 49 36% 91%;
     --clr-light: 246 41% 27%;
     --clr-white: 0 0% 0%;
-}
+} */
 
 .visually-hidden {
     clip: rect(0 0 0 0);
@@ -113,7 +131,7 @@ body {
     font-family: var(--ff-sans-normal);
     font-size: var(--fs-400);
     color: hsl(var(--clr-white));
-    background-color: hsl(var(--clr-dark));
+    /* background-color: hsl(var(--clr-dark)); */
     line-height: 1.5;
     min-height: 100vh;
 
@@ -648,10 +666,16 @@ select {
 }
 
 .home-white {
+    background-size: contain;
+    background-repeat: repeat;
+    background-position: center top;
     background-image: url("../../images/backgrounds/background-technology-mobile-modified.jpg");
 }
 
 .home-alt-white {
+    background-size: cover;
+    background-repeat: repeat;
+    background-position: bottom center;
     background-image: url("../../images//backgrounds//background-destination-mobile-modified.jpg");
 }
 
@@ -669,10 +693,14 @@ select {
     }
 
     .home-white {
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
         background-image: url("../../images/backgrounds/background-technology-tablet-modified.jpg");
     }
     
     .home-alt-white {
+        background-position: center center;
         background-image: url("../../images//backgrounds//background-destination-tablet-modified.jpg");
     }
 }
@@ -691,10 +719,14 @@ select {
     }
 
     .home-white {
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
         background-image: url("../../images/backgrounds/background-technology-desktop-modified.jpg");
     }
     
     .home-alt-white {
+        background-position: center center;
         background-image: url("../../images//backgrounds//background-destination-desktop-modified.jpg");
     }
 }

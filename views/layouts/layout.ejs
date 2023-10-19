@@ -11,19 +11,19 @@
         href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
         rel="stylesheet">
     <title>TYR</title>
+    <script src="/javascripts/themeSwitcher.js"></script>
     <link rel="stylesheet" href="/stylesheets/main.css">
     <link rel="manifest" href="/manifest/manifest.webmanifest">
     <script src="/javascripts/header/header.js" defer></script>
 </head>
 
-<body class="home">
+<body>
     <%- include("../partials/header.ejs") %>
         <%- body %> <!-- Hier wird der eigentliche Inhalt der gerenderten Seite eingefügt -->
     
         <%- include("../partials/offlineModal.ejs") %>
         <!--jede seite schickt ihren online status an den aktiven service worker | auch bei wechsel -->
         <script src="/javascripts/displayOfflineData.js"></script>
-        <script src="/javascripts/themeSwitcher.js"></script>
 </body>
 
 

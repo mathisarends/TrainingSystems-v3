@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const handleAutomaticProgressionButton = document.querySelector(".plan-automatic-progression-button");
 
-    handleAutomaticProgressionButton.addEventListener("click", e => {
+    handleAutomaticProgressionButton?.addEventListener("click", e => {
         e.preventDefault();
         
         const confirmationModal = document.getElementById("deloadModal");
