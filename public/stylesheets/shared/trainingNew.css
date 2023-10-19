@@ -17,7 +17,7 @@
 
 .custom-training-container,
 .stats-container {
-    border: 1px solid hsl( var(--clr-light) / 0.35 );
+    border: 1px solid hsl( var(--clr-light) / 1 );
     padding: 2rem 0.5rem 0.5rem;
     flex-grow: 1;
     width: 100%;
@@ -64,7 +64,7 @@
 .custom-training-container:nth-of-type(3n + 1) {
     background-color: hsl( var(--clr-dark));
     color: hsl( var(--clr-white));
-    border-color: white;
+    border-color: hsl( var(--clr-white));
 }
 
 .custom-training-container:nth-of-type(3n + 2) {

@@ -200,6 +200,12 @@ table .table-row td:last-of-type {
         color: hsl( var(--clr-white) / 0.9125) !important;
     }
 
+    html[data-theme="light"] table input,
+    html[data-theme="light"] table select,
+    html[data-theme="light"] table td::before {
+        color: hsl( var(--clr-white) / 1) !important;
+    }
+
     tr {
         background-color: hsl( var(--clr-dark-2) / 0.675);
     }
