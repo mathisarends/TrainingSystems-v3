@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("display offline data");
   const url = window.location.href;
 
+  const actionUrl = document.querySelector("form")?.action;
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then(function (registration) {
       if (registration.active) {
@@ -13,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const userID = userIDInput.value;
           registration.active.postMessage({
             command: "getOfflineData",
-            url: `${window.location.href}`,
+            url: `${actionUrl || window.location.href}`,
             user: userID,
           });
         }

@@ -372,6 +372,7 @@ self.addEventListener("message", (event) => {
     const userID = message.user;
 
     console.log("userID", userID);
+    console.log(url);
     console.log("isSynced", isSynced);
 
     // is synced flag not used anymore because entries are deleted then synced_
