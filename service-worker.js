@@ -100,6 +100,7 @@ const assets = [
   "/javascripts/trainingPage/addNewExercise.js",
   "/javascripts/trainingPage/weightInput.js",
   "/javascripts/trainingPage/automaticProgression.js",
+  "/javascripts/trainingPage/editTrainingPage.js",
 
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
