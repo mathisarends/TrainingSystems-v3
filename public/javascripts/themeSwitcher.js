@@ -23,6 +23,17 @@ const setPreference = () => {
   reflectPreference();
 };
 
+const updateManifest = (theme) => {
+  const manifestLink = document.getElementById("manifest-theme-link");
+  const manifest = {
+    ...manifestLink,
+    href: theme === "light" ? "/manifest/manifest.webmanifest" : "/manifest/manifest`_light.webmanifest"
+  }
+  Object.keys(manifest).forEach((key) => {
+    manifestLink.setAttribute(key, manifest[key]);
+  })
+}
+
 const reflectPreference = () => {
   document.firstElementChild.setAttribute("data-theme", theme.value);
 
@@ -33,6 +44,8 @@ const reflectPreference = () => {
     document.firstElementChild.classList.remove("home");
     document.firstElementChild.classList.add("home-white");
   }
+
+  updateManifest(theme.value);
 
   document
     .querySelector("#theme-toggle")
@@ -60,8 +73,8 @@ window.onload = () => {
   // sync with system cahnges
   window
     .matchMedia("(prefers-color-schema: dark)")
-    .addEventListener("change", ({ matches: isDark }) => {
-      theme.value = isDark ? "dark" : "light";
+    .addEventListener("change", ({ matches: isLight }) => {
+      theme.value = isLight ? "light" : "dark";
       setPreference();
     });
 };

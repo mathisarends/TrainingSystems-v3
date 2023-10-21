@@ -11,10 +11,17 @@ let defaultNetworkMode = true; //true = default behaviour, false = offline mode 
 
 const imageAssets = [
   "/manifest/manifest.webmanifest",
+  "/manifest/manifest_light.webmanifest",
+
   "/manifest/icon-192x192.png",
   "/manifest/icon-256x256.png",
   "/manifest/icon-384x384.png",
   "/manifest/icon-512x512.png",
+
+  "/manifest/icon-192x192-modified.png",
+  "/manifest/icon-256x256-modified.png",
+  "/manifest/icon-384x384-modified.png",
+  "/manifest/icon-512x512-modified.png",
 
   //dark mode
   "/images/backgrounds/background-destination-desktop.jpg",

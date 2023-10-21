@@ -1,0 +1,32 @@
+{
+    "theme_color": "hsl(51 37% 93%)",
+    "background_color": "hsl(51 37% 93%)",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "name": "Training Systems",
+    "short_name": "TS",
+    "description": "Eine App um deinen Trainingsfortschritt aufzuzeichnen",
+    "icons": [
+        {
+            "src": "./icon-192x192-modified.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./icon-256x256-modified.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "./icon-384x384-modified.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "./icon-512x512-modified.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
