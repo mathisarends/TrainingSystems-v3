@@ -10,10 +10,10 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
         rel="stylesheet">
+    <link id="manifest-theme-link" rel="manifest" href="/manifest/manifest.webmanifest">
     <script src="/javascripts/themeSwitcher.js"></script>
     <link rel="stylesheet" href="/stylesheets/shared/index.css">
     <link rel="stylesheet" href="/stylesheets/login.css">
-    <link rel="manifest" href="/manifest/manifest.webmanifest">
     <title>Trainingsplan erstellen</title>
 </head>
 
@@ -64,11 +64,21 @@
                 <option value="peaking">Peaking</option>
             </select>
 
+            <label for="weightPlaceholders" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Gewichtsempfehlungen</label>
+            <select name="weightPlaceholders" class="generic-selector" required>
+                <option selected value="" disabled hidden></option>
+                <option value="basedOnMax">basierend auf Rechenmax</option>
+                <option value="basedOnLastWeek">basierend auf letzter Trainingswoche</option>
+                <option value="off">keine Gewichtsempfehlungen</option>
+            </select>
+
             <label for="isLastWeekDeload" class="ff-sans-normal letter-spacing-4 text-accent fs-400">Automatischer Deload-Planer in der letzten Woche? (empfohlen)</label>
             <select name="isLastWeekDeload" class="generic-selector" required>
                 <option selected value="true">Ja</option>
                 <option value="false">Nein</option>
             </select>
+
+
 
             <button type="submit" class="form-button uppercase" style="margin-top: 1.5rem;">Create</button>
 

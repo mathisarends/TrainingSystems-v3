@@ -14,6 +14,7 @@ import NewTrainingPlan from "./trainingPlanSchema.js";
       lastWeekDeload: true,
       lastWeekDeloadHandled: false,
       trainingWeeks: trainingWeeks,
+      weightPlaceholders: "basedOnMax",
   
     })
     return templateTrainingPlan;
@@ -31,7 +32,8 @@ import NewTrainingPlan from "./trainingPlanSchema.js";
       lastUpdated: curDate,
       lastWeekDeload: true,
       lastWeekDeloadHandled: false,
-      trainingWeeks: trainingWeeks
+      trainingWeeks: trainingWeeks,
+      weightPlaceholders: "basedOnMax",
     })
     return templateTrainingPlan;
   }

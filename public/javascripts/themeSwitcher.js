@@ -27,7 +27,7 @@ const updateManifest = (theme) => {
   const manifestLink = document.getElementById("manifest-theme-link");
   const manifest = {
     ...manifestLink,
-    href: theme === "light" ? "/manifest/manifest.webmanifest" : "/manifest/manifest`_light.webmanifest"
+    href: theme === "light" ? "/manifest/manifest.webmanifest" : "/manifest/manifest_light.webmanifest"
   }
   Object.keys(manifest).forEach((key) => {
     manifestLink.setAttribute(key, manifest[key]);

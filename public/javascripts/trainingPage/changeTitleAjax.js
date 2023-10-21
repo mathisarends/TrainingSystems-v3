@@ -2,20 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // changes the title of the training edit page while not refreshing - used in order to catch fetch events in service worker
 
-    const backToTrainingPageBTN = document.querySelectorAll(".form-button")[1];
-
-    backToTrainingPageBTN.addEventListener("click", e => { //simply navigates back to training
-        e.preventDefault();
-        window.location.href = "/training";
-    })
-
-    const submitButton = document.querySelector(".form-button");
-
+    const submitButton = document.getElementById("submit-button");
     submitButton.addEventListener("click", e => {
         e.preventDefault();
         form.dispatchEvent(new Event("submit"));
     })
-
 
     const form = document.querySelector("form");
 
@@ -29,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         try {
-            const response = await fetch(`${window.location.pathname}`, {
+            const response = await fetch(`${form.action}`, {
                 method: "PATCH",
                 body: JSON.stringify(formDataObject), // send json object
                 headers: {

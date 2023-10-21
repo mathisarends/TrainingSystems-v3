@@ -46,6 +46,7 @@ export async function getCreateTrainingPlan(req, res) {
       const trainingPlanFrequency = trainingPlanData.training_frequency;
       const trainingPlanWeeks = trainingPlanData.training_weeks;
       const lastWeekDeload = trainingPlanData.isLastWeekDeload;
+      const weightPlaceholders = trainingPlanData.weightPlaceholders;
       const lastWeekDeloadHandled = false;
   
       const lastUpdated = new Date();
@@ -64,7 +65,11 @@ export async function getCreateTrainingPlan(req, res) {
         lastWeekDeload: lastWeekDeload,
         lastWeekDeloadHandled: lastWeekDeloadHandled,
         trainingWeeks: trainingWeeks,
+        weightPlaceholders: weightPlaceholders,
       });
+
+      console.log(weightPlaceholders);
+      console.log(newTrainingPlan.weightPlaceholders);
   
       user.trainingPlansCustomNew.push(newTrainingPlan);
       user.trainingPlansCustomNew.sort((a, b) => b.lastUpdated - a.lastUpdated); // sorts by date descending
@@ -111,8 +116,8 @@ export async function getCreateTrainingPlan(req, res) {
         return res.status(404).send("Training nicht gefunden!");
       }
   
-      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, lastWeekDeload } = getTrainingPlanInfo(trainingPlan);
-  
+      const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, lastWeekDeload, weightPlaceholders } = getTrainingPlanInfo(trainingPlan);
+
       const blockLength = getAmountOfTrainingWeeks(trainingPlan);
   
       // JUMP TODO: hier das gerenderte Tempalte ändern
@@ -125,6 +130,7 @@ export async function getCreateTrainingPlan(req, res) {
         trainingPhase: trainingPhase,
         lastWeekDeload: lastWeekDeload,
         blockLength: blockLength,
+        weightPlaceholders: weightPlaceholders,
         templatePlanName: `custom-${letter}`, //for posting to the right path
       });
     } catch (err) {
@@ -152,6 +158,7 @@ export async function getCreateTrainingPlan(req, res) {
       const newTrainingPhase = req.body.training_phase;
       const isLastWeekDeload = req.body.isLastWeekDeload;
       const newBlockLength = req.body.block_length;
+      const weightPlaceholders = req.body.weightPlaceholders;
   
       // wenn es änderungen gibt dann aktualiseren
       if (trainingPlan.title !== newTitle) {
@@ -166,6 +173,10 @@ export async function getCreateTrainingPlan(req, res) {
 
       if (trainingPlan.lastWeekDeload !== isLastWeekDeload) {
         trainingPlan.lastWeekDeload = isLastWeekDeload;
+      }
+
+      if (trainingPlan.weightPlaceholders !== weightPlaceholders) {
+        trainingPlan.weightPlaceholders = weightPlaceholders;
       }
 
       const currentBlockLength = trainingPlan.trainingWeeks.length

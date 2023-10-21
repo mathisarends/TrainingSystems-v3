@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // hier jegliche logik aus ajaxAutoSave reintuen die mit den weight inputs und recommandations zu tun hat.
 
     const url = window.location.href;
+    const weightPlaceholderStrategy = document.getElementById("weightPlaceholderStrategry").value || "default"; //default fallback for session
+    console.log(weightPlaceholderStrategy);
 
     const form = document.querySelector("form");
     const maxFactorsInput = document.getElementById('maxFactors');
@@ -31,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const category = row.querySelector(".exercise-category-selector").value;
         const weightInput = row.querySelector(".weight");
     
-        if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInput.value) {
+        if ((category === "Squat" || category === "Bench" || category === "Deadlift") && !weightInput.value && weightInput.placeholder === "" && weightPlaceholderStrategy !== "off") {
           const exerciseName = row.querySelector('.exercise-name-selector:not([style*="display: none"])').value;
           const maxAdjustmentFactor = maxFactors[exerciseName];
     
@@ -56,10 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const upperLimit = result + 2.5;
             const resultString = lowerLimit + "-" + upperLimit;
     
-            // wenn wird uns nicht im session mode befinden oder wenn wir uns in diesem befinden der gerenderte weight placeholder aber "" ist
-            if (!url.includes("session-train") || (url.includes("session-train") && weightInput.placeholder === "")) {
-              weightInput.placeholder = resultString;
-            }
+            weightInput.placeholder = resultString;
     
           }
         }

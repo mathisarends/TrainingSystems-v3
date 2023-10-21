@@ -9,6 +9,7 @@ export function getTrainingPlanInfo(trainingPlan) {
     trainingPlan.trainingWeeks[0].trainingDays.length;
   const amountOfExercises = trainingPlan.exercisesPerDay;
   const lastWeekDeload = trainingPlan.lastWeekDeload;
+  const weightPlaceholders = trainingPlan.weightPlaceholders;
 
   return {
     trainingTitle,
@@ -17,6 +18,7 @@ export function getTrainingPlanInfo(trainingPlan) {
     amountOfTrainingDays,
     amountOfExercises,
     lastWeekDeload,
+    weightPlaceholders
   };
 }
 
@@ -571,6 +573,7 @@ export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan)
     }
 
     const trainingPlan = getTypeOfPlan(user, typeOfPlan, index);
+    const weightPlaceholders = trainingPlan.weightPlaceholders;
 
     if(!trainingPlan) { //Routes will hopefully will never be reached
       return res.status(404).send("Training nicht gefunden!");
@@ -635,6 +638,7 @@ export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan)
       currentTrainingWeekFatique: currentTrainingWeekFatique || [], //current training week
 
       isDeloadWeek: isDeloadWeek,
+      weightPlaceholders: weightPlaceholders,
       amountOfExercises: amountOfExercises,
 
       amountOfTrainingDays: amountOfTrainingDays,

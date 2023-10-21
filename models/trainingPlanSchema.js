@@ -12,7 +12,11 @@ const trainingPlanSchema = new mongoose.Schema({
   lastUpdated: Date,
   automaticProgression: Boolean, //new entry for automatic progression in main exercises over the weeks
   lastWeekDeload: Boolean,
-  lastWeekDeloadHandled: Boolean,
+  lastWeekDeloadHandled: Boolean, //legacy could be removed?
+  weightPlaceholders: { //new implement this in edit and create route
+    type: String, 
+    enum: ["basedOnMax", "basedOnLastWeek", "off"]
+  },
   trainingWeeks: [
     {
       trainingDays: [

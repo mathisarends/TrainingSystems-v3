@@ -9,6 +9,7 @@
     <input id="userMaxSquat" type="hidden" name="maxSquat" value="<%= user.maxSquat %>">
     <input id="userMaxBench" type="hidden" name="maxBench" value="<%= user.maxBench %>">
     <input id="userMaxDeadlift" type="hidden" name="maxDeadlift" value="<%= user.maxDeadlift %>">
+    <input id="weightPlaceholderStrategry" type="hidden" value="<%= weightPlaceholders %>">
     <input id="maxFactors" type="hidden" value="<%= JSON.stringify(maxFactors) %> %>">
 
     <input id="isDeloadWeek" type="hidden" value="<%= isDeloadWeek %>">
@@ -127,6 +128,22 @@
                                                                                         selectedNotes=trainingWeekData[i].exercises[k]?.notes
                                                                                         || "" ; %>
 
+                                                                                    <!-- gets lastTrainingWeek weights as a reference if the setting is basedOnLastWeek and the exercise data matches -->
+                                                                                    <% const getTrainingWeightAndRPEFromLastWeek = () => { %>
+                                                                                        <% if (((selectedCategory === previousTrainingWeekData[i]?.exercises[k]?.category 
+                                                                                        && selectedExercise === previousTrainingWeekData[i]?.exercises[k]?.exercise
+                                                                                        && selectedReps === previousTrainingWeekData[i]?.exercises[k]?.reps) ||
+                                                                                        (!trainingWeekData[i].exercises[k]?.category 
+                                                                                        && !trainingWeekData[i].exercises[k]?.exercise
+                                                                                        && !trainingWeekData[i].exercises[k]?.sets
+                                                                                        && !trainingWeekData[i]?.exercises[k]?.reps)) && weightPlaceholders === "basedOnLastWeek"
+                                                                                        ) { %>
+                                                                                            <% return true %>
+                                                                                        <% } else { %>
+                                                                                            <% return false %>
+                                                                                            <% } %>
+                                                                                        <% } %>
+
                                                                                         <tr
                                                                                             class="table-row mainExercise">
                                                                                             <td data-cell="category">
@@ -199,11 +216,14 @@
                                                                                                     name="day<%=i + 1%>_exercise<%=k + 1%>_reps"
                                                                                                     value="<%= selectedReps %>">
                                                                                             </td>
+                                                                                            <% const lastWeekWeight = getTrainingWeightAndRPEFromLastWeek() ? previousTrainingWeekData[i]?.exercises[k]?.weight : "" %>
                                                                                             <td data-cell="weight">
                                                                                                 <input type="text"
                                                                                                     class="weight"
                                                                                                     name="day<%=i + 1%>_exercise<%=k + 1%>_weight"
-                                                                                                    value="<%= selectedWeight %>">
+                                                                                                    value="<%= selectedWeight || "" %>"
+                                                                                                    placeholder="<%= (!selectedWeight && lastWeekWeight) ? lastWeekWeight : "" %>"
+                                                                                                    >
                                                                                             </td>
                                                                                             <td data-cell="RPE">
                                                                                                 <input type="number"
@@ -212,11 +232,14 @@
                                                                                                     value="<%= selectedTargetRPE %>"
                                                                                                     step="0.5">
                                                                                             </td>
+
+                                                                                            <% const lastWeekActualRPE = getTrainingWeightAndRPEFromLastWeek() ? previousTrainingWeekData[i]?.exercises[k]?.actualRPE : "" %>
                                                                                             <td data-cell="@RPE">
                                                                                                 <input type="text"
                                                                                                     class="actualRPE"
                                                                                                     name="day<%=i + 1%>_exercise<%=k + 1%>_actualRPE"
-                                                                                                    value="<%= selectedActualRPE %>"
+                                                                                                    value="<%= selectedActualRPE || "" %>"
+                                                                                                    placeholder="<%= (!selectedActualRPE && lastWeekActualRPE) ? lastWeekActualRPE : "" %>"
                                                                                                     step="0.5">
                                                                                             </td>
                                                                                             <td data-cell="Est. Max">
@@ -259,12 +282,12 @@
                                             type="submit" type="submit" style="margin-top: 0;">Save</button>
                                     </div>
 
-                                    <audio id="timerAudio">
+                                    <audio id="timerAudio" crossorigin="anonymous">
                                         <source src="/audio/newTimer.mp3" type="audio/mpeg">
                                         Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
                                     </audio>
 
-                                    <audio id="save-audio">
+                                    <audio id="save-audio" crossorigin="anonymous">
                                         <source src="/audio/save_sound.mp3" type="audio/mpeg">
                                         Sorry - Ihr Browser hat keine Unterstützung für dieses Audio-Format.
                                     </audio>
