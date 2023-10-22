@@ -287,6 +287,10 @@ table .table-row td:last-of-type {
         color: hsl( var(--clr-white) / .25);
     }
 
+    html[data-theme="light"] .rest-pause-container .rest-pause-timer {
+        color: hsl( var(--clr-white) / .5);
+    }
+
     .exercise-category-selector,
     .exercise-name-selector,
     input {

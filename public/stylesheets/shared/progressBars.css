@@ -16,6 +16,14 @@
     border-radius: 10px;
 }
 
+html[data-theme="light"] .rest-pause-progress-bar::-webkit-progress-bar {
+    background-color: hsl(var(--clr-light ) / 0.325);
+}
+
+html[data-theme="light"] .rest-pause-progress-bar::-webkit-progress-value {
+    background: linear-gradient(to left, hsl( var(--clr-white) / .625y), hsl(var(--clr-white) / 0.75));
+}
+
 @media (max-width: 650px) {
     .rest-pause-progress-bar {
         width: 100%;

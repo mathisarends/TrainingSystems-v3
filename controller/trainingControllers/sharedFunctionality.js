@@ -565,6 +565,47 @@ export function getAmountOfTrainingWeeks(trainingPlan) {
   return trainingWeeks;
 }
 
+export async function handleArchiveProcess(req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+
+    const data = req.body;
+    const index = parseInt(data.archiveIndex);
+    const typeOfPlan = data.trainingPlanType;
+
+    const trainingPlan = getTrainingPlanForArchive(user, typeOfPlan, index);
+
+    const usersTrainingPlansOfType = typeOfPlan === "custom" ? user.trainingPlansCustomNew : user.trainingPlanTemplate;
+    if (usersTrainingPlansOfType.length > index) {
+      usersTrainingPlansOfType.splice(index, 1);
+    } else {
+      return res.status(400).json({ error: "Ungültiger Index"});
+    }
+    
+    user.archivedPlans.unshift(trainingPlan);
+
+    await user.save();
+    res.status(200).json({});
+
+  } catch (err) {
+    console.log("Fehler beim archivieren des Plans", err);
+    res.status(500).json({error: "Es ist ein Fehler beim archivieren aufgetreten"});
+  }
+}
+
+function getTrainingPlanForArchive(user, typeOfPlan, index) {
+  if (typeOfPlan === "custom") {
+    return user.trainingPlansCustomNew[index];
+  } else if (typeOfPlan === "template") {
+    return user.trainingPlanTemplate[index];
+  } else {
+    return null;
+  }
+}
+
 export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan) {
   try {
     const user = await User.findById(req.user._id);

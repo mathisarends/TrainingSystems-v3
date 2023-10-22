@@ -37,6 +37,7 @@ import {
   handleWeeklyProgression,
   patchTrainingPlan,
   getTrainingPlan,
+  handleArchiveProcess,
 } from "../controller/trainingControllers/sharedFunctionality.js"
 
 import { 
@@ -67,10 +68,10 @@ customTemplateLetters.forEach((letter, index) => {
   }
 })
 
-customTemplateLetters.forEach((letter, index) => {
+/* customTemplateLetters.forEach((letter, index) => {
   const routePath = `/custom-${letter}-automaticProgression`;
   router.get(routePath, checkAuthenticated, (req, res) => getCustomEditPage(req, res, index, letter));
-})
+}) */
 
 customTemplateLetters.forEach((letter, index) => {
   const routePath = `/custom-${letter}-edit`;
@@ -95,7 +96,8 @@ customTemplateLetters.forEach((letter, index) => {
     router.patch(routePath, checkAuthenticated, (req, res) => handleWeeklyProgression(req, res, week, index, isCustom));
 })
 
-
+// archive route
+router.post(`/archive-training-plan`, checkAuthenticated, (req, res) => handleArchiveProcess(req, res));
 
 /* TEMPLATE PLANS */
 templateLetters.forEach((letter, index) => {

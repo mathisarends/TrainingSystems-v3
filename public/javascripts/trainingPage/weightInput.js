@@ -93,9 +93,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const sum = numbers.reduce((acc, num) => acc + num + 0);
           const average = sum / numbers.length;
       
-          let roundedAverage = Math.round(average / 2.5) * 2.5;
-          if (roundedAverage % 2.5 !== 0) {
-            roundedAverage = Math.round(roundedAverage / 2.5) * 2.5;
+          let roundedAverage = Math.round(average / 0.5) * 0.5;
+          if (roundedAverage % 0.5 !== 0) {
+            roundedAverage = Math.round(roundedAverage / 0.5) * 0.5;
           }
           weightInput.value = roundedAverage;
         }

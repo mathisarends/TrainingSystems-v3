@@ -9,6 +9,8 @@
             class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Session</button>
         <button id="template-tab" aria-selected="false" role="tab" aria-controls="template-tab"
             class="uppercase ff-sans-cond text-accent letter-spacing-2" tabindex="-1">Template</button>
+        <button id="archive-tab" aria-selected="false" role="tab" aria-controls="archive-tab" tabindex="-1"
+        class="uppercase ff-sans-cond text-accent letter-spacing-2">Archiv</button>
     </div>
 
     <input id="userIdentification" type="hidden" name="userIdentification" value="<%= userID %>">
@@ -70,6 +72,19 @@
 
                             <button class="main-page-button edit-training-plan-button uppercase"
                             id="edit-custom-training-button" style="display: none;">Bearbeiten</button>
+                            
+                            <% for (let i=0; i < userCustomTrainings.length; i++) { %>
+
+                                <form action="/training/archive-training-plan" method="POST"
+                                    class="archive-custom-form" style="display: none">
+                                    <input type="hidden" value="<%= i %>" name="archiveIndex">
+                                    <input type="hidden" value="custom" name="trainingPlanType">
+                                    <input type="hidden" class="archiveTitle"
+                                        value="<%= userCustomTrainings[i].title %>">
+                                    <input type="hidden" name="userIdentification" value="<%= userID %>">
+                                    <button class="main-page-button archive-training-plan-button uppercase" type="submit">ARCHIVIEREN</button>
+                                </form>
+                                <% } %>
 
 
                             <% for (let i=0; i < userCustomTrainings.length; i++) { %>
@@ -211,6 +226,42 @@
                 <% } %>
         </div>
 
+    </section>
+
+    <!--Training plan archive -->
+    <section class="custom-view-container archive-view-container flow" hidden>
+        <div class="training-button-container">
+
+            <button class="main-page-button training-plan-button uppercase">
+                Trainieren
+            </button>
+
+            <button class="main-page-button stats-page-button uppercase">Statistics</button>
+
+            <button class="more-training-options main-page-button training-page-button uppercase letter-spacing-1" style="display: none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-chevrons-down">
+                    <polyline points="7 13 12 18 17 13"></polyline>
+                    <polyline points="7 6 12 11 17 6"></polyline>
+                </svg>
+            </button>
+
+            <button class="main-page-button edit-training-plan-button uppercase" id="edit-template-training-button" style="display: none;">
+                Bearbeiten
+            </button>
+
+            <!-- Endgültig löschen? -->
+<!--             <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
+                <form action="/training/reset-template-training?_method=DELETE" method="POST"
+                    class="reset-template-training-form" style="display: none;">
+                    <input type="hidden" value="<%= i %>" name="resetIndex">
+                    <input type="hidden" value="template-training" name="trainingPlanType">
+                    <input type="hidden" name="userIdentification" value="<%= userID %>">
+                    <button class="main-page-button uppercase" type="submit">Löschen</button>
+                </form>
+                <% } %> -->
+        </div>
     </section>
 
     <div id="confirmationModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">

@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
         title.innerHTML = `<span aria-hidden="true">01</span>SESSION`;
       } else if (i === 2) {
         title.innerHTML = `<span aria-hidden="true">01</span>TEMPLATE`;
+      } else if (i === 3) {
+        title.innerHTML = `<span aria-hidden="true">01</span>ARCHIVE`;
       }
     });
   }

@@ -23,6 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const moreNavOptionsContainer = document.querySelector(
     ".more-training-options"
   );
+
+  const archiveCustomForms = document.querySelectorAll(".archive-custom-form");
+  const archiveCustomButtons = document.querySelectorAll(".archive-training-plan-button");
+
   const statsButton = document.querySelector(".stats-page-button");
 
   let latestTrainingWeekOfSelectedPlan = null;
@@ -39,6 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
     customTrainingContainers.forEach((trainingContainer, i) => {
       trainingContainer.classList.remove("selected");
       deleteCustomTrainingForms[i].style.display = "none";
+      editCustomTrainingBTN.style.display = "none";
+      archiveCustomForms[i].style.display = "none";
     });
 
     moreNavOptionsContainer.style.display = "block"; //edit page, delete page etc.
@@ -52,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     moreNavOptionsContainer.style.display = "none"; //hide the button itself
     editCustomTrainingBTN.style.display = "block";
+    archiveCustomForms[lastSelectedTrainingIndex].style.display = "block";
     deleteCustomTrainingForms[lastSelectedTrainingIndex].style.display =
       "block";
   });
@@ -99,6 +106,13 @@ document.addEventListener("DOMContentLoaded", () => {
     handleCreateTrainingButtonEventListener("create-training-plan");
   });
 
+/*   archiveCustomButtons.forEach((archiveButton, index) => {
+    archiveButton.addEventListener("click", e => {
+      e.preventDefault();
+      const form = archiveButton.closest("form");
+      form
+    })
+  }) */
 
   function syncOfflineDataAndReactToResponse(modal, userID, redirectURL) {
     const handleSyncSuccess = () => {

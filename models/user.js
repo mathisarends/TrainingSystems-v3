@@ -76,13 +76,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["männlich", "weiblich"]
     }, 
-    colorTheme: {
-        type: String, 
-        default: "theme-dark",
-    },
     trainingPlanTemplate: [TrainingPlan.schema],
     trainingPlansCustomNew: [TrainingPlan.schema],
     trainings: [TrainingSchema.schema],
+    archivedPlans: [TrainingPlan.schema], //fertig trainierte pläne können in das archiv verschoben werden
 
     trainingData: [TrainingData.schema], 
     exercises: [Exercise.schema],
