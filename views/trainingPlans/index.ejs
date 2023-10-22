@@ -230,15 +230,44 @@
 
     <!--Training plan archive -->
     <section class="custom-view-container archive-view-container flow" hidden>
+
+        <% if (archivedPlans.length===0) { %>
+            <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500">
+                <p>
+                    Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
+                    Erstelle einfach einen mit dem Button unten.
+                </p>
+            </div>
+            <% } %>
+
+        <div class="training-plan-container flex" style="--gap: 1rem">
+            <% for (let i = 0; i < archivedPlans.length; i++) { %>
+                <div class="custom-training-container">
+                    <div style="display: none" class="hidden-index">
+                        <%= i %>
+                    </div>
+                    <div class="uppercase">
+                            <%= archivedPlans[i].title || "Default Title" %>
+                    </div>
+                    <input type="hidden" value="<%= userID %>" name="userIdentification">
+                    <div class=" ff-sans-cond fs-400 letter-spacing-4">
+                                <%= formattedArchiveTrainingPlanDates[i] %> - <span class="uppercase text-accent"><%= archivedPlans[i].typeOfPlan %></span> 
+                    </div>
+                </div>
+                <% } %>
+        </div>
+
+
+
         <div class="training-button-container">
 
             <button class="main-page-button training-plan-button uppercase">
-                Trainieren
+                ANSCHAUEN
             </button>
 
             <button class="main-page-button stats-page-button uppercase">Statistics</button>
 
-            <button class="more-training-options main-page-button training-page-button uppercase letter-spacing-1" style="display: none">
+            <button class="more-training-options main-page-button training-page-button uppercase letter-spacing-1" style_="display: none">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round" class="feather feather-chevrons-down">
@@ -247,20 +276,15 @@
                 </svg>
             </button>
 
-            <button class="main-page-button edit-training-plan-button uppercase" id="edit-template-training-button" style="display: none;">
-                Bearbeiten
+            <!-- hier optionen: als vorlage oder komplett? -->
+            <button id="delete-archived-training" class="main-page-button training-plan-button uppercase" style="display: none">
+                LÖSCHEN
             </button>
 
-            <!-- Endgültig löschen? -->
-<!--             <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
-                <form action="/training/reset-template-training?_method=DELETE" method="POST"
-                    class="reset-template-training-form" style="display: none;">
-                    <input type="hidden" value="<%= i %>" name="resetIndex">
-                    <input type="hidden" value="template-training" name="trainingPlanType">
-                    <input type="hidden" name="userIdentification" value="<%= userID %>">
-                    <button class="main-page-button uppercase" type="submit">Löschen</button>
-                </form>
-                <% } %> -->
+            <button id="restore-archived-training" class="main-page-button training-plan-button uppercase" style="display: none">
+                WIEDERVERWENDEN
+            </button>
+
         </div>
     </section>
 
@@ -297,3 +321,100 @@
 <script src="/javascripts/trainingIndexPage/handleCustomRedirects.js"></script>
 <script src="/javascripts/trainingIndexPage/handleTemplateRedirects.js"></script>
 <script src="/javascripts/trainingIndexPage/handleSessionRedirects.js"></script>
+
+<script src="/javascripts/trainingIndexPage/archiveLogic.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const archiveSection = document.querySelector("section:last-of-type");
+        const archivedPlanFields = archiveSection.querySelectorAll(".custom-training-container");
+        
+        const moreOptionsPerFieldBTN = archiveSection.querySelector(".more-training-options");
+        const restoreArchivedTrainingBTN = archiveSection.querySelector("#restore-archived-training");
+        const deleteArchivedTrainingBTN = archiveSection.querySelector("#delete-archived-training");
+
+        let lastSelectedArchiveIndex;
+
+        archivedPlanFields.forEach((field, index) => {
+            field.addEventListener("click", () => {
+                selectArchivedField(index);
+            })
+        })
+
+        function selectArchivedField(index) {
+            archivedPlanFields.forEach((field, i) => {
+                field.classList.remove("selected");
+            })
+
+            archivedPlanFields[index].classList.add("selected");
+            restoreArchivedTrainingBTN.style.display = "none";
+            deleteArchivedTrainingBTN.style.display = "none";
+            lastSelectedArchiveIndex = index;
+            moreOptionsPerFieldBTN.style.display = "block";
+        }
+
+        moreOptionsPerFieldBTN.addEventListener("click", () => {
+            moreOptionsPerFieldBTN.style.display = "none";
+            restoreArchivedTrainingBTN.style.display = "block";
+            deleteArchivedTrainingBTN.style.display = "block";
+        })
+
+        deleteArchivedTrainingBTN.addEventListener("click", e =>{
+            e.preventDefault();
+            setupDeleteModal();
+        })
+
+        const confirmationModal = document.getElementById("confirmationModal");
+        const confirmResetButton = document.getElementById("confirmResetButton");
+        const cancelDeleteButton = document.getElementById("cancelResetButton");
+        
+        
+
+        function setupDeleteModal() {
+            
+
+            const trainingTitle = archivedPlanFields[lastSelectedArchiveIndex].querySelectorAll("div")[1].textContent.trim();
+            console.log(trainingTitle);
+            confirmationModal.querySelector("input").value = `"${trainingTitle}" endgültig löschen?`;
+
+            confirmationModal.style.display = "block";
+
+            confirmResetButton.addEventListener("click", e => {
+                e.preventDefault();
+                handleDeleteProcessFromArchive();
+            })
+
+            cancelDeleteButton.addEventListener("click", e => {
+                e.preventDefault();
+                confirmationModal.style.display = "none";
+            })
+        }
+
+        function handleDeleteProcessFromArchive() {
+            const deleteIndex = lastSelectedArchiveIndex;
+            fetch('/training/delete-archived-training-plan', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ deleteIndex })
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    confirmationModal.style.display = "none";
+                } else if (response.status === 400) {
+                    
+                } else {
+
+                }
+            })
+            .catch(error => {
+                console.error("Fehler beim löschen:", error);
+            })
+            .finally(() => {
+                location.reload();
+            })
+        }
+
+    })
+</script>

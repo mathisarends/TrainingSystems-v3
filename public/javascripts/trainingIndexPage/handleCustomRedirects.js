@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   const archiveCustomForms = document.querySelectorAll(".archive-custom-form");
-  const archiveCustomButtons = document.querySelectorAll(".archive-training-plan-button");
 
   const statsButton = document.querySelector(".stats-page-button");
 

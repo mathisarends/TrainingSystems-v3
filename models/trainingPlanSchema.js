@@ -6,6 +6,15 @@ const trainingPlanSchema = new mongoose.Schema({
     ref: "User",
     required: false,
   },
+  typeOfPlan: {
+    type: String,
+    enum: ["custom", "template"],
+    required: false,
+  },
+  weightPlaceholders: { //new implement this in edit and create route
+    type: String, 
+    enum: ["basedOnMax", "basedOnLastWeek", "off"]
+  },
   title: String,
   trainingFrequency: Number,
   trainingPhase: String,
@@ -13,10 +22,6 @@ const trainingPlanSchema = new mongoose.Schema({
   automaticProgression: Boolean, //new entry for automatic progression in main exercises over the weeks
   lastWeekDeload: Boolean,
   lastWeekDeloadHandled: Boolean, //legacy could be removed?
-  weightPlaceholders: { //new implement this in edit and create route
-    type: String, 
-    enum: ["basedOnMax", "basedOnLastWeek", "off"]
-  },
   trainingWeeks: [
     {
       trainingDays: [

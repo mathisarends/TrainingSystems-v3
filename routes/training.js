@@ -38,6 +38,7 @@ import {
   patchTrainingPlan,
   getTrainingPlan,
   handleArchiveProcess,
+  handleArchiveDelete,
 } from "../controller/trainingControllers/sharedFunctionality.js"
 
 import { 
@@ -98,6 +99,7 @@ customTemplateLetters.forEach((letter, index) => {
 
 // archive route
 router.post(`/archive-training-plan`, checkAuthenticated, (req, res) => handleArchiveProcess(req, res));
+router.delete(`/delete-archived-training-plan`, checkAuthenticated, (req, res) => handleArchiveDelete(req, res));
 
 /* TEMPLATE PLANS */
 templateLetters.forEach((letter, index) => {

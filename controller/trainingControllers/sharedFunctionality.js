@@ -230,7 +230,6 @@ export function renderTrainingPlansView(res, user, additionalData = {}) {
     userID: user.id,
     errorCreatingNewCustomTrainingPlan: "",
     errorCreatingNewCustomTraining: "",
-    lastVisitedTrainingMode: user.lastVisitedTrainingMode || "",
   };
 
   const {
@@ -238,6 +237,7 @@ export function renderTrainingPlansView(res, user, additionalData = {}) {
     trainingPlanTemplate,
     trainingPlansCustomNew,
     trainings,
+    archivedPlans,
   } = user;
 
   const trainingFormattedDates = getLastEditedTrainingDates(trainings);
@@ -248,6 +248,9 @@ export function renderTrainingPlansView(res, user, additionalData = {}) {
 
   const formattedTemplateTrainingPlanDates =
     getLastEditedDatesOfType(trainingPlanTemplate);
+
+  const formattedArchiveTrainingPlanDates =
+    getLastEditedDatesOfType(archivedPlans);
 
   const customCurrentTrainingWeek = getMostRecentTrainingWeeks(
     trainingPlansCustomNew
@@ -262,9 +265,11 @@ export function renderTrainingPlansView(res, user, additionalData = {}) {
     userTemplateTrainings: trainingPlanTemplate,
     userCustomTrainings: trainingPlansCustomNew,
     userTrainings: trainings,
+    archivedPlans,
 
     trainingFormattedDates,
     formattedTrainingPlanDates: formattedTrainingPlanDates || "",
+    formattedArchiveTrainingPlanDates,
     formattedTemplateTrainingPlanDates,
 
     customCurrentTrainingWeek,
@@ -577,7 +582,12 @@ export async function handleArchiveProcess(req, res) {
     const typeOfPlan = data.trainingPlanType;
 
     const trainingPlan = getTrainingPlanForArchive(user, typeOfPlan, index);
+    trainingPlan.lastUpdated = new Date();
+    trainingPlan.typeOfPlan = typeOfPlan;
 
+    console.log(trainingPlan);
+
+    //delete the plan from the right array 
     const usersTrainingPlansOfType = typeOfPlan === "custom" ? user.trainingPlansCustomNew : user.trainingPlanTemplate;
     if (usersTrainingPlansOfType.length > index) {
       usersTrainingPlansOfType.splice(index, 1);
@@ -586,13 +596,39 @@ export async function handleArchiveProcess(req, res) {
     }
     
     user.archivedPlans.unshift(trainingPlan);
-
     await user.save();
     res.status(200).json({});
 
   } catch (err) {
     console.log("Fehler beim archivieren des Plans", err);
     res.status(500).json({error: "Es ist ein Fehler beim archivieren aufgetreten"});
+  }
+}
+
+export async function handleArchiveDelete(req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+
+    const data = req.body;
+    const deleteIndex = data.deleteIndex;
+
+    const userArchivedPlans = user.archivedPlans;
+
+    if (userArchivedPlans.length > deleteIndex) {
+      userArchivedPlans.splice(deleteIndex, 1)
+    } else {
+      res.status(400).json({ error: "Ungültiger Index" });
+    }
+
+    await user.save();
+    res.status(200).json({});
+
+  } catch (error) {
+    console.log("Es ist ein Fehler beim löschen des Trainingplans aus dem Archiv aufgetreten!", error);
+    res.status(500).json({error: "Es ist ein Fehler beim löschen eines archivierten Plans aufgetreten"});
   }
 }
 

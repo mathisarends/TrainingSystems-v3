@@ -67,9 +67,6 @@ export async function getCreateTrainingPlan(req, res) {
         trainingWeeks: trainingWeeks,
         weightPlaceholders: weightPlaceholders,
       });
-
-      console.log(weightPlaceholders);
-      console.log(newTrainingPlan.weightPlaceholders);
   
       user.trainingPlansCustomNew.push(newTrainingPlan);
       user.trainingPlansCustomNew.sort((a, b) => b.lastUpdated - a.lastUpdated); // sorts by date descending
