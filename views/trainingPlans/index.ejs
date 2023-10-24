@@ -181,9 +181,8 @@
                     <div style="display: none" class="hidden-index">
                         <%= i %>
                     </div>
-                    <input type="text" class="templateNextTrainingWeek" value="<%= templateCurrentTrainingWeek[i] %>"
-                        style="display: none">
-                    <div class="uppercase">
+                    <input type="hidden" class="templateNextTrainingWeek" value="<%= templateCurrentTrainingWeek[i] %>">
+                    <div class="training-plan-title uppercase">
                         <% const templateLetters="ABCDEFGHIJKLMNOPQRSTUVWXYZ" ; %>
                             <%= userTemplateTrainings[i].title || ("Template " + templateLetters[i]); %>
                     </div>
@@ -216,12 +215,25 @@
             </button>
 
             <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
+
+                <form action="/training/archive-training-plan" method="POST"
+                    class="archive-template-form" style="display: none">
+                    <input type="hidden" value="<%= i %>" name="archiveIndex">
+                    <input type="hidden" value="template" name="trainingPlanType">
+                    <input type="hidden" class="archiveTitle"
+                        value="<%= user.trainingPlanTemplate[i].title %>">
+                    <input type="hidden" name="userIdentification" value="<%= userID %>">
+                    <button class="main-page-button archive-template-training-plan-button uppercase" type="submit">ARCHIVIEREN</button>
+                </form>
+                <% } %>
+
+            <% for (let i=0; i < user.trainingPlanTemplate.length; i++) { %>
                 <form action="/training/reset-template-training?_method=DELETE" method="POST"
                     class="reset-template-training-form" style="display: none;">
                     <input type="hidden" value="<%= i %>" name="resetIndex">
                     <input type="hidden" value="template-training" name="trainingPlanType">
                     <input type="hidden" name="userIdentification" value="<%= userID %>">
-                    <button class="main-page-button uppercase" type="submit">Löschen</button>
+                    <button class="main-page-button uppercase" type="submit">RESET</button>
                 </form>
                 <% } %>
         </div>
@@ -251,7 +263,7 @@
                     </div>
                     <input type="hidden" value="<%= userID %>" name="userIdentification">
                     <div class=" ff-sans-cond fs-400 letter-spacing-4">
-                                <%= formattedArchiveTrainingPlanDates[i] %> - <span class="uppercase text-accent"><%= archivedPlans[i].typeOfPlan %></span> 
+                                <%= formattedArchiveTrainingPlanDates[i] %> - <span class="trainingPlanType uppercase"><%= archivedPlans[i].typeOfPlan %></span> 
                     </div>
                 </div>
                 <% } %>
@@ -361,7 +373,13 @@
 
         deleteArchivedTrainingBTN.addEventListener("click", e =>{
             e.preventDefault();
-            setupDeleteModal();
+            setupArchiveModal("delete");
+        })
+
+        restoreArchivedTrainingBTN.addEventListener("click", e => {
+            e.preventDefault();
+            setupArchiveModal("restore")
+            
         })
 
         const confirmationModal = document.getElementById("confirmationModal");
@@ -370,23 +388,69 @@
         
         
 
-        function setupDeleteModal() {
-            
+        function setupArchiveModal(mode) {
+
+            console.log(mode);
 
             const trainingTitle = archivedPlanFields[lastSelectedArchiveIndex].querySelectorAll("div")[1].textContent.trim();
-            console.log(trainingTitle);
-            confirmationModal.querySelector("input").value = `"${trainingTitle}" endgültig löschen?`;
 
-            confirmationModal.style.display = "block";
+            if (mode === "delete") {
+                confirmationModal.querySelector("input").value = `"${trainingTitle.toUpperCase()}" endgültig löschen?`;
 
-            confirmResetButton.addEventListener("click", e => {
-                e.preventDefault();
-                handleDeleteProcessFromArchive();
-            })
+                confirmationModal.style.display = "block";
 
+                confirmResetButton.addEventListener("click", e => {
+                    e.preventDefault();
+                    handleDeleteProcessFromArchive();
+                })
+
+            } else if (mode === "restore") {
+                confirmationModal.querySelector("input").value = `"${trainingTitle.toUpperCase()}" wiederherstellen?`;
+                confirmResetButton.textContent = "BESTÄTIGEN";
+
+                confirmationModal.style.display = "block";
+
+                confirmResetButton.addEventListener("click", e => {
+                    e.preventDefault();
+                    handleRestoreProcess();
+                })
+            }
+
+            // immer machen
             cancelDeleteButton.addEventListener("click", e => {
-                e.preventDefault();
-                confirmationModal.style.display = "none";
+                    e.preventDefault();
+                    confirmationModal.style.display = "none";
+                })
+        }
+
+        function handleRestoreProcess() {
+            const restoreIndex = lastSelectedArchiveIndex;
+            const typeOfPlan = archivedPlanFields[lastSelectedArchiveIndex].querySelector(".trainingPlanType").textContent;
+
+            const data = {
+                restoreIndex,
+                typeOfPlan
+            }
+
+            fetch('/training/restore-archived-training-plan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    confirmationModal.style.display = "none";
+                } else if (response.status === 403) {
+                    /// hier anzeigen dass die route für diese werte nicht erlaubt ist.
+                }
+            })
+            .catch(error => {
+                console.error("Fehler beim wiederherstellen:", error);
+            })
+            .finally(() => {
+                location.reload();
             })
         }
 

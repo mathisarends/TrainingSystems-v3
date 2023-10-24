@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const moreTrainingOptionsTemplateTraining = document.getElementsByClassName("more-training-options")[1];
       const statsButton = document.querySelectorAll(".stats-page-button")[2];
     
+      const archiveTemplateForms = document.querySelectorAll(".archive-template-form");
+
       let lastSelectedTemplateIndex = null;
       let lastSelectNextTrainingWeek = null;
     
@@ -27,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         moreTrainingOptionsTemplateTraining.style.display = "none"; // hide itself
         editTemplateTrainingBTN.style.display = "block";
         resetTemplateTrainingForm[lastSelectedTemplateIndex].style.display = "block";
+        archiveTemplateForms[lastSelectedTemplateIndex].style.display = "block";
       })
     
       editTemplateTrainingBTN.addEventListener("click", () => {
@@ -53,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
           templateTrainingPlanLinks.forEach((otherLink, otherIndex) => {
             otherLink.classList.remove("selected");
             resetTemplateTrainingForm[otherIndex].style.display = "none";
+            archiveTemplateForms[otherIndex].style.display = "none";
           });
     
           // Aktualisieren der aktuellen Auswahl

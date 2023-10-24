@@ -18,7 +18,7 @@ export function getTrainingPlanInfo(trainingPlan) {
     amountOfTrainingDays,
     amountOfExercises,
     lastWeekDeload,
-    weightPlaceholders
+    weightPlaceholders,
   };
 }
 
@@ -585,23 +585,26 @@ export async function handleArchiveProcess(req, res) {
     trainingPlan.lastUpdated = new Date();
     trainingPlan.typeOfPlan = typeOfPlan;
 
-    console.log(trainingPlan);
+    //delete the plan from the right array
+    const usersTrainingPlansOfType =
+      typeOfPlan === "custom"
+        ? user.trainingPlansCustomNew
+        : user.trainingPlanTemplate;
 
-    //delete the plan from the right array 
-    const usersTrainingPlansOfType = typeOfPlan === "custom" ? user.trainingPlansCustomNew : user.trainingPlanTemplate;
-    if (usersTrainingPlansOfType.length > index) {
+    if (typeOfPlan === "custom" && usersTrainingPlansOfType.length > index) {
       usersTrainingPlansOfType.splice(index, 1);
-    } else {
-      return res.status(400).json({ error: "Ungültiger Index"});
+    } else if (typeOfPlan === "custom") {
+      return res.status(400).json({ error: "Ungültiger Index" });
     }
-    
+
     user.archivedPlans.unshift(trainingPlan);
     await user.save();
     res.status(200).json({});
-
   } catch (err) {
     console.log("Fehler beim archivieren des Plans", err);
-    res.status(500).json({error: "Es ist ein Fehler beim archivieren aufgetreten"});
+    res
+      .status(500)
+      .json({ error: "Es ist ein Fehler beim archivieren aufgetreten" });
   }
 }
 
@@ -618,17 +621,59 @@ export async function handleArchiveDelete(req, res) {
     const userArchivedPlans = user.archivedPlans;
 
     if (userArchivedPlans.length > deleteIndex) {
-      userArchivedPlans.splice(deleteIndex, 1)
+      userArchivedPlans.splice(deleteIndex, 1);
     } else {
       res.status(400).json({ error: "Ungültiger Index" });
     }
 
     await user.save();
     res.status(200).json({});
+  } catch (error) {
+    console.log(
+      "Es ist ein Fehler beim löschen des Trainingplans aus dem Archiv aufgetreten!",
+      error
+    );
+    res
+      .status(500)
+      .json({
+        error:
+          "Es ist ein Fehler beim löschen eines archivierten Plans aufgetreten",
+      });
+  }
+}
+
+export async function handleArchiveRestore (req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send("Benutzer nicht gefunden");
+    }
+
+    const data = req.body;
+    
+    const restoreIndex = data.restoreIndex;
+    const typeOfPlan = data.typeOfPlan;
+    
+    const trainingPlan = user.archivedPlans[restoreIndex];
+
+    const trainingPlanArray = typeOfPlan === "custom" ? user.trainingPlansCustomNew : user.trainingPlanTemplate;
+
+    if (typeOfPlan === "custom" && trainingPlanArray.length >= 4) {
+      res.status(403).json({error: "Maximale Anzahl an Plänen bereits erreicht!"});
+    } else if (typeOfPlan === "template") {
+      res.status(403).json({error: "Diese Pläne können nicht wiederhergestellt werden!"});
+    } else {
+      //trainingsplan wieder in das ursprüngliche array und aus dem archiv array löschen
+      trainingPlan.lastUpdated = new Date();
+      trainingPlanArray.unshift(trainingPlan);
+      user.archivedPlans.splice(restoreIndex, 1);
+      await user.save();
+      res.status(200).json({});
+    }
 
   } catch (error) {
-    console.log("Es ist ein Fehler beim löschen des Trainingplans aus dem Archiv aufgetreten!", error);
-    res.status(500).json({error: "Es ist ein Fehler beim löschen eines archivierten Plans aufgetreten"});
+    res.status(500).json({ error: "Es ist ein Fehler beim Wiederherstellen eines archivierten Plans aufgetreten!"});
+    console.log("Fehler beim Wiederherstellen des Trainingplans", error);
   }
 }
 
@@ -642,7 +687,14 @@ function getTrainingPlanForArchive(user, typeOfPlan, index) {
   }
 }
 
-export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan) {
+export async function getTrainingPlan(
+  req,
+  res,
+  index,
+  letter,
+  week,
+  typeOfPlan
+) {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -652,7 +704,8 @@ export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan)
     const trainingPlan = getTypeOfPlan(user, typeOfPlan, index);
     const weightPlaceholders = trainingPlan.weightPlaceholders;
 
-    if(!trainingPlan) { //Routes will hopefully will never be reached
+    if (!trainingPlan) {
+      //Routes will hopefully will never be reached
       return res.status(404).send("Training nicht gefunden!");
     }
 
@@ -661,21 +714,34 @@ export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan)
     }
 
     const isDeloadWeek = isWeekDeloadWeek(trainingPlan, week);
-    const { trainingTitle, trainingFrequency, trainingPhase, amountOfTrainingDays, amountOfExercises } = getTrainingPlanInfo(trainingPlan);
+    const {
+      trainingTitle,
+      trainingFrequency,
+      trainingPhase,
+      amountOfTrainingDays,
+      amountOfExercises,
+    } = getTrainingPlanInfo(trainingPlan);
     const lastTrainingDay = getLastTrainingDayOfWeek(trainingPlan, week - 1); //in order to always directly navigate to the correct training day:
 
     //the most recent data is displayed then the data from last week and as a fallback the data from the first week - offset by one because of index
     const trainingWeekData = [];
     const currentTrainingWeekFatique = [];
     for (let j = 0; j < amountOfTrainingDays; j++) {
-      trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 1, j));
-      currentTrainingWeekFatique.push(extractFatiqueLevelOfTrainingDay(trainingPlan, week - 1, j));
+      trainingWeekData.push(
+        extractDataOfTrainingDay(trainingPlan, week - 1, j)
+      );
+      currentTrainingWeekFatique.push(
+        extractFatiqueLevelOfTrainingDay(trainingPlan, week - 1, j)
+      );
     }
 
     const previousTrainingWeekData = [];
-    if (week >= 2) { // check bounds in order to prevent indexOutOfBounds
+    if (week >= 2) {
+      // check bounds in order to prevent indexOutOfBounds
       for (let j = 0; j < amountOfTrainingDays; j++) {
-        previousTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, week - 2, j));
+        previousTrainingWeekData.push(
+          extractDataOfTrainingDay(trainingPlan, week - 2, j)
+        );
       }
     }
 
@@ -684,24 +750,34 @@ export async function getTrainingPlan(req, res, index, letter, week, typeOfPlan)
       firstTrainingWeekData.push(extractDataOfTrainingDay(trainingPlan, 0, j));
     }
 
-    const { exerciseCategories, categoryPauseTimes, categorizedExercises, defaultRepSchemeByCategory, maxFactors } = categorizeExercises(user.exercises);
+    const {
+      exerciseCategories,
+      categoryPauseTimes,
+      categorizedExercises,
+      defaultRepSchemeByCategory,
+      maxFactors,
+    } = categorizeExercises(user.exercises);
 
-    const trainingData = user.trainingData.length > 0 ? user.trainingData[0] : {};
+    const trainingData =
+      user.trainingData.length > 0 ? user.trainingData[0] : {};
 
     let afterPageIndex = (week + 1) % trainingPlan.trainingWeeks.length;
-    afterPageIndex = afterPageIndex === 0 ? trainingPlan.trainingWeeks.length : afterPageIndex;
+    afterPageIndex =
+      afterPageIndex === 0 ? trainingPlan.trainingWeeks.length : afterPageIndex;
 
     let beforePageIndex = (week - 1) % trainingPlan.trainingWeeks.length;
-    beforePageIndex = beforePageIndex === 0 ? trainingPlan.trainingWeeks.length : beforePageIndex;
+    beforePageIndex =
+      beforePageIndex === 0
+        ? trainingPlan.trainingWeeks.length
+        : beforePageIndex;
 
     const beforePage = `/training/${typeOfPlan}-${letter}${beforePageIndex}`;
     const afterPage = `/training/${typeOfPlan}-${letter}${afterPageIndex}`;
 
-    const previousTrainingWeek = (week >= 2) ? trainingPlan.trainingWeeks[week - 2] : {};
-
+    const previousTrainingWeek =
+      week >= 2 ? trainingPlan.trainingWeeks[week - 2] : {};
 
     res.render("trainingPlans/custom/trainingPlan", {
-
       userID: user.id,
       user: user,
 
@@ -815,14 +891,17 @@ function getTypeOfPlan(user, typeOfPlan, index) {
     return user.trainingPlansCustomNew[index];
   } else if (typeOfPlan === "template") {
     return user.trainingPlanTemplate[index];
-  } 
+  }
   return null;
 }
 
 // if it is the last week and the user selected the last week is deload option return true else false
 function isWeekDeloadWeek(trainingPlan, week) {
   if (week === trainingPlan.trainingWeeks.length) {
-    if (trainingPlan.lastWeekDeload === undefined || !trainingPlan.lastWeekDeload) {
+    if (
+      trainingPlan.lastWeekDeload === undefined ||
+      !trainingPlan.lastWeekDeload
+    ) {
       return false;
     } else {
       return true;
@@ -906,16 +985,28 @@ export async function handleWeeklyProgression(req, res, week, index, isCustom) {
     // first part save training data regularly
 
     trainingPlan.trainingWeeks.forEach((trainingWeek, weekIndex) => {
-      if (weekIndex !== 0) { //erste woche wird nicht weiter betrachtet für die progression
+      if (weekIndex !== 0) {
+        //erste woche wird nicht weiter betrachtet für die progression
         trainingWeek.trainingDays.forEach((trainingDay, dayIndex) => {
-          trainingPlan.trainingWeeks[0].trainingDays[dayIndex].exercises.forEach((exercise, exerciseIndex) => { //von der ersten trainingswoche betrachten wir jeden tag eizeln:
-            
-            if (!trainingDay.exercises[exerciseIndex]) { //wenn dieser wert für den trainingstag aus der aktuellen woche nicht definiert ist 
-                                                        // kopiere die relevanten informationen in diese object damit geupdated werden kann
-              trainingDay.exercises[exerciseIndex] = copyRelevantExerciseDetails(exercise);
+          trainingPlan.trainingWeeks[0].trainingDays[
+            dayIndex
+          ].exercises.forEach((exercise, exerciseIndex) => {
+            //von der ersten trainingswoche betrachten wir jeden tag eizeln:
+
+            if (!trainingDay.exercises[exerciseIndex]) {
+              //wenn dieser wert für den trainingstag aus der aktuellen woche nicht definiert ist
+              // kopiere die relevanten informationen in diese object damit geupdated werden kann
+              trainingDay.exercises[exerciseIndex] =
+                copyRelevantExerciseDetails(exercise);
             }
-            handleAutomaticProgressionPerExercise(weekIndex, dayIndex, trainingDay.exercises[exerciseIndex], updatedData, exerciseIndex);
-          })
+            handleAutomaticProgressionPerExercise(
+              weekIndex,
+              dayIndex,
+              trainingDay.exercises[exerciseIndex],
+              updatedData,
+              exerciseIndex
+            );
+          });
         });
       }
     });
@@ -930,9 +1021,8 @@ export async function handleWeeklyProgression(req, res, week, index, isCustom) {
 }
 
 function copyRelevantExerciseDetails(exercise) {
-
   const newExerciseObject = {};
-  
+
   newExerciseObject.category = exercise.category;
   newExerciseObject.exercise = exercise.exercise;
   newExerciseObject.sets = exercise.sets;
@@ -942,7 +1032,13 @@ function copyRelevantExerciseDetails(exercise) {
   return newExerciseObject;
 }
 
-function handleAutomaticProgressionPerExercise(weekIndex, dayIndex, exercise, updatedData, exerciseIndex) {
+function handleAutomaticProgressionPerExercise(
+  weekIndex,
+  dayIndex,
+  exercise,
+  updatedData,
+  exerciseIndex
+) {
   const fieldPrefix = `day${dayIndex + 1}_exercise${exerciseIndex + 1}_`;
 
   let increment = parseFloat(weekIndex * 0.5);
@@ -951,11 +1047,14 @@ function handleAutomaticProgressionPerExercise(weekIndex, dayIndex, exercise, up
   const exerciseCategory = exercise.category;
   const targetRPE = parseFloat(updatedData[`${fieldPrefix}targetRPE`]); //always take it from the data send which is the first week:
 
-
-  if ((categoryValue === exerciseCategory) && 
-      (categoryValue === "Squat" ||categoryValue === "Bench" || categoryValue === "Deadlift") 
-      && exercise) {
-        exercise.targetRPE = Math.min(targetRPE + increment, 9);
+  if (
+    categoryValue === exerciseCategory &&
+    (categoryValue === "Squat" ||
+      categoryValue === "Bench" ||
+      categoryValue === "Deadlift") &&
+    exercise
+  ) {
+    exercise.targetRPE = Math.min(targetRPE + increment, 9);
   }
 }
 
