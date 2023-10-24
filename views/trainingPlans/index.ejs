@@ -303,6 +303,16 @@
     <div id="confirmationModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none">
         <div class="modal-content flow" style="--flow-space: 0.5em;">
             <input type="text" readonly value="Training löschen">
+            <div id="more-restore-data-container" style="display: none;">
+                <select id="keepTrainingData" class="select-restore-bar" name="keepTrainingData">
+                    <option selected value="true">Trainingsdaten beibehalten</option>
+                    <option value="false">Trainingsdaten (RPE & Weight) entfernen</option>
+                </select>
+                <select id="keepTrainingArchived" class="select-restore-bar" name="keepTrainingArchived">
+                    <option selected value="true">Im Archiv behalten</option>
+                    <option value="false">Aus Archiv löschen</option>
+                </select>
+            </div>
             <div class="modal-buttons">
                 <button class="modal-button text-accent" id="confirmResetButton">LÖSCHEN</button>
                 <button class="modal-button text-accent" id="cancelResetButton">ABBRECHEN</button>
@@ -366,9 +376,17 @@
         }
 
         moreOptionsPerFieldBTN.addEventListener("click", () => {
+
+            const currentArchiveField = archivedPlanFields[lastSelectedArchiveIndex];
+            const typeOfPlan = currentArchiveField.querySelector(".trainingPlanType").textContent;
+
             moreOptionsPerFieldBTN.style.display = "none";
-            restoreArchivedTrainingBTN.style.display = "block";
             deleteArchivedTrainingBTN.style.display = "block";
+            restoreArchivedTrainingBTN.style.display = "block";
+
+            if (typeOfPlan === "template") {
+                restoreArchivedTrainingBTN.style.display = "none";
+            }
         })
 
         deleteArchivedTrainingBTN.addEventListener("click", e =>{
@@ -390,8 +408,6 @@
 
         function setupArchiveModal(mode) {
 
-            console.log(mode);
-
             const trainingTitle = archivedPlanFields[lastSelectedArchiveIndex].querySelectorAll("div")[1].textContent.trim();
 
             if (mode === "delete") {
@@ -407,6 +423,9 @@
             } else if (mode === "restore") {
                 confirmationModal.querySelector("input").value = `"${trainingTitle.toUpperCase()}" wiederherstellen?`;
                 confirmResetButton.textContent = "BESTÄTIGEN";
+
+                const restoreDataOptionsContainer = document.getElementById("more-restore-data-container");
+                restoreDataOptionsContainer.style.display = "block";
 
                 confirmationModal.style.display = "block";
 
@@ -427,9 +446,16 @@
             const restoreIndex = lastSelectedArchiveIndex;
             const typeOfPlan = archivedPlanFields[lastSelectedArchiveIndex].querySelector(".trainingPlanType").textContent;
 
+            
+            const restoreDataOptionsContainer = document.getElementById("more-restore-data-container");
+            const keepTrainingData = restoreDataOptionsContainer.querySelector("#keepTrainingData").value;
+            const keepTrainingArchived = restoreDataOptionsContainer.querySelector("#keepTrainingArchived").value;
+
             const data = {
                 restoreIndex,
-                typeOfPlan
+                typeOfPlan,
+                keepTrainingData,
+                keepTrainingArchived
             }
 
             fetch('/training/restore-archived-training-plan', {
@@ -439,18 +465,30 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => {
+            .then(async response => {
                 if (response.status === 200) {
                     confirmationModal.style.display = "none";
+                    location.reload();
                 } else if (response.status === 403) {
                     /// hier anzeigen dass die route für diese werte nicht erlaubt ist.
+                    const errorResponse = await response.json();
+                    handle403(errorResponse.error)
                 }
             })
             .catch(error => {
                 console.error("Fehler beim wiederherstellen:", error);
             })
-            .finally(() => {
-                location.reload();
+        }
+
+        function handle403(errorMessage) {
+
+            // error Message anzeigen und den button ausblenden:
+            confirmationModal.querySelector("input").value = errorMessage;
+
+            //sobald man das modal ausblendet wird der erste button wieder angezeigt!
+            confirmResetButton.addEventListener("click", e => {
+                e.preventDefault();
+                confirmationModal.querySelector("button").style.display = "block";
             })
         }
 

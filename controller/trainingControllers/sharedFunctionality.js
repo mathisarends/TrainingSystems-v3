@@ -642,6 +642,7 @@ export async function handleArchiveDelete(req, res) {
   }
 }
 
+//todo code refactoren:
 export async function handleArchiveRestore (req, res) {
   try {
     const user = await User.findById(req.user._id);
@@ -653,20 +654,33 @@ export async function handleArchiveRestore (req, res) {
     
     const restoreIndex = data.restoreIndex;
     const typeOfPlan = data.typeOfPlan;
-    
+    const keepTrainingData = data.keepTrainingData === "true"; // convert to boolean
+    const keepTrainingArchived = data.keepTrainingArchived === "true";
+
     const trainingPlan = user.archivedPlans[restoreIndex];
 
     const trainingPlanArray = typeOfPlan === "custom" ? user.trainingPlansCustomNew : user.trainingPlanTemplate;
 
     if (typeOfPlan === "custom" && trainingPlanArray.length >= 4) {
-      res.status(403).json({error: "Maximale Anzahl an Plänen bereits erreicht!"});
+      res.status(403).json({error: "Max. Anzahl an Plänen erreicht!"});
     } else if (typeOfPlan === "template") {
-      res.status(403).json({error: "Diese Pläne können nicht wiederhergestellt werden!"});
+      res.status(403).json({error: "Kann nicht restored werden!"});
     } else {
-      //trainingsplan wieder in das ursprüngliche array und aus dem archiv array löschen
+      //hauptzweig
       trainingPlan.lastUpdated = new Date();
+
+      if (!keepTrainingArchived && keepTrainingData) { // normales wiederherstellen
+        user.archivedPlans.splice(restoreIndex, 1);
+      } else if (keepTrainingArchived && keepTrainingData) { // wiederherstellen aber im archiv behalten
+        
+      } else if (keepTrainingArchived && !keepTrainingData) { // archiviert lassen aber "template modus" -> weight rpe und notes entfernen
+        removeUseDataOfTrainingPlan(trainingPlan);
+      } else if (!keepTrainingArchived && !keepTrainingData) { // "template mode" nicht archivieren
+        removeUseDataOfTrainingPlan(trainingPlan);
+        user.archivedPlans.splice(restoreIndex, 1);
+      }
+
       trainingPlanArray.unshift(trainingPlan);
-      user.archivedPlans.splice(restoreIndex, 1);
       await user.save();
       res.status(200).json({});
     }
@@ -675,6 +689,19 @@ export async function handleArchiveRestore (req, res) {
     res.status(500).json({ error: "Es ist ein Fehler beim Wiederherstellen eines archivierten Plans aufgetreten!"});
     console.log("Fehler beim Wiederherstellen des Trainingplans", error);
   }
+}
+
+function removeUseDataOfTrainingPlan(trainingPlan) {
+  trainingPlan.trainingWeeks.forEach((trainingWeek) => {
+    trainingWeek.trainingDays.forEach((trainingDay) => {
+      trainingDay.exercises.forEach((exercise) => {
+        exercise.weight = "";
+        exercise.actualRPE = "";
+        exercise.estMax = "";
+        exercise.notes = "";
+      })
+    })
+  })
 }
 
 function getTrainingPlanForArchive(user, typeOfPlan, index) {
