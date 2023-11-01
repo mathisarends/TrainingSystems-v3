@@ -264,6 +264,7 @@
                     <div class=" ff-sans-cond fs-400 letter-spacing-4">
                                 <%= formattedArchiveTrainingPlanDates[i] %> - <span class="trainingPlanType uppercase"><%= archivedPlans[i].typeOfPlan %></span> 
                     </div>
+                    <% console.log(archivedPlans[i].id) %>
                     <% console.log(archivedPlans[i].trainingWeeks[0].id) %>
                     <input type="hidden" class="archive-plan-id" value="<%= archivedPlans[i].id %>">
                 </div>

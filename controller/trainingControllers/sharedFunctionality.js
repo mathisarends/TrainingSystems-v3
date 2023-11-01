@@ -924,7 +924,7 @@ function getTypeOfPlan(user, typeOfPlan, index) {
 }
 
 // if it is the last week and the user selected the last week is deload option return true else false
-function isWeekDeloadWeek(trainingPlan, week) {
+export function isWeekDeloadWeek(trainingPlan, week) {
   if (week === trainingPlan.trainingWeeks.length) {
     if (
       trainingPlan.lastWeekDeload === undefined ||

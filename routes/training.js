@@ -33,13 +33,18 @@ import {
 } from "../controller/trainingControllers/trainingSessionController.js";
 
 import {
+  viewArchivedPlan
+} from "../controller/trainingControllers/archiveController.js";
+
+import {
   getStatisticPage,
   handleWeeklyProgression,
   patchTrainingPlan,
   getTrainingPlan,
   handleArchiveProcess,
   handleArchiveDelete,
-  handleArchiveRestore
+  handleArchiveRestore,
+  extractDataOfTrainingDay
 } from "../controller/trainingControllers/sharedFunctionality.js"
 
 import { 
@@ -103,32 +108,8 @@ router.post("/archive-training-plan", checkAuthenticated, (req, res) => handleAr
 router.delete("/delete-archived-training-plan", checkAuthenticated, (req, res) => handleArchiveDelete(req, res));
 router.post("/restore-archived-training-plan", checkAuthenticated, (req, res) => handleArchiveRestore(req, res));
 
-import User from "../models/user.js";
+router.get("/archive/plan/:planId/week/:weekId", checkAuthenticated, (req, res) => viewArchivedPlan(req, res));
 
-router.get("/archive/plan/:id", checkAuthenticated, async (req, res) => {
-  try {
-    const planId = req.params.id;
-    const user = await User.findById(req.user._id); // Assuming you're using user authentication.
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const plan = user.archivedPlans.id(planId);
-
-    if (!plan) {
-      return res.status(404).json({ message: "Plan not found" });
-    }
-
-    res.json(plan);
-
-    /* const plan = user.archivedPlans.id(planId); */
-
-  } catch (error) {
-    console.log("Es ist ein Fehler beim Aufrufen der Archivseite aufgetreten", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-})
 
 /* TEMPLATE PLANS */
 templateLetters.forEach((letter, index) => {
