@@ -51,6 +51,10 @@ const trainingPlanSchema = new mongoose.Schema({
       benchTonnage: Number,
       deadliftSetsDone: Number,
       deadliftTonnage: Number,
+      parentTrainingPlan: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TrainingPlan",
+      },
     },
   ],
 });

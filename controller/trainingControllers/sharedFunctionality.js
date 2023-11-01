@@ -550,7 +550,8 @@ export function removeTrainingWeeks(
 export function addNewTrainingWeeks(
   trainingWeeks,
   daysPerWeek,
-  trainingWeeksToAdd
+  trainingWeeksToAdd,
+  trainingPlanId
 ) {
   const emptyTrainingDay = {
     exercises: [],
@@ -561,7 +562,7 @@ export function addNewTrainingWeeks(
     for (let i = 0; i < daysPerWeek; i++) {
       trainingDays.push(emptyTrainingDay);
     }
-    trainingWeeks.push({ trainingDays });
+    trainingWeeks.push({ trainingDays, trainingPlanId });
   }
 }
 
@@ -729,7 +730,7 @@ export async function getTrainingPlan(
     }
 
     const trainingPlan = getTypeOfPlan(user, typeOfPlan, index);
-    const weightPlaceholders = trainingPlan.weightPlaceholders;
+    const weightPlaceholders = trainingPlan.weightPlaceholders; //typeOfPlaceholder "off, basedOnMax, basedOnLastWeek"
 
     if (!trainingPlan) {
       //Routes will hopefully will never be reached

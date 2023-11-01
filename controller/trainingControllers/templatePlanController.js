@@ -79,12 +79,13 @@ import {
         trainingPlan.lastWeekDeload = isLastWeekDeload;
       }      
 
+      const trainingPlanId = trainingPlan._id;
       
       const currentBlockLength = trainingPlan.trainingWeeks.length
       if (currentBlockLength !== newBlockLength) {
         if (newBlockLength > currentBlockLength) {
           const weekDifference = newBlockLength - currentBlockLength; //get the difference how many sets shall be added
-          addNewTrainingWeeks(trainingPlan.trainingWeeks, trainingPlan.trainingFrequency, weekDifference);
+          addNewTrainingWeeks(trainingPlan.trainingWeeks, trainingPlan.trainingFrequency, weekDifference, trainingPlanId);
 
         } else if (newBlockLength < currentBlockLength) {
           const weekDifference = currentBlockLength - newBlockLength;

@@ -103,6 +103,33 @@ router.post("/archive-training-plan", checkAuthenticated, (req, res) => handleAr
 router.delete("/delete-archived-training-plan", checkAuthenticated, (req, res) => handleArchiveDelete(req, res));
 router.post("/restore-archived-training-plan", checkAuthenticated, (req, res) => handleArchiveRestore(req, res));
 
+import User from "../models/user.js";
+
+router.get("/archive/plan/:id", checkAuthenticated, async (req, res) => {
+  try {
+    const planId = req.params.id;
+    const user = await User.findById(req.user._id); // Assuming you're using user authentication.
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const plan = user.archivedPlans.id(planId);
+
+    if (!plan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+
+    res.json(plan);
+
+    /* const plan = user.archivedPlans.id(planId); */
+
+  } catch (error) {
+    console.log("Es ist ein Fehler beim Aufrufen der Archivseite aufgetreten", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+})
+
 /* TEMPLATE PLANS */
 templateLetters.forEach((letter, index) => {
   for (let week = 1; week <= maxWeeks; week++) {

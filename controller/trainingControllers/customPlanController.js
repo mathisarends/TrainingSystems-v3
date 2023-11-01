@@ -67,10 +67,21 @@ export async function getCreateTrainingPlan(req, res) {
         trainingWeeks: trainingWeeks,
         weightPlaceholders: weightPlaceholders,
       });
+
+      await newTrainingPlan.save();
+      const newTrainingPlanId = newTrainingPlan._id;
+
+      //parent trainingId nachträglich für jede woche speichern um von woche auf den gesamten plan zugreifen zu können
+      trainingWeeks.forEach((week) => {
+        week.parentTrainingPlan = newTrainingPlanId;
+      })
+
+      newTrainingPlan.trainingWeeks = trainingWeeks;
+
   
       user.trainingPlansCustomNew.push(newTrainingPlan);
       user.trainingPlansCustomNew.sort((a, b) => b.lastUpdated - a.lastUpdated); // sorts by date descending
-  
+
       await user.save();
   
       res.redirect("/training/custom-A1");
@@ -176,11 +187,13 @@ export async function getCreateTrainingPlan(req, res) {
         trainingPlan.weightPlaceholders = weightPlaceholders;
       }
 
+      const trainingPlanId = trainingPlan._id;
+
       const currentBlockLength = trainingPlan.trainingWeeks.length
       if (currentBlockLength !== newBlockLength) {
         if (newBlockLength > currentBlockLength) {
           const weekDifference = newBlockLength - currentBlockLength; //get the difference how many sets shall be added
-          addNewTrainingWeeks(trainingPlan.trainingWeeks, trainingPlan.trainingFrequency, weekDifference);
+          addNewTrainingWeeks(trainingPlan.trainingWeeks, trainingPlan.trainingFrequency, weekDifference, trainingPlanId);
 
         } else if (newBlockLength < currentBlockLength) {
           const weekDifference = currentBlockLength - newBlockLength;

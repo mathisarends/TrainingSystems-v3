@@ -246,8 +246,7 @@
         <% if (archivedPlans.length===0) { %>
             <div class="no-training-available ff-sans-cond letter-spacing-3 fs-500">
                 <p>
-                    Es sieht so aus als hättest du keine gespeicherten Trainingspläne.
-                    Erstelle einfach einen mit dem Button unten.
+                    Hier werden deine archivierten Trainingspläne angezeigt. Diesen Text siehst du nur wenn du noch keine hast :)
                 </p>
             </div>
             <% } %>
@@ -265,6 +264,8 @@
                     <div class=" ff-sans-cond fs-400 letter-spacing-4">
                                 <%= formattedArchiveTrainingPlanDates[i] %> - <span class="trainingPlanType uppercase"><%= archivedPlans[i].typeOfPlan %></span> 
                     </div>
+                    <% console.log(archivedPlans[i].trainingWeeks[0].id) %>
+                    <input type="hidden" class="archive-plan-id" value="<%= archivedPlans[i].id %>">
                 </div>
                 <% } %>
         </div>
