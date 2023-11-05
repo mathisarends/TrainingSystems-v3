@@ -8,11 +8,21 @@ document.addEventListener("DOMContentLoaded", () => {
         const pathName = window.location.pathname; ///training/custom-A-stats
         const trainingType = pathName.substring(0, pathName.lastIndexOf("-"));
     
+        const url = window.location.href;
     
         navToTrainingBTNs.forEach((trainingButton) => {
             trainingButton.addEventListener("click", e => {
                 e.preventDefault();
-                window.location.href = `${trainingType}${lastTrainingWeek}`; // immer an erste woche eigentlich an zuletzt trainierte TODO:
+                
+                if (url.includes("/training/archive/stats")) { //archive stats page
+                    const trainingPlanObjectId = url.slice(-24);
+                    const firstTrainingWeekId = document.getElementById("firstTrainingWeekId").value;
+                    const redirectUrl = `/training/archive/plan/${trainingPlanObjectId}/week/${firstTrainingWeekId}`;
+                    window.location.href = redirectUrl;
+
+                } else { //normal stats page
+                    window.location.href = `${trainingType}${lastTrainingWeek}`;
+                }
             })
         })
     

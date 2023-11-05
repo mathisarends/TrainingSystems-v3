@@ -28,7 +28,7 @@ export async function viewArchivedPlan(req, res) {
         const week = trainingPlan.trainingWeeks.id(weekId);
     
         if (!week) {
-          return req.status(404).json({ message: "Week not found" });
+          return res.status(404).json({ message: "Week not found" });
         }
     
         const {
@@ -57,11 +57,27 @@ export async function viewArchivedPlan(req, res) {
     
         const trainingData =
         user.trainingData.length > 0 ? user.trainingData[0] : {};
+        
+        let beforePageId;
+        let afterPageId;
+        
+        const weekIndex = weekNumber - 1; // Annahme, dass weekNumber 1-basiert ist.
+        const totalWeeks = trainingPlan.trainingWeeks.length;
+        
+        if (totalWeeks > 0) {
+          beforePageId = trainingPlan.trainingWeeks[weekIndex]._id;
+        
+          // Berechnung der nächsten Woche
+          let nextWeekIndex = (weekIndex + 1) % totalWeeks;
+          afterPageId = trainingPlan.trainingWeeks[nextWeekIndex]._id;
+        
+          // Berechnung der vorherigen Woche
+          let previousWeekIndex = (weekIndex - 1 + totalWeeks) % totalWeeks;
+          beforePageId = trainingPlan.trainingWeeks[previousWeekIndex]._id;
+        }
 
-
-
-        const beforePage = ""; 
-        const afterPage = "";
+        const beforePage = `/training/archive/plan/${planId}/week/${beforePageId}`; 
+        const afterPage = `/training/archive/plan/${planId}/week/${afterPageId}`; 
 
         const isDeloadWeek = isWeekDeloadWeek(trainingPlan, weekNumber);
 
@@ -133,6 +149,7 @@ export async function viewArchivedPlanStats(req, res) {
     }
 
     const { trainingTitle } = getTrainingPlanInfo(trainingPlan);
+    const firstWeekTrainingId = trainingPlan.trainingWeeks[0]._id;
 
     const squatSetsDone = [];
     const squatTonnage = [];
@@ -203,6 +220,7 @@ export async function viewArchivedPlanStats(req, res) {
       bestDeadliftSets,
 
       lastWeekIndex,
+      firstWeekTrainingId,
     });
 
 
