@@ -84,6 +84,7 @@ const assets = [
   "/javascripts/trainingIndexPage/handleTemplateRedirects.js",
   "/javascripts/trainingIndexPage/handleSessionRedirects.js",
   "/javascripts/trainingIndexPage/archiveLogic.js",
+  "/javascripts/trainingIndexPage/archiveRedirectAndRestore.js",
 
   "/javascripts/trainingPage/ajaxAutoSave.js",
   "/javascripts/trainingPage/calcBackoffMax.js",

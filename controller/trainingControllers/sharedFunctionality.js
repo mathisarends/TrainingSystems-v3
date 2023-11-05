@@ -358,7 +358,7 @@ function formatDateWithDay(date) {
   return `${dayOfWeek} ${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
-function getIndexOfMostRecentTrainingDay(trainingPlan) {
+export function getIndexOfMostRecentTrainingDay(trainingPlan) {
   if (!trainingPlan || !trainingPlan.trainingWeeks) {
     return {
       weekIndex: undefined,
@@ -496,11 +496,11 @@ export async function getStatisticPage(req, res, index) {
       lastWeekIndex,
     });
   } catch (error) {
-    console.log("Fehler beim aufrufen der statistic page:");
+    console.log("Fehler beim aufrufen der statistic page:", error);
   }
 }
 
-function findBestSetInCategory(week, category, userExercises) {
+export function findBestSetInCategory(week, category, userExercises) {
   // get all the relevant exercise in order to get access to maxFactors
   const usersCategoryExercises = userExercises.filter(
     (exercise) => exercise.category.name === category

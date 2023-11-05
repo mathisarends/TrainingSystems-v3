@@ -4,7 +4,9 @@ import {
     getTrainingPlanInfo,
     categorizeExercises,
     isWeekDeloadWeek,
-    extractDataOfTrainingDay
+    extractDataOfTrainingDay,
+    findBestSetInCategory, //for stats --
+    getIndexOfMostRecentTrainingDay
   } from "./sharedFunctionality.js";
 
 export async function viewArchivedPlan(req, res) {
@@ -38,16 +40,12 @@ export async function viewArchivedPlan(req, res) {
         } = getTrainingPlanInfo(trainingPlan);
 
         const weekNumber = getWeekNumberById(trainingPlan, weekId);
-        console.log(weekNumber);
     
         const trainingWeekData = [];
-        console.log(amountOfTrainingDays)
 
         for (let i = 0; i < amountOfTrainingDays; i++) {
             trainingWeekData.push(extractDataOfTrainingDay(trainingPlan, weekNumber - 1, i));
         }
-
-        console.log(trainingWeekData[0].exercises);
     
         const {
           exerciseCategories,
@@ -117,6 +115,101 @@ export async function viewArchivedPlan(req, res) {
         console.log("Es ist ein Fehler beim Aufrufen der Archivseite aufgetreten", error);
         res.status(500).json({ message: "Internal server error" });
       }
+}
+
+export async function viewArchivedPlanStats(req, res) {
+  try {
+    const user = await User.findById(req.user._id); // Assuming you're using user authentication.
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const planId = req.params.planId;
+    const trainingPlan = user.archivedPlans.id(planId);
+
+    if (!trainingPlan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+
+    const { trainingTitle } = getTrainingPlanInfo(trainingPlan);
+
+    const squatSetsDone = [];
+    const squatTonnage = [];
+    const benchSetsDone = [];
+    const benchTonnage = [];
+    const deadliftSetsDone = [];
+    const deadliftTonnage = [];
+
+    trainingPlan.trainingWeeks.forEach((trainingWeek) => {
+      squatSetsDone.push(trainingWeek.squatSetsDone);
+      squatTonnage.push(trainingWeek.squatTonnage);
+      benchSetsDone.push(trainingWeek.benchSetsDone);
+      benchTonnage.push(trainingWeek.benchTonnage);
+      deadliftSetsDone.push(trainingWeek.deadliftSetsDone);
+      deadliftTonnage.push(trainingWeek.deadliftTonnage);
+    });
+
+    const bestSquatSets = [];
+    const bestBenchSets = [];
+    const bestDeadliftSets = [];
+
+    trainingPlan.trainingWeeks.forEach((trainingWeek) => {
+      const bestSquatSetInWeek = findBestSetInCategory(
+        trainingWeek,
+        "Squat",
+        user.exercises
+      );
+      const bestBenchSetInWeek = findBestSetInCategory(
+        trainingWeek,
+        "Bench",
+        user.exercises
+      );
+      const bestDeadliftSetInWeek = findBestSetInCategory(
+        trainingWeek,
+        "Deadlift",
+        user.exercises
+      );
+
+      if (bestSquatSetInWeek) {
+        bestSquatSets.push(bestSquatSetInWeek);
+      }
+
+      if (bestBenchSetInWeek) {
+        bestBenchSets.push(bestBenchSetInWeek);
+      }
+
+      if (bestDeadliftSetInWeek) {
+        bestDeadliftSets.push(bestDeadliftSetInWeek);
+      }
+    });
+
+    const { weekIndex: lastWeekIndex } =
+    getIndexOfMostRecentTrainingDay(trainingPlan);
+
+    res.render("trainingPlans/archive/archiveStats", {
+      trainingTitle,
+      userID: req.user._id,
+
+      squatSetsDone,
+      squatTonnage,
+      benchSetsDone,
+      benchTonnage,
+      deadliftSetsDone,
+      deadliftTonnage,
+
+      bestSquatSets,
+      bestBenchSets,
+      bestDeadliftSets,
+
+      lastWeekIndex,
+    });
+
+
+
+  } catch (error) {
+    console.log("Es ist ein Fehler beim aufrufen der ArchiveStats Page aufgetreten", error);
+  }
 }
 
 function getWeekNumberById(trainingPlan, weekId) {
