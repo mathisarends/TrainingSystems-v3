@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const offlineSVG = document.getElementById("offline-svg");
     const syncSVG = document.getElementById("sync-svg");
 
-    // check inital status wheter offline mode is on or not
-    const isOnlineModeOn = localStorage.getItem("wifi");
+
+    const isOnlineModeOn = localStorage.getItem("wifi");     // check inital status wheter offline mode is on or not
 
     // wait for service worker activation
     async function waitForServiceWorkerActivation() {
@@ -67,9 +67,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //get online status first => if !online then set the wifi to offline automatically
     // if online set the custom wifi
-    registration.active.postMessage({
-      command: "getOnlineStatus",
-    });
+
+    // if the localStorage value is offline mode then use it immediately => else: getOnlineStatus from sw
+    if (isOnlineModeOn) {
+      registration.active.postMessage({
+        command: "getOnlineStatus",
+      });
+    }
 
     navigator.serviceWorker.addEventListener("message", (event) => {
       const data = event.data;
@@ -80,21 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // if the device is only check for localstorage value | if offline then always set it to offline
         if (onlineStatus) {
-          // set initial status and send it to service worker => value from localstorage
-          if (isOnlineModeOn === "true") {
-            registration.active.postMessage({
-              command: "switchToDefaultMode",
-              registratedUser: registratedUserID,
-            });
-
-            showOnlineSVG();
-          } else if (isOnlineModeOn === "false") {
+          
+          if (isOnlineModeOn === "false") {
             registration.active.postMessage("switchToOfflineMode");
 
             showOfflineSVG();
           } else {
-            //inital the default mode is selected
-
             registration.active.postMessage({
               command: "switchToDefaultMode",
               registratedUser: registratedUserID,
@@ -102,11 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             showOnlineSVG();
           }
-        } else if (!onlineStatus) {
-
-          // if the device is not online always set network mode to false;
-          registration.active.postMessage("switchToOfflineMode");
-          showOfflineSVG();
         }
       }
     });
@@ -148,6 +138,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
+
+    const toggleServerButton = document.getElementById("toggle-server");
+    toggleServerButton.addEventListener("click", e => {
+      e.preventDefault();
+
+      const turnServerOnModal = document.getElementById("turnServerOnModal");
+      turnServerOnModal.style.display = "block";
+
+      const turnServerOnButton = document.getElementById("turn_on_server");
+      const cancelButton = document.getElementById("cancel_server");
+
+      turnServerOnButton.addEventListener("click", () => {
+        window.location.href = "/logout";
+      })
+
+      cancelButton.addEventListener("click", () => {
+        turnServerOnModal.style.display = "none";
+      })
+
+    })
 
     //wenn auf den online modus gewechselt wird und der service worker feststellt dass es ungespeicherte daten aus dem offline mode gibt dann wird dieser button angezeigt: um zu synchroniseren:
     navigator.serviceWorker.addEventListener("message", (event) => {

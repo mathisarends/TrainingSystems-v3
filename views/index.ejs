@@ -36,6 +36,19 @@
   </svg>
 </div>
 
+<div id="turnServerOnModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none;">
+  <div class="modal-content flow" style="--flow-space: 0.5em;">
+        <input type="text" readonly value="Server anschalten!">
+        <input type="text" readonly value="Dies kann bis zu 30 Sekunden dauern">
+        <input type="text" readonly value="Du wirst ausgeloggt">
+        <div class="modal-buttons">
+          <button class="modal-button text-accent" id="turn_on_server">FORTSETZEN</button>
+          <button class="modal-button text-accent" id="cancel_server">ABBRECHEN</button>
+      </div>
+    </div>
+</div>
+
+
 <div id="waitForSyncModal" class="modal ff-sans-cond text-accent fs-500 letter-spacing-4" style="display: none;">
   <div class="modal-content flow" style="--flow-space: 0.5em;">
         <input type="text" readonly value="Synchronisieren">
@@ -49,7 +62,12 @@
 </div>
 
 <footer>
-  <div class="navigate-week-button-container text-accent" id="wifi-bar" style="display: flex;">
+  <div class="navigate-week-button-container text-accent" id="wifi-bar" style="display: flex; --gap: 3rem;">
+
+    <div id="toggle-server">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-power"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+    </div>
+
     <div id="online-svg" style="display: none">
 
       <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"

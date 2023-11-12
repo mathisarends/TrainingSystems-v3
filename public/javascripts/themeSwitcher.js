@@ -23,17 +23,6 @@ const setPreference = () => {
   reflectPreference();
 };
 
-const updateManifest = (theme) => {
-  const manifestLink = document.getElementById("manifest-theme-link");
-  const manifest = {
-    ...manifestLink,
-    href: theme === "light" ?"/manifest/manifest_light.webmanifest" : "/manifest/manifest.webmanifest",
-  }
-  Object.keys(manifest).forEach((key) => {
-    manifestLink.setAttribute(key, manifest[key]);
-  })
-}
-
 const reflectPreference = () => {
   document.firstElementChild.setAttribute("data-theme", theme.value);
 
@@ -44,8 +33,6 @@ const reflectPreference = () => {
     document.firstElementChild.classList.remove("home");
     document.firstElementChild.classList.add("home-white");
   }
-
-  updateManifest(theme.value);
 
   document
     .querySelector("#theme-toggle")
