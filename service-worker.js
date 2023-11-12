@@ -84,6 +84,7 @@ const assets = [
   "/javascripts/trainingIndexPage/handleTemplateRedirects.js",
   "/javascripts/trainingIndexPage/handleSessionRedirects.js",
   "/javascripts/trainingIndexPage/archiveLogic.js",
+  "/javascripts/trainingIndexPage/archiveRedirectAndRestore.js",
 
   "/javascripts/trainingPage/ajaxAutoSave.js",
   "/javascripts/trainingPage/calcBackoffMax.js",
@@ -102,6 +103,7 @@ const assets = [
   "/javascripts/trainingPage/weightInput.js",
   "/javascripts/trainingPage/automaticProgression.js",
   "/javascripts/trainingPage/editTrainingPage.js",
+  "/javascripts/trainingPage/archivePlanView.js",
 
   "/javascripts/volume/calcVolume.js",
   "/javascripts/volume/switchViews.js",
@@ -381,7 +383,6 @@ self.addEventListener("message", (event) => {
     const userID = message.user;
 
     console.log("userID", userID);
-    console.log(url);
     console.log("isSynced", isSynced);
 
     // is synced flag not used anymore because entries are deleted then synced_

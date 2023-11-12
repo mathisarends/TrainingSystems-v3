@@ -33,7 +33,7 @@ import {
 } from "../controller/trainingControllers/trainingSessionController.js";
 
 import {
-  viewArchivedPlan
+  viewArchivedPlan, viewArchivedPlanStats
 } from "../controller/trainingControllers/archiveController.js";
 
 import {
@@ -109,6 +109,7 @@ router.delete("/delete-archived-training-plan", checkAuthenticated, (req, res) =
 router.post("/restore-archived-training-plan", checkAuthenticated, (req, res) => handleArchiveRestore(req, res));
 
 router.get("/archive/plan/:planId/week/:weekId", checkAuthenticated, (req, res) => viewArchivedPlan(req, res));
+router.get("/archive/stats/:planId", checkAuthenticated, (req, res) => viewArchivedPlanStats(req, res))
 
 
 /* TEMPLATE PLANS */
