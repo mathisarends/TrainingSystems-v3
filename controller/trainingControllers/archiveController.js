@@ -61,7 +61,7 @@ export async function viewArchivedPlan(req, res) {
         user.trainingData.length > 0 ? user.trainingData[0] : {};
 
 
-
+        // implement this logi here !!!!
         const beforePage = ""; 
         const afterPage = "";
 
