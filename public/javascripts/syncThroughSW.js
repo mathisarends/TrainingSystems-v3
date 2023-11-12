@@ -73,6 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
       registration.active.postMessage({
         command: "getOnlineStatus",
       });
+    } else {
+      showOfflineSVG();
     }
 
     navigator.serviceWorker.addEventListener("message", (event) => {
