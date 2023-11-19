@@ -1,6 +1,7 @@
 # Training Systems
 
 Eine voll offline-fähige PWA um sein Krafttraining zu planen und protokollieren.
+Gebaut mit Node.js, Express, EJS und MongoDB.
 
 ## Demo Bilder
 ![main_dark](/demo/main_dark.jpg)
