@@ -9,3 +9,12 @@ Folgende Schritte müssen durchgeführt werden, um das Projekt zu installieren u
 ```bash
 npm install
 npm run dev 
+
+Demo
+Hier sind einige Demo-Bilder der mobile Version, die die Benutzeroberfläche und Funktionen des Systems zeigen:
+
+`![Bild 1](/images/bild1.png)`.
+Beschreibung des Bildes 1
+
+Bild 2
+Beschreibung des Bildes 2
