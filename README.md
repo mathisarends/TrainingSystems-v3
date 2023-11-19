@@ -6,35 +6,15 @@ Eine voll offline-fähige PWA um sein Krafttraining zu planen und protokollieren
 
 Folgende Schritte müssen durchgeführt werden, um das Projekt zu installieren und zu starten
 
+### Demo Bilder
+![main_dark](https://github.com/mathisarends/TrainingSystems-v3/assets/140075923/f1895ec8-8a73-450a-b696-db173379803e)
+![main_white](https://github.com/mathisarends/TrainingSystems-v3/assets/140075923/7c904f36-76ae-456f-9c09-f696e84bd966)
+![stats_dark](https://github.com/mathisarends/TrainingSystems-v3/assets/140075923/ed76d559-ed29-49f1-83c1-99caecb891c5)
+![stats_light](https://github.com/mathisarends/TrainingSystems-v3/assets/140075923/bfdfff66-aa03-4ff9-9a06-9bf17b512fe5)
+![training_view_dark](https://github.com/mathisarends/TrainingSystems-v3/assets/140075923/08de5327-643c-491d-901a-870b65e079fd)
+![training_view_light](https://github.com/mathisarends/TrainingSystems-v3/assets/140075923/519b858b-84d2-4566-9f1a-eb6186e3cb7f)
+
+
 ```bash
 npm install
-npm run dev 
-
-Demo
-Hier sind einige Demo-Bilder der mobile Version, die die Benutzeroberfläche und Funktionen des Systems zeigen:
-
-![Startbildschirm Desktop - Dark Mode](/demo/main_desktop_dark.jpg)
-*Startbildschirm Desktop - Dark Mode*
-
-![Startbildschirm Mobile - Dark Mode](/demo/main_dark.jpg)
-*Startbildschirm Mobile - Dark Mode*
-
-![Mobile Training Plan Overview - Dark Mode](/demo/training_view_dark.jpg)
-*Mobile Training Plan Overview - Dark Mode*
-
-![Mobile Stats Page - Dark Mode](/demo/stats_dark.jpg)
-*Mobile Stats Page - Dark Mode*
-
-**LIGHT MODE**
-
-![Startbildschirm Desktop - Light Mode](/demo/main_desktop_light.jpg)
-*Startbildschirm Desktop - Light Mode*
-
-![Startbildschirm Mobile - Light Mode](/demo/main_white.jpg)
-*Startbildschirm Mobile - Light Mode*
-
-![Mobile Training Plan Overview - Light Mode](/demo/training_view_light.jpg)
-*Mobile Training Plan Overview - Light Mode*
-
-![Mobile Stats Page - Light Mode](/demo/stats_light.jpg)
-*Mobile Stats Page - Light Mode*
+npm run dev
