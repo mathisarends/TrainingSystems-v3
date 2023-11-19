@@ -13,8 +13,28 @@ npm run dev
 Demo
 Hier sind einige Demo-Bilder der mobile Version, die die Benutzeroberfläche und Funktionen des Systems zeigen:
 
-`![Bild 1](/images/bild1.png)`.
-Beschreibung des Bildes 1
+![Startbildschirm Desktop - Dark Mode](/demo/main_desktop_dark.jpg)
+*Startbildschirm Desktop - Dark Mode*
 
-Bild 2
-Beschreibung des Bildes 2
+![Startbildschirm Mobile - Dark Mode](/demo/main_dark.jpg)
+*Startbildschirm Mobile - Dark Mode*
+
+![Mobile Training Plan Overview - Dark Mode](/demo/training_view_dark.jpg)
+*Mobile Training Plan Overview - Dark Mode*
+
+![Mobile Stats Page - Dark Mode](/demo/stats_dark.jpg)
+*Mobile Stats Page - Dark Mode*
+
+**LIGHT MODE**
+
+![Startbildschirm Desktop - Light Mode](/demo/main_desktop_light.jpg)
+*Startbildschirm Desktop - Light Mode*
+
+![Startbildschirm Mobile - Light Mode](/demo/main_white.jpg)
+*Startbildschirm Mobile - Light Mode*
+
+![Mobile Training Plan Overview - Light Mode](/demo/training_view_light.jpg)
+*Mobile Training Plan Overview - Light Mode*
+
+![Mobile Stats Page - Light Mode](/demo/stats_light.jpg)
+*Mobile Stats Page - Light Mode*
