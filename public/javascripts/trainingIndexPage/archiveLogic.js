@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // context: custom plans
+    // context: custom plans for retrieving title
     const customTrainingContainers = document.querySelectorAll(
         "section:nth-of-type(1) .custom-training-container"
       );
 
-      const templateTrainingContainers = document.querySelectorAll(
+      const templateTrainingContainers = document.querySelectorAll( //for retrieving title
         "section:nth-of-type(3) .custom-training-container"
       );
 
