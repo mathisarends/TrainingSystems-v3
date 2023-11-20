@@ -14,9 +14,6 @@ Gebaut mit Node.js, Express, EJS und MongoDB.
 ![training_view_dark](/demo/training_view_dark.jpg)
 ![training_view_light](/demo/training_view_light.jpg)
 
-![training_view_dark](/demo/training_view_dark.jpg)
-![training_view_light](/demo/training_view_light.jpg)
-
 ![training_page_dark](/demo/training_page_dark.jpg)
 ![training_plan_light](/demo/training_plan_light.jpg)
 
