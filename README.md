@@ -1,9 +1,25 @@
 # Training Systems
 
-Eine voll offline-fähige PWA um sein Krafttraining zu planen und protokollieren.
-Gebaut mit Node.js, Express, EJS und MongoDB.
+Diese Fitness-App ermöglicht es Nutzern, individuelle Accounts anzulegen und personalisierte Trainingspläne zu erstellen und zu verwalten. Mit integrierten statistischen Auswertungen behalten Nutzer den Überblick über ihren Fortschritt und können ihre Fitnessziele effektiv verfolgen.
 
-## Demo Bilder
+## Funktionen
+
+- **Benutzerkontenverwaltung**: Erstelle und verwalte persönliche Benutzerkonten für eine maßgeschneiderte Nutzererfahrung.
+- **Trainingsplanung**: Entwickle und organisiere individuelle Trainingspläne entsprechend den eigenen Fitnesszielen.
+- **Statistische Auswertungen**: Behalte den Überblick über Trainingsergebnisse und Fortschritte mithilfe von übersichtlichen statistischen Analysen.
+- **Empfehlungen für Trainingsvolumen**: Erhalte personalisierte Empfehlungen basierend auf definierten Parametern für ein optimales Trainingsvolumen.
+- **Individuelle Übungen**: Definiere und integriere eigene Übungen, um das Training an persönliche Bedürfnisse anzupassen.
+
+
+### Technologie
+Die App ist als Progressive Web App (PWA) implementiert, die schnelle Zugriffszeiten und Offline-Fähigkeiten durch die Nutzung eines Service Workers bietet. Die Online/Offline-Synchronisation gewährleistet eine nahtlose Nutzungserfahrung.
+
+- **Frontend**: Implementiert mit modernen Webtechnologien.
+- **Backend**: Entwickelt mit Node.js, Express und Mongoose für eine effiziente und robuste Serverstruktur.
+
+
+
+#### Demo Bilder
 ![main_desktop_dark](/demo/main_desktop_dark.jpg)
 ![main_desktop_light](/demo/main_desktop_light.jpg)
 
@@ -18,7 +34,7 @@ Gebaut mit Node.js, Express, EJS und MongoDB.
 ![training_plan_light](/demo/training_plan_light.jpg)
 
 
-### Installation
+##### Installation
 
 Eine Demo Version kann unter dieser URL gefunden werden. Erstmaliges Laden kann bis zu 30 Sekunden dauern, da es sich um einen kostenlosen Server handelt. Bitte mit dem Account username: demo, password: demo einloggen.
 
