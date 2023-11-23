@@ -292,7 +292,7 @@ self.addEventListener("message", async (event) => {
 
     event.source.postMessage({
       type: "swOnlineStatus",
-      onlineStatus: onlineStatus,
+      onlineStatus: onlineStatus, 
     })
   }
 })

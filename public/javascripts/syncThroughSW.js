@@ -69,11 +69,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // if online set the custom wifi
 
     // if the localStorage value is offline mode then use it immediately => else: getOnlineStatus from sw
-    if (isOnlineModeOn) {
+    
+    if (isOnlineModeOn === "true") {
       registration.active.postMessage({
         command: "getOnlineStatus",
       });
-    } else {
+    } else if (isOnlineModeOn === "false") {
+      registration.active.postMessage("switchToOfflineMode"); //switch to offline Mode just in case
       showOfflineSVG();
     }
 
@@ -152,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const cancelButton = document.getElementById("cancel_server");
 
       turnServerOnButton.addEventListener("click", () => {
+        localStorage.setItem("wifi", "true");
         window.location.href = "/logout";
       })
 
