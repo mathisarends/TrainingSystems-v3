@@ -36,7 +36,7 @@ Die App ist als Progressive Web App (PWA) implementiert, die schnelle Zugriffsze
 
 ##### Installation
 
-Eine Demo Version kann unter dieser URL gefunden werden. Erstmaliges Laden kann bis zu 30 Sekunden dauern, da es sich um einen kostenlosen Server handelt. Bitte mit dem Account username: demo, password: demo einloggen.
+Eine Demo Version kann unter dieser URL gefunden werden. Erstmaliges Laden kann bis zu 30 Sekunden dauern, da es sich um einen kostenlosen Server handelt.
 
 ```bash
 https://training-systems.onrender.com/
