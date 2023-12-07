@@ -1,0 +1,80 @@
+<main id="main" class="grid-container grid-container--training grid-container--stats flow">
+  <h1 class="numbered-title"><span aria-hidden="true">STATS</span></h1>
+
+  <div
+    class="tab-list underline-indicators flex"
+    role="tablist"
+    aria-label="destination list"
+    style="justify-content: space-between"
+  >
+    <button
+      id="friends-tab"
+      aria-selected="true"
+      role="tab"
+      aria-controls="friends-tab"
+      class="uppercase ff-sans-cond text-accent letter-spacing-2"
+      tabindex="0"
+    >
+      Friends
+    </button>
+    <button
+      id="add-friends-tab"
+      aria-selected="false"
+      role="tab"
+      aria-controls="add-friends-tab"
+      class="uppercase ff-sans-cond text-accent letter-spacing-2"
+      tabindex="0"
+    >
+      HINZUFÜGEN
+    </button>
+    <button
+      id="settings-tab"
+      aria-selected="false"
+      role="tab"
+      aria-controls="settings-tab"
+      class="uppercase ff-sans-cond text-accent letter-spacing-2"
+      tabindex="0"
+    >
+      SETTINGS
+    </button>
+  </div>
+
+  <section class="custom-view-container flow" style="--flow-space: 2em">
+    <div class="training-plan-container flex" style="--gap: 1rem">
+      <div class="stats-container" style="width: 100%">
+        <div class="training-plan-title uppercase">Hallo</div>
+        <div class="ff-sans-cond fs-400 letter-spacing-4">
+          Was geht ab in der Statt Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure, tempora et
+          necessitatibus dolorem, non saepe ipsam quae exercitationem nisi, ex laborum! Fugiat cum obcaecati asperiores
+          necessitatibus nihil quasi eaque fugit!
+        </div>
+      </div>
+
+      <div class="stats-container">
+        <div class="training-plan-title uppercase">Hallo 2</div>
+        <div class="ff-sans-cond fs-400 letter-spacing-4">Was geht ab 2</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="training-button-container" style="width: 100%">
+    <button class="main-page-button training-plan-button uppercase" id="start-custom-training-button">
+      Trainieren
+    </button>
+
+    <button class="main-page-button edit-training-plan-button uppercase" id="edit-custom-training-button">
+      Bearbeiten
+    </button>
+
+    <button class="main-page-button back-button uppercase" id="edit-custom-training-button">BACK</button>
+  </div>
+</main>
+
+<script>
+  const navigateBackBTN = document.querySelector(".back-button");
+  navigateBackBTN.addEventListener("click", e => {
+    e.preventDefault();
+
+    window.location.href = "/";
+  });
+</script>

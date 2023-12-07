@@ -225,7 +225,6 @@ self.addEventListener("fetch", async event => {
 
   // These responses are always the same whether in offline or online mode
   if (!responseSet) {
-    console.log("hier kommt nix durch");
     if (isCSS || isJS || isManfifest || isImage || isFont) {
       response = staleNoRevalidate(event);
       responseSet = true;
@@ -243,7 +242,6 @@ self.addEventListener("fetch", async event => {
   }
 
   if (!responseSet && defaultNetworkMode) {
-    console.log("hier kommt nix durch");
     if (isAudio) {
       response = staleNoRevalidate(event);
       responseSet = true;
