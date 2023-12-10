@@ -1,5 +1,19 @@
-<main id="main" class="grid-container grid-container--training grid-container--stats flow">
-  <h1 class="numbered-title"><span aria-hidden="true">STATS</span></h1>
+<style>
+  .custom-training-container {
+    flex: 1; /* Der Container nimmt so viel Platz wie möglich ein */
+    display: flex;
+    flex-direction: column; /* Stelle sicher, dass die inneren Elemente in einer Spalte angeordnet sind */
+  }
+
+  .training-plan-container {
+    display: flex;
+    --gap: 1rem; /* Setze die gewünschte Lücke zwischen den Elementen */
+    gap: var(--gap);
+  }
+</style>
+
+<main id="main" class="grid-container grid-container--training grid-container--stats flow" style="overflow-x: hidden">
+  <h1 class="numbered-title"><span aria-hidden="true"><%= username %></span>Friends</h1>
 
   <div
     class="tab-list underline-indicators flex"
@@ -41,19 +55,42 @@
 
   <section class="custom-view-container flow" style="--flow-space: 2em">
     <div class="training-plan-container flex" style="--gap: 1rem">
-      <div class="stats-container" style="width: 100%">
-        <div class="training-plan-title uppercase">Hallo</div>
-        <div class="ff-sans-cond fs-400 letter-spacing-4">
-          Was geht ab in der Statt Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure, tempora et
-          necessitatibus dolorem, non saepe ipsam quae exercitationem nisi, ex laborum! Fugiat cum obcaecati asperiores
-          necessitatibus nihil quasi eaque fugit!
-        </div>
-      </div>
+      <% for (let i=0; i < users.length; i++) { %>
 
-      <div class="stats-container">
-        <div class="training-plan-title uppercase">Hallo 2</div>
-        <div class="ff-sans-cond fs-400 letter-spacing-4">Was geht ab 2</div>
+      <div class="custom-training-container friend-container" style="margin: auto; padding-top: 1.25rem">
+        <div style="display: none" class="hidden-index"><%= i %></div>
+        <div
+          class="training-plan-title flex uppercase text-white"
+          style="justify-content: space-between; padding-inline: 1.75rem"
+        >
+          <div><%= users[i].name %></div>
+          <input type="hidden" class="userId" value="<%= users[i]._id.toString() %>" />
+          <div class="flex">
+            <div class="add-friend-button" style="color: hsl(var(--clr-white) / 0.75)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-user-plus"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex" style="justify-content: space-evenly"></div>
       </div>
+      <% } %>
     </div>
   </section>
 
@@ -76,5 +113,19 @@
     e.preventDefault();
 
     window.location.href = "/";
+  });
+
+  const addFriendButtons = document.querySelectorAll(".add-friend-button");
+  console.log(addFriendButtons);
+
+  addFriendButtons.forEach((addFriendButton, index) => {
+    addFriendButton.addEventListener("click", e => {
+      e.preventDefault();
+
+      const userId = document.querySelectorAll(".userId")[index].value;
+      console.log(userId);
+
+      // use ajax in order to send friend request to /social/friends with the field addedUserId
+    });
   });
 </script>
