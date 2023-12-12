@@ -181,6 +181,7 @@ self.addEventListener("install", ev => {
   );
 });
 
+// wurde von mir verschlimmbessert aufgepasst !
 self.addEventListener("fetch", async event => {
   const url = new URL(event.request.url);
 

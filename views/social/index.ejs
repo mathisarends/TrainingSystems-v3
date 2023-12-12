@@ -1,19 +1,5 @@
-<style>
-  .custom-training-container {
-    flex: 1; /* Der Container nimmt so viel Platz wie möglich ein */
-    display: flex;
-    flex-direction: column; /* Stelle sicher, dass die inneren Elemente in einer Spalte angeordnet sind */
-  }
-
-  .training-plan-container {
-    display: flex;
-    --gap: 1rem; /* Setze die gewünschte Lücke zwischen den Elementen */
-    gap: var(--gap);
-  }
-</style>
-
 <main id="main" class="grid-container grid-container--training grid-container--stats flow" style="overflow-x: hidden">
-  <h1 class="numbered-title"><span aria-hidden="true"><%= username %></span>Friends</h1>
+  <h1 class="numbered-title"><span aria-hidden="true"><%= username %></span>SOCIAL</h1>
 
   <div
     class="tab-list underline-indicators flex"
@@ -28,34 +14,65 @@
       aria-controls="friends-tab"
       class="uppercase ff-sans-cond text-accent letter-spacing-2"
       tabindex="0"
+      id="friends"
     >
-      Friends
+      FRIENDS
     </button>
     <button
-      id="add-friends-tab"
+      id="pending-friends-tab"
       aria-selected="false"
       role="tab"
       aria-controls="add-friends-tab"
       class="uppercase ff-sans-cond text-accent letter-spacing-2"
       tabindex="0"
     >
-      HINZUFÜGEN
+      PENDING
     </button>
     <button
-      id="settings-tab"
+      id="search-friends-tab"
       aria-selected="false"
       role="tab"
       aria-controls="settings-tab"
       class="uppercase ff-sans-cond text-accent letter-spacing-2"
       tabindex="0"
+      id="search"
     >
-      SETTINGS
+      SEARCH
     </button>
   </div>
 
   <section class="custom-view-container flow" style="--flow-space: 2em">
     <div class="training-plan-container flex" style="--gap: 1rem">
-      <% for (let i=0; i < users.length; i++) { %>
+      <% for (let i=0; i < friends.length; i++) { %>
+
+      <div class="custom-training-container">
+        <div class="training-plan-title uppercase"><%= friends[i].name %></div>
+        <div class="ff-sans-cond fs-400 letter-spacing-4"><%= friends[i].friendSince %></div>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="custom-view-container flow" style="--flow-space: 2em" hidden>
+    <div class="training-plan-container flex" style="--gap: 1rem">
+      <% for (let i=0; i < pendingFriends.length; i++) { %>
+
+      <div class="custom-training-container">
+        <div class="training-plan-title uppercase"><%= pendingFriends[i].name %></div>
+        <div class="ff-sans-cond fs-400 letter-spacing-4"><%= pendingFriends[i].requestSent %></div>
+        <div class="ff-sans-cond fs-400 letter-spacing-4"><%= pendingFriends[i].status %></div>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="custom-view-container flow" style="--flow-space: 2em">
+    <div>
+      <input type="text" id="search-bar" placeholder="Look for people" />
+    </div>
+
+    <div class="training-plan-container flex" style="--gap: 1rem">
+      <% for (let i=0; i < otherUsers.length; i++) { %>
 
       <div class="custom-training-container friend-container" style="margin: auto; padding-top: 1.25rem">
         <div style="display: none" class="hidden-index"><%= i %></div>
@@ -63,8 +80,8 @@
           class="training-plan-title flex uppercase text-white"
           style="justify-content: space-between; padding-inline: 1.75rem"
         >
-          <div><%= users[i].name %></div>
-          <input type="hidden" class="userId" value="<%= users[i]._id.toString() %>" />
+          <div class="userbase-names"><%= otherUsers[i].name %></div>
+          <input type="hidden" class="userId" value="<%= otherUsers[i]._id.toString() %>" />
           <div class="flex">
             <div class="add-friend-button" style="color: hsl(var(--clr-white) / 0.75)">
               <svg
@@ -116,7 +133,6 @@
   });
 
   const addFriendButtons = document.querySelectorAll(".add-friend-button");
-  console.log(addFriendButtons);
 
   addFriendButtons.forEach((addFriendButton, index) => {
     addFriendButton.addEventListener("click", e => {
@@ -125,7 +141,102 @@
       const userId = document.querySelectorAll(".userId")[index].value;
       console.log(userId);
 
+      const url = window.location.href;
+      const baseUrl = window.location.origin;
+      const relativeURL = url.replace(baseUrl, "");
+
+      const fetchUrl = `${relativeURL}/add`;
+      console.log(fetchUrl);
+
+      fetch(`${relativeURL}/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ addedUserId: userId })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Fehler: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Erfolgreich gesendet", data);
+        })
+        .catch(err => {
+          console.error("Fehler beim Senden der Anfrage", err);
+        });
+
       // use ajax in order to send friend request to /social/friends with the field addedUserId
+    });
+  });
+
+  // tab selector
+  const tabList = document.querySelector('[role="tablist"]');
+  const tabs = tabList.querySelectorAll('[role="tab"]');
+  const sections = document.querySelectorAll("section");
+
+  tabs.forEach((tab, tabIndex) => {
+    tab.addEventListener("click", e => {
+      e.preventDefault();
+
+      sections.forEach((section, sectionIndex) => {
+        section.setAttribute("hidden", true);
+        tabs[sectionIndex].setAttribute("aria-selected", false);
+      });
+
+      sections[tabIndex].removeAttribute("hidden");
+      tab.setAttribute("aria-selected", true);
+    });
+  });
+
+  // show right tab from start
+  function triggerClick(selectedTab) {
+    const clickEvent = new Event("click", {
+      bubbles: true,
+      cancelable: true
+    });
+    selectedTab.dispatchEvent(clickEvent);
+  }
+
+  const tabButtons = document.querySelectorAll('[role="tab"]');
+
+  tabButtons.forEach(button => {
+    button.addEventListener("click", e => {
+      e.preventDefault();
+      localStorage.setItem("selectedFriendTab", button.id);
+    });
+  });
+
+  const lastSelectedTab = localStorage.getItem("selectedFriendTab");
+  if (lastSelectedTab) {
+    const tabToSelect = document.getElementById(lastSelectedTab);
+    if (tabToSelect) {
+      tabToSelect.setAttribute("aria-selected", true);
+      triggerClick(tabToSelect);
+    }
+  } else {
+    tabButtons[0].setAttribute("aria-selected", true);
+    triggerClick(tabButtons[0]);
+  }
+
+  // search bar
+  const searchBar = document.getElementById("search-bar");
+  const userBaseNames = document.querySelectorAll(".userbase-names");
+
+  searchBar.addEventListener("input", () => {
+    const searchRequest = searchBar.value.toLowerCase().trim();
+
+    userBaseNames.forEach(userBaseField => {
+      const username = userBaseField.textContent.toLowerCase().trim();
+
+      const friendContainer = userBaseField.closest(".friend-container");
+      if (friendContainer && (username.includes(searchRequest) || username.startsWith(searchRequest))) {
+        friendContainer.style.display = "flex";
+      } else if (friendContainer) {
+        friendContainer.style.display = "none";
+      }
     });
   });
 </script>
